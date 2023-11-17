@@ -3,3 +3,5 @@
 .Rprofile
 data\*
 renv\*
+.Rproj*
+rsconnect*
