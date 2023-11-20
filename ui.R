@@ -24,7 +24,7 @@ ui <-  fluidPage(theme = bs_theme(version = 4, bootswatch = "minty"),
                  
                  # title ------ 
                  # shown across tabs
-                 titlePanel("Overall survival and extrapolation for common cancers: a multinational cohort study"),
+                 titlePanel("Overall survival for common cancers: a multinational cohort study"),
                  
                  # set up: pages along the side -----  
                  navlistPanel(
@@ -38,7 +38,7 @@ ui <-  fluidPage(theme = bs_theme(version = 4, bootswatch = "minty"),
                        preliminary and subject to change.")),
                             tags$hr(),
                             tags$h5(
- "This app is a companion to the study focussing on the assessment and prediction of survival for eight different cancers
+ "This app is a companion to the study focussing on the overall survival for eight different cancers
  (Breast, Colorectal, Lung, Liver, Stomach, Head & Neck, Prostate, and Pancreas) for a variety of different electronic health records and cancer registries across Europe (Spain, Netherlands, Italy, Germany, Norway, Finland, Portugal, Estonia, Switzerland, Hungary, and the United Kingdom)."), 
  tags$h5(
  "In the following pages you can find information on the survival using the KM method, median survival, mean survival and survival as one, five and ten years. Additionally, the results of eight extrapolation methods to predict survival with goodness of fit measures and predicted survival at one, five and ten years for stratified and adjusted model types. Finally and a description of the characteristics of the study populations and attrition is also reported.
@@ -49,8 +49,8 @@ for each cancer. All results have been performed for the whole population and fo
                         tags$h5("The results of this study are published in the following journals:"
                                 ),
  tags$ol(
-   tags$li(strong("TBC"),"(",tags$a(href="https://www.ndorms.ox.ac.uk/research/research-groups/Musculoskeletal-Pharmacoepidemiology","Paper Link"),")" ),
-    tags$li(strong("TBC"),"(",tags$a(href="https://www.ndorms.ox.ac.uk/research/research-groups/Musculoskeletal-Pharmacoepidemiology","Paper Link"),")" )),
+   tags$li(strong("TBC"),"(",tags$a(href="https://www.ndorms.ox.ac.uk/research/research-groups/Musculoskeletal-Pharmacoepidemiology","Paper Link"),")" )),
+   # tags$li(strong("TBC"),"(",tags$a(href="https://www.ndorms.ox.ac.uk/research/research-groups/Musculoskeletal-Pharmacoepidemiology","Paper Link"),")" )),
 
  tags$h5("The analysis code used to generate these results can be found",
          tags$a(href="https://github.com/oxford-pharmacoepi", "here"),
@@ -322,7 +322,7 @@ tabPanel("Population Survival",
                             div(style="display: inline-block;vertical-align:top; width: 150px;",
                                 pickerInput(inputId = "table1_outcome_cohort_name_selector",
                                             label = "Cancer",
-                                            choices = sort(unique(tableone_summary$Cancer)),
+                                            choices = sort(unique(tableone_final$Cancer)),
                                             selected = c("Breast"),
                                             options = list(
                                               `actions-box` = TRUE,
@@ -336,8 +336,8 @@ tabPanel("Population Survival",
                             div(style="display: inline-block;vertical-align:top; width: 150px;",
                                 pickerInput(inputId = "table1_database_selector",
                                             label = "Database",
-                                            choices = unique(tableone_summary$Database),
-                                            selected = unique(tableone_summary$Database),
+                                            choices = unique(tableone_final$Database),
+                                            selected = unique(tableone_final$Database),
                                             options = list(
                                               `actions-box` = TRUE,
                                               size = 10,
@@ -348,7 +348,7 @@ tabPanel("Population Survival",
                             div(style="display: inline-block;vertical-align:top; width: 150px;",
                                 pickerInput(inputId = "table1_sex_selector",
                                             label = "Sex",
-                                            choices = sort(unique(tableone_summary$Sex)),
+                                            choices = sort(unique(tableone_final$Sex)),
                                             selected = c("Both"),
                                             options = list(
                                               `actions-box` = TRUE,
@@ -360,7 +360,7 @@ tabPanel("Population Survival",
                             div(style="display: inline-block;vertical-align:top; width: 150px;",
                                 pickerInput(inputId = "table1_age_selector",
                                             label = "Age",
-                                            choices = sort(unique(tableone_summary$Age)),
+                                            choices = sort(unique(tableone_final$Age)),
                                             selected = c("All"),
                                             options = list(
                                               `actions-box` = TRUE,
@@ -392,7 +392,7 @@ tabPanel("Population Survival",
           div(style="display: inline-block;vertical-align:top; width: 150px;",
               pickerInput(inputId = "attrition_cohort_name_selector",
                           label = "Cancer",
-                          choices = sort(unique(cohort_attrition$Cancer)),
+                          choices = sort(unique(attritioncdm$Cancer)),
                           selected = c("Breast"),
                           options = list(
                             `actions-box` = TRUE,
@@ -407,8 +407,8 @@ tabPanel("Population Survival",
           div(style="display: inline-block;vertical-align:top; width: 150px;",
               pickerInput(inputId = "attrition_database_name_selector",
                           label = "Database",
-                          choices = unique(cohort_attrition$Database),
-                          selected = unique(cohort_attrition$Database),
+                          choices = unique(attritioncdm$Database),
+                          selected = unique(attritioncdm$Database),
                           options = list(
                             `actions-box` = TRUE,
                             size = 10,

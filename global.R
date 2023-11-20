@@ -32,10 +32,10 @@ list2env(study_results,globalenv())
 rm(study_results)
 
 # filter results for just km results
-survival_km <- survival_estimates %>% 
+survival_km <- survivalResults %>% 
   filter(Method == "Kaplan-Meier")
 
-med_surv_km <- median_survival_results %>% 
+med_surv_km <- medianResults %>% 
   filter(Method == "Kaplan-Meier",
          Adjustment == "None") %>% 
   select(!c(Adjustment, 
@@ -49,23 +49,23 @@ med_surv_km <- median_survival_results %>%
             `surv year 10`
             ))
 
-hot_km <- hazard_overtime_results %>% 
+hot_km <- hazOverTimeResults %>% 
   filter(Method == "Kaplan-Meier")
 
 #filter results for stratified results
 # survival_est_strat <- survival_estimates %>% 
 #   filter(Adjustment == "None" )
 
-survival_est_strat <- survival_estimates %>% 
+survival_est_strat <- survivalResults %>% 
   filter(Adjustment == "None") %>% 
   mutate(Method = as.factor(Method) %>% relevel(ref = "Kaplan-Meier"))
 
 # filter for stratified gof
-goodness_of_fit_results_strat <- goodness_of_fit_results %>% 
+goodness_of_fit_results_strat <- GOFResults %>% 
   filter(Adjustment == "None" )
   
 # filter for stratified extroplation parameters
-extrapolation_parameters_strat <- extrapolation_parameters %>% 
+extrapolation_parameters_strat <- ExtrpolationParameters %>% 
   filter(Adjustment == "None" )
 
 
