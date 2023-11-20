@@ -370,7 +370,7 @@ server <-	function(input, output, session) {
 # risk table KM
   get_survival_risktable<-reactive({
 
-    table<-risk_table_results %>%
+    table<- riskTableResults %>%
       # first deselect settings which did not vary for this study
       select(!c(Method, Adjustment, Stratification)) %>% 
       filter(Database %in% input$km_database_name_selector)  %>%
@@ -480,7 +480,7 @@ server <-	function(input, output, session) {
 # table 1
   get_table_one <-reactive({
     
-    table <- tableone_summary %>% 
+    table <- tableone_final %>% 
       filter(Cancer %in% input$table1_outcome_cohort_name_selector) %>% 
       filter(Sex %in% input$table1_sex_selector) %>% 
       filter(Age %in% input$table1_age_selector) %>% 
@@ -584,7 +584,7 @@ server <-	function(input, output, session) {
 # table for cohort attrition
   get_table_attrition <-reactive({
     
-    table <- cohort_attrition %>% 
+    table <- attritioncdm %>% 
       filter(Cancer %in% input$attrition_cohort_name_selector) %>% 
     filter(Database %in% input$attrition_database_name_selector) 
     
@@ -615,7 +615,7 @@ server <-	function(input, output, session) {
 # table for cdm snapshot
   get_database_info <-reactive({
     
-    table <- cdm_snapshot 
+    table <- snapshotcdm 
     
     table
   }) 
