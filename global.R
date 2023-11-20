@@ -29,6 +29,7 @@ nice.num.count<-function(x) {
 study_results <- readRDS(here("data","Results.rds"))
 # extract each element from the list to put results into r environment
 list2env(study_results,globalenv())
+rm(study_results)
 
 # filter results for just km results
 survival_km <- survival_estimates %>% 
