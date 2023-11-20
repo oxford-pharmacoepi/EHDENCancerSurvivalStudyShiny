@@ -5,4 +5,4 @@ data\*
 renv\*
 .Rproj*
 rsconnect*
-data/Results.rds
+data/*
