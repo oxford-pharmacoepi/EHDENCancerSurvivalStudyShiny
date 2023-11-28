@@ -30,34 +30,6 @@ server <-	function(input, output, session) {
       gtsave(x, file)
     }
   )
-
-
-  
-  # # cohort attrition -----
-  # get_table_attrition <-reactive({
-  #   
-  #   table <- incidence_attrition %>% 
-  #     filter(denominator_sex %in% input$attrition_sex_selector) %>% 
-  #     filter(denominator_age_group %in% input$attrition_age_selector) %>% 
-  #     filter(outcome_cohort_name %in% input$attrition_cohort_name_selector) %>% 
-  #     filter(analysis_interval %in% input$attrition_time_selector)
-  #   
-  #   table
-  # }) 
-  # 
-  # output$tbl_incidence_attrition <- renderText(kable(get_table_attrition()) %>%
-  #                                                kable_styling("striped", full_width = F) )
-  # 
-  # output$dt_incidence_attrition_word <- downloadHandler(
-  #   filename = function() {
-  #     "incidence_attrition.docx"
-  #   },
-  #   content = function(file) {
-  #     x <- gt(get_table_attrition())
-  #     gtsave(x, file)
-  #   }
-  # )
-  
   
   # patient_characteristics ----
   get_patient_characteristics <- reactive({
@@ -115,40 +87,6 @@ server <-	function(input, output, session) {
   )
   
   
-  
-  
-  
-  # # demographics --------
-  # 
-  # get_demographics <- reactive({
-  #   
-  #   table <- demographics %>% 
-  #     filter(Sex %in% input$tableone_sex_selector) %>% 
-  #     filter(Age %in% input$tableone_age_selector) 
-  #   
-  #   selected_columns <- c("Description", input$demographics_database_name_selector)
-  #   table <- table[, selected_columns, drop = FALSE]
-  #   
-  #   table
-  #   
-  # }) 
-  # 
-  # 
-  # output$dt_demographics <- renderText(kable(get_demographics()) %>%
-  #                                        kable_styling("striped", full_width = F) )
-  # 
-  # 
-  # output$gt_demographics_word <- downloadHandler(
-  #   filename = function() {
-  #     "demographics.docx"
-  #   },
-  #   content = function(file) {
-  #     x <- gt(get_demographics())
-  #     gtsave(x, file)
-  #   }
-  # )  
-  # 
-  # 
   # table one --------
 
   get_table_one <- reactive({
@@ -241,7 +179,7 @@ server <-	function(input, output, session) {
   # surv stats --------
   get_risk_table <- reactive({
     
-    table <- riskTableResults %>%
+    table <- survival_risk_table %>%
       filter(Cancer %in% input$risk_table_cohort_name_selector) %>%
       filter(Database %in% input$risk_table_database_name_selector) %>% 
       filter(Age %in% input$risk_table_age_selector) %>% 

@@ -35,12 +35,8 @@ ui <- dashboardPage(
         text = "Characteristics",
         tabName = "char",
         menuSubItem(
-          text = "Overall Demographics",
+          text = "Demographics",
           tabName = "demographics"
-        ),
-        menuSubItem(
-          text = "Characterisation",
-          tabName = "tableone"
         )
       ),
       
@@ -129,9 +125,8 @@ ui <- dashboardPage(
                 
         ),
         
-        tags$h5("Any questions regarding this shiny app please contact",
-                tags$a(href="mailto:danielle.newby@ndorms.ox.ac.uk", "Danielle Newby"), "and any questions regarding this study please contact the corresponding author",
-                tags$a(href="mailto:daniel.prietoalhambra@ndorms.ox.ac.uk", "Professor Daniel Prieto Alhambra")
+        tags$h5("Any questions regarding this shiny app or the study please contact",
+                tags$a(href="mailto:danielle.newby@ndorms.ox.ac.uk", "Danielle Newby")
                 
         ),
         
