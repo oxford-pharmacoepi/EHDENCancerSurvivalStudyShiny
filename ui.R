@@ -515,6 +515,10 @@ ui <- dashboardPage(
                           `selected-text-format` = "count > 3"),
                         multiple = TRUE,)
         ),
+        div(
+          style = "width: 80vh; height: 5vh;",  # Set width to 100% for responsive design
+          checkboxInput("show_ci", "Show Confidence Intervals", value = TRUE)
+        ),
         
         div(
           style = "width: 80vh; height: 95vh;",  # Set width to 100% for responsive design
