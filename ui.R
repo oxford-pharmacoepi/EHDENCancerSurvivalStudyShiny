@@ -255,9 +255,7 @@ ui <- dashboardPage(
             style="display:inline-block; float:right")
         
       ),
-      
-      
-      
+
       tabItem(
         tabName = "risk_results",
         div(
@@ -527,8 +525,30 @@ ui <- dashboardPage(
         ),
         
         div(
-          style = "width: 80vh; height: 95vh;",  # Set width to 100% for responsive design
-          plotOutput("survivalPlot")
+          style = "width: 80%; height: 90%;",  # Set width to 100% for responsive design
+          plotOutput("survivalPlot",
+                     height = "800px"
+          ) %>%
+            withSpinner(),
+          h4("Download Figure"),
+          div("Height:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
+          div(
+            style = "display: inline-block;",
+            textInput("survival_download_height", "", 10, width = "50px")
+          ),
+          div("cm", style = "display: inline-block; margin-right: 25px;"),
+          div("Width:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
+          div(
+            style = "display: inline-block;",
+            textInput("survival_download_width", "", 20, width = "50px")
+          ),
+          div("cm", style = "display: inline-block; margin-right: 25px;"),
+          div("dpi:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
+          div(
+            style = "display: inline-block; margin-right:",
+            textInput("survival_download_dpi", "", 600, width = "50px")
+          ),
+          downloadButton("survival_download_plot", "Download plot")
         )
         
       )

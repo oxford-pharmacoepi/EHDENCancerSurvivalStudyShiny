@@ -204,6 +204,25 @@ server <-	function(input, output, session) {
     }
   )  
   
+  
+  
+### download survival plot ----
+  output$survival_download_plot <- downloadHandler(
+    filename = function() {
+      "Survival_plot.png"
+    },
+    content = function(file) {
+      ggsave(
+        file,
+        get_surv_plot(),
+        width = as.numeric(input$survival_download_width),
+        height = as.numeric(input$survival_download_height),
+        dpi = as.numeric(input$survival_download_dpi),
+        units = "cm"
+      )
+    }
+  )
+  
 # survival plots -------
   get_surv_plot <- reactive({
     plot_data <- survival_km %>%
@@ -221,11 +240,10 @@ server <-	function(input, output, session) {
         ggplot(aes(x = time, y = est, ymin = lcl, ymax = ucl, group = Group, colour = Group, fill = Group)) +
         geom_line() +
         geom_ribbon(aes(ymin = lcl, ymax = ucl, fill = Group, colour = Group), alpha = 0.3) +
-        xlab("Time (Years)") +
+        xlab("Survival Time (Years)") +
         ylab("Survival Function (%)") +
-        facet_wrap(vars(facet_var), ncol = 2) +
+        facet_wrap(vars(facet_var), ncol = 2, scales = "free") +
         theme_bw() 
-
 
 
     } else if (!is.null(input$surv_plot_group) && is.null(input$surv_plot_facet)) {
@@ -234,9 +252,10 @@ server <-	function(input, output, session) {
         ggplot(aes(x = time, y = est, ymin = lcl, ymax = ucl, group = Group, colour = Group, fill = Group)) +
         geom_line() +
         geom_ribbon(aes(ymin = lcl, ymax = ucl, fill = Group, colour = Group), alpha = 0.3) +
-        xlab("Time (Years)") +
+        xlab("Survival Time (Years)") +
         ylab("Survival Function (%)") +
         theme_bw() 
+
 
     } else if (is.null(input$surv_plot_group) && !is.null(input$surv_plot_facet)) {
       plot <- plot_data %>%
@@ -244,26 +263,31 @@ server <-	function(input, output, session) {
         ggplot(aes(x = time, y = est, ymin = lcl, ymax = ucl, group = Group, colour = Group, fill = Group)) +
         geom_line() +
         geom_ribbon(aes(ymin = lcl, ymax = ucl, fill = Group, colour = Group), alpha = 0.3) +
-        xlab("Time (Years)") +
+        xlab("Survival Time (Years)") +
         ylab("Survival Function (%)") +
-        facet_wrap(vars(facet_var), ncol = 2) +
+        facet_wrap(vars(facet_var), ncol = 2, scales = "free") +
         theme_bw() 
+
 
     } else {
       plot <- plot_data %>%
         ggplot(aes(x = time, y = est, ymin = lcl, ymax = ucl, group = Group, colour = Group, fill = Group)) +
         geom_line() +
         geom_ribbon(aes(ymin = lcl, ymax = ucl, fill = Group, colour = Group), alpha = 0.3) +
-        xlab("Time (Years)") +
+        xlab("Survival Time (Years)") +
         ylab("Survival Function (%)") +
         theme_bw() 
+
 
     }
 
     # Move scale_y_continuous outside of ggplot
-    plot <- plot + scale_y_continuous(limits = c(0, NA), 
-                                      labels = scales::percent)
-
+      plot <- plot + 
+        scale_y_continuous(limits = c(0, NA), 
+                           labels = scales::percent, 
+                           expand = c(0.02,0.02)) +
+        scale_x_continuous(expand = c(0.02,0.02),
+                           breaks = pretty_breaks(n = 10))  
     plot 
     
     } else {
@@ -274,11 +298,11 @@ server <-	function(input, output, session) {
           unite("facet_var", c(all_of(input$surv_plot_facet)), remove = FALSE, sep = "; ") %>%
           ggplot(aes(x = time, y = est, ymin = lcl, ymax = ucl, group = Group, colour = Group, fill = Group)) +
           geom_line() +
-          xlab("Time (Years)") +
+          xlab("Survival Time (Years)") +
           ylab("Survival Function (%)") +
-          facet_wrap(vars(facet_var), ncol = 2) +
+          facet_wrap(vars(facet_var), ncol = 2, scales = "free") +
           theme_bw() 
-        
+
         
         
       } else if (!is.null(input$surv_plot_group) && is.null(input$surv_plot_facet)) {
@@ -286,35 +310,39 @@ server <-	function(input, output, session) {
           unite("Group", c(all_of(input$surv_plot_group)), remove = FALSE, sep = "; ") %>%
           ggplot(aes(x = time, y = est, ymin = lcl, ymax = ucl, group = Group, colour = Group, fill = Group)) +
           geom_line() +
-          xlab("Time (Years)") +
+          xlab("Survival Time (Years)") +
           ylab("Survival Function (%)") +
           theme_bw() 
+
         
       } else if (is.null(input$surv_plot_group) && !is.null(input$surv_plot_facet)) {
         plot <- plot_data %>%
           unite("facet_var", c(all_of(input$surv_plot_facet)), remove = FALSE, sep = "; ") %>%
           ggplot(aes(x = time, y = est, ymin = lcl, ymax = ucl, group = Group, colour = Group, fill = Group)) +
           geom_line() +
-          xlab("Time (Years)") +
+          xlab("Survival Time (Years)") +
           ylab("Survival Function (%)") +
-          facet_wrap(vars(facet_var), ncol = 2) +
+          facet_wrap(vars(facet_var), ncol = 2, scales = "free") +
           theme_bw() 
+
         
       } else {
         plot <- plot_data %>%
           ggplot(aes(x = time, y = est, ymin = lcl, ymax = ucl, group = Group, colour = Group, fill = Group)) +
           geom_line() +
-          xlab("Time (Years)") +
+          xlab("Survival Time (Years)") +
           ylab("Survival Function (%)") +
           theme_bw() 
         
       }
       
       # Move scale_y_continuous outside of ggplot
-      plot <- plot + scale_y_continuous(limits = c(0, NA),
-                                        labels = scales::percent)
-      
-      plot      
+      plot <- plot + 
+        scale_y_continuous(limits = c(0, NA), 
+                           labels = scales::percent, 
+                           expand = c(0.02,0.02)) +
+        scale_x_continuous(expand = c(0.02,0.02),
+                           breaks = pretty_breaks(n = 10))    
  
       
     }
