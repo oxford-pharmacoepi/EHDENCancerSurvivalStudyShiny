@@ -261,7 +261,8 @@ server <-	function(input, output, session) {
     }
 
     # Move scale_y_continuous outside of ggplot
-    plot <- plot + scale_y_continuous(limits = c(0, NA))
+    plot <- plot + scale_y_continuous(limits = c(0, NA), 
+                                      labels = scales::percent)
 
     plot 
     
@@ -310,7 +311,8 @@ server <-	function(input, output, session) {
       }
       
       # Move scale_y_continuous outside of ggplot
-      plot <- plot + scale_y_continuous(limits = c(0, NA))
+      plot <- plot + scale_y_continuous(limits = c(0, NA),
+                                        labels = scales::percent)
       
       plot      
  

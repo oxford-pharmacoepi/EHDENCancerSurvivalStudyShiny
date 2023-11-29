@@ -3,7 +3,7 @@
 # ui shiny ----
 ui <- dashboardPage(
   dashboardHeader(
-    title = div("Menu", style = "text-align: left;"),  # Align title to the left
+    title = div("Cancer Survival", style = "text-align: left;"),  # Align title to the left
     titleWidth = 250  # Adjust the width as needed
   ),
   ## menu ----
@@ -11,12 +11,15 @@ ui <- dashboardPage(
     sidebarMenu(
       menuItem(
         text = "Background",
-        tabName = "background"
+        tabName = "background",
+        icon = shiny::icon("book")
       ),
 
       menuItem(
         text = "Overall Survival",
         tabName = "os",
+        icon = shiny::icon("skull")
+        ,
         menuSubItem(
           text = "Survival Plots",
           tabName = "survival_results"
@@ -34,6 +37,7 @@ ui <- dashboardPage(
       menuItem(
         text = "Characteristics",
         tabName = "char",
+        icon = shiny::icon("clipboard"),
         menuSubItem(
           text = "Demographics",
           tabName = "demographics"
@@ -43,6 +47,7 @@ ui <- dashboardPage(
       menuItem(
         text = "Databases",
         tabName = "dbs",
+        icon = shiny::icon("database"),
         menuSubItem(
           text = "Snapshot",
           tabName = "snapshotcdm"
@@ -56,6 +61,7 @@ ui <- dashboardPage(
       menuItem(
         text = "Cohorts",
         tabName = "cohorts",
+        icon = shiny::icon("disease"),
         menuSubItem(
           text = "Cohort concepts",
           tabName = "cohort_concepts"
@@ -494,7 +500,7 @@ ui <- dashboardPage(
                                     "Sex",
                                     "Age"
                         ),
-                        selected = c("Cancer", "Database" ),
+                        selected = c("Cancer" ),
                         options = list(
                           `actions-box` = TRUE,
                           size = 10,

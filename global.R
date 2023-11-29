@@ -105,6 +105,14 @@ for(i in seq_along(survival_estimates_files)){
 survival_estimates <- dplyr::bind_rows(survival_estimates) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD"))
+
+survival_estimates_prostate <- survival_estimates %>% 
+  filter(Cancer == "Prostate") %>% 
+  mutate(Sex = "Both")
+
+survival_estimates <- bind_rows(survival_estimates,
+                                survival_estimates_prostate)
+
   
 # risk tables ----------
 survival_risk_table_files <- results[stringr::str_detect(results, ".csv")]
@@ -124,7 +132,14 @@ survival_risk_table <- dplyr::bind_rows(survival_risk_table) %>%
   select(c("0", "0.5", "1", "2", "4", "6", "8", "10" , "12", "14", "16", "18" ,"20",
            "Cancer", "Age", "Sex", "Database"))
 
- 
+survival_risk_table_prostate <- survival_risk_table %>% 
+  filter(Cancer == "Prostate") %>% 
+  mutate(Sex = "Both")
+
+survival_risk_table <- bind_rows(survival_risk_table,
+                                survival_risk_table_prostate)
+
+
 # median and survival probabilities ------
 survival_median_files <- results[stringr::str_detect(results, ".csv")]
 survival_median_files <- results[stringr::str_detect(results, "median_mean")]
@@ -137,6 +152,14 @@ for(i in seq_along(survival_median_files)){
 survival_median_table <- dplyr::bind_rows(survival_median_table) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) 
+
+survival_median_table_prostate <- survival_median_table %>% 
+  filter(Cancer == "Prostate") %>% 
+  mutate(Sex = "Both")
+
+survival_median_table <- bind_rows(survival_median_table,
+                                   survival_median_table_prostate)
+
 
 # table one ------
 tableone_whole_files <- results[stringr::str_detect(results, ".csv")]
@@ -156,7 +179,9 @@ snapshot_files <- results[stringr::str_detect(results, "cdm_snapshot")]
 snapshotcdm <- list()
 for(i in seq_along(snapshot_files)){
   snapshotcdm[[i]] <- readr::read_csv(snapshot_files[[i]],
-                                         show_col_types = FALSE)
+                                         show_col_types = FALSE) %>% 
+    mutate_all(as.character)
+
 }
 snapshotcdm <- bind_rows(snapshotcdm) %>% 
   select("cdm_name", "person_count", "observation_period_count" ,
