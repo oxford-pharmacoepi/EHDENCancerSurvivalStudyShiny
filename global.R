@@ -112,6 +112,7 @@ survival_estimates_prostate <- survival_estimates %>%
 
 survival_estimates <- bind_rows(survival_estimates,
                                 survival_estimates_prostate)
+rm(survival_estimates_prostate)
 
   
 # risk tables ----------
@@ -139,6 +140,8 @@ survival_risk_table_prostate <- survival_risk_table %>%
 
 survival_risk_table <- bind_rows(survival_risk_table,
                                 survival_risk_table_prostate)
+
+rm(survival_risk_table_prostate)
 
 
 # median and survival probabilities ------
@@ -172,6 +175,7 @@ survival_median_table_prostate <- survival_median_table %>%
 
 survival_median_table <- bind_rows(survival_median_table,
                                    survival_median_table_prostate)
+rm(survival_median_table_prostate)
 
 
 # table one ------
@@ -219,7 +223,8 @@ for(i in seq_along(attrition_files)){
 }
 attritioncdm <- bind_rows(attritioncdm) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
-  dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) 
+  dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
+  select(!c(cohort_definition_id))
 
 # filter results for just km results
 survival_km <- survival_estimates %>% 
@@ -244,3 +249,6 @@ med_surv_km <- survival_median_table %>%
             )) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) 
+
+rm(survival_estimates)
+rm(survival_median_table)
