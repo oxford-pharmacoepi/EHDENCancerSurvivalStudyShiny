@@ -37,7 +37,7 @@ ui <- dashboardPage(
       menuItem(
         text = "Characteristics",
         tabName = "char",
-        icon = shiny::icon("clipboard"),
+        icon = shiny::icon("hospital-user"),
         menuSubItem(
           text = "Demographics",
           tabName = "demographics"
@@ -61,7 +61,7 @@ ui <- dashboardPage(
       menuItem(
         text = "Cohorts",
         tabName = "cohorts",
-        icon = shiny::icon("disease"),
+        icon = shiny::icon("person"),
         menuSubItem(
           text = "Cohort concepts",
           tabName = "cohort_concepts"
