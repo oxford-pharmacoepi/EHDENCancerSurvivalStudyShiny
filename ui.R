@@ -378,6 +378,9 @@ ui <- dashboardPage(
         
       ),
       
+      
+      
+      
       tabItem(
         tags$h5("UNDER DEVELOPMENT!! Description of database details used in study"),
         tabName = "database_details",
@@ -394,10 +397,36 @@ ui <- dashboardPage(
       ) ,
       
       tabItem(
-        tags$h5("UNDER DEVELOPMENT!! Clinical codelists for cancers"),
+        tags$h5("Clinical codelists for cancers"),
         tabName = "cohort_concepts",
+        div(
+          style = "display: inline-block;vertical-align:top; width: 150px;",
+          pickerInput(
+            inputId = "codelist_cohort_selector",
+            label = "Cancer",
+            choices = unique(concepts_lists$Cancer),
+            selected = unique(concepts_lists$Cancer),
+            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
+            multiple = TRUE
+          )
+        ),
+        
+        div(
+          style = "display: inline-block;vertical-align:top; width: 150px;",
+          pickerInput(
+            inputId = "codelist_vocab_selector",
+            label = "Vocabulary",
+            choices = unique(concepts_lists$Vocabulary),
+            selected = unique(concepts_lists$Vocabulary),
+            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
+            multiple = TRUE
+          )
+        ),
+        
         htmlOutput('tbl_codelists'),
+        
         tags$hr(),
+        
         div(
           style = "display:inline-block",
           downloadButton(

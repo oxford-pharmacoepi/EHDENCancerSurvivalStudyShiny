@@ -71,8 +71,21 @@ server <-	function(input, output, session) {
     }
   )
   
-  #clinical codelists
-  output$tbl_codelists <- renderText(kable(concepts_lists) %>%
+  
+  # clinical codelists ----------------
+  
+  get_codelists <- reactive({
+    
+    table <- concepts_lists %>%
+      filter(Vocabulary %in% input$codelist_vocab_selector) %>%
+      filter(Cancer %in% input$codelist_cohort_selector)
+    
+    table
+    
+  })
+  
+
+  output$tbl_codelists <- renderText(kable(get_codelists()) %>%
                                        kable_styling("striped", full_width = F) )
 
 
@@ -81,7 +94,7 @@ server <-	function(input, output, session) {
       "concept_lists.docx"
     },
     content = function(file) {
-      x <- gt(concepts_lists)
+      x <- gt(get_codelists())
       gtsave(x, file)
     }
   )
