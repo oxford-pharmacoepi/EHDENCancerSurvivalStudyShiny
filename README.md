@@ -1,5 +1,4 @@
 # EHDEN Cancer Survival Study Shiny
-========================================================================================================================================================
 
 ## Introduction
 This is the repository to view the cancer survival results from the EHDEN wp2 study (https://github.com/oxford-pharmacoepi/CancerSurvivalWp2Analysis)
