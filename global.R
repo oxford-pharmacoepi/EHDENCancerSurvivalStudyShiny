@@ -140,7 +140,6 @@ survival_risk_table_prostate <- survival_risk_table %>%
 
 survival_risk_table <- bind_rows(survival_risk_table,
                                 survival_risk_table_prostate)
-
 rm(survival_risk_table_prostate)
 
 
