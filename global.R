@@ -129,8 +129,9 @@ for(i in seq_along(survival_risk_table_files)){
 survival_risk_table <- dplyr::bind_rows(survival_risk_table) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
-  select(c("0", "0.5", "1", "2", "4", "6", "8", "10" , "12", "14", "16", "18" ,"20",
-           "Cancer", "Age", "Sex", "Database"))
+  select(c("Database", "details", "0", "0.5", "1", "2", "4", "6", "8", "10" , "12", "14", "16", "18" ,"20",
+           "Cancer", "Age", "Sex")) %>% 
+  relocate(Database, .before = 1)
 
 survival_risk_table_prostate <- survival_risk_table %>% 
   filter(Cancer == "Prostate") %>% 
@@ -151,7 +152,9 @@ for(i in seq_along(survival_median_files)){
 }
 survival_median_table <- dplyr::bind_rows(survival_median_table) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
-  dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) 
+  dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
+  relocate(Database, .before = 1) %>% 
+  select(!c(study_period))
 
 survival_median_table_prostate <- survival_median_table %>% 
   filter(Cancer == "Prostate") %>% 
