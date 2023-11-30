@@ -405,7 +405,7 @@ ui <- dashboardPage(
             inputId = "codelist_cohort_selector",
             label = "Cancer",
             choices = unique(concepts_lists$Cancer),
-            selected = unique(concepts_lists$Cancer),
+            selected = "Breast",
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
             multiple = TRUE
           )

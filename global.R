@@ -156,6 +156,7 @@ survival_median_table <- dplyr::bind_rows(survival_median_table) %>%
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
   relocate(Database, .before = 1) %>% 
+  relocate(`rmean in years (SE)`, .after = `Median Survival in Years (95% CI)` ) %>% 
   select(!c(study_period)) %>% 
   rename(
     "1-year Survival (95% CI)" = `Survival Rate % (95% CI) year 1`,
