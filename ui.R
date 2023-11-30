@@ -158,6 +158,7 @@ ui <- dashboardPage(
 
       tabItem(
         tabName = "demographics",
+        tags$h5("UNDER DEVELOPMENT!!"),
         div(
           style = "display: inline-block;vertical-align:top; width: 150px;",
           pickerInput(
@@ -378,7 +379,7 @@ ui <- dashboardPage(
       ),
       
       tabItem(
-        tags$h5("Description of database details used in study"),
+        tags$h5("UNDER DEVELOPMENT!! Description of database details used in study"),
         tabName = "database_details",
         htmlOutput('tbl_database_details'),
         tags$hr(),
@@ -393,7 +394,7 @@ ui <- dashboardPage(
       ) ,
       
       tabItem(
-        tags$h5("Clinical codelists for cancers"),
+        tags$h5("UNDER DEVELOPMENT!! Clinical codelists for cancers"),
         tabName = "cohort_concepts",
         htmlOutput('tbl_codelists'),
         tags$hr(),
