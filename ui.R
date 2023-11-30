@@ -125,7 +125,7 @@ ui <- dashboardPage(
           tags$li(strong("TBC"),"(",tags$a(href="https://www.ndorms.ox.ac.uk/research/research-groups/Musculoskeletal-Pharmacoepidemiology","Paper Link"),")" )),
         
         tags$h5("The analysis code used to generate these results can be found",
-                tags$a(href="https://github.com/oxford-pharmacoepi", "here"),
+                tags$a(href="https://github.com/oxford-pharmacoepi/CancerSurvivalWp2Analysis", "here"),
                 ".The cohort diagnostics including the clinical codelists for each of the 8 cancers can be found",
                 tags$a(href="https://dpa-pde-oxford.shinyapps.io/CancerExtrapolationDiagnostics/", "here")
                 
