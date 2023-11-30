@@ -263,7 +263,7 @@ server <-	function(input, output, session) {
           xlab("Time (Years)") +
           ylab("Survival Function (%)") +
           facet_wrap(vars(facet_var), ncol = 2) +
-          theme_bw(base_size = 20) 
+          theme_bw(base_size = 15) 
         
         
         
@@ -275,7 +275,7 @@ server <-	function(input, output, session) {
           geom_ribbon(aes(ymin = lcl, ymax = ucl, fill = Group, colour = Group), alpha = 0.3) +
           xlab("Time (Years)") +
           ylab("Survival Function (%)") +
-          theme_bw(base_size = 20) 
+          theme_bw(base_size = 15) 
         
       } else if (is.null(input$surv_plot_group) && !is.null(input$surv_plot_facet)) {
         plot <- plot_data %>%
@@ -286,7 +286,7 @@ server <-	function(input, output, session) {
           xlab("Time (Years)") +
           ylab("Survival Function (%)") +
           facet_wrap(vars(facet_var), ncol = 2) +
-          theme_bw(base_size = 20) 
+          theme_bw(base_size = 15) 
         
       } else {
         plot <- plot_data %>%
@@ -295,7 +295,7 @@ server <-	function(input, output, session) {
           geom_ribbon(aes(ymin = lcl, ymax = ucl, fill = Group, colour = Group), alpha = 0.3) +
           xlab("Time (Years)") +
           ylab("Survival Function (%)") +
-          theme_bw(base_size = 20) 
+          theme_bw(base_size = 15) 
         
       }
       
@@ -306,7 +306,7 @@ server <-	function(input, output, session) {
                            expand = c(0.02,0.02)) +
         scale_x_continuous(expand = c(0.02,0.02),
                            breaks = pretty_breaks(n = 10)) +
-        theme(strip.text = element_text(size = 20, face = "bold"))
+        theme(strip.text = element_text(size = 15, face = "bold"))
       
       plot 
       
@@ -321,7 +321,7 @@ server <-	function(input, output, session) {
           xlab("Time (Years)") +
           ylab("Survival Function (%)") +
           facet_wrap(vars(facet_var), ncol = 2) +
-          theme_bw(base_size = 20) 
+          theme_bw(base_size = 15) 
         
         
         
@@ -332,7 +332,7 @@ server <-	function(input, output, session) {
           geom_line() +
           xlab("Time (Years)") +
           ylab("Survival Function (%)") +
-          theme_bw(base_size = 20) 
+          theme_bw(base_size = 15) 
         
       } else if (is.null(input$surv_plot_group) && !is.null(input$surv_plot_facet)) {
         plot <- plot_data %>%
@@ -342,7 +342,7 @@ server <-	function(input, output, session) {
           xlab("Time (Years)") +
           ylab("Survival Function (%)") +
           facet_wrap(vars(facet_var), ncol = 2) +
-          theme_bw(base_size = 20) 
+          theme_bw(base_size = 15) 
         
       } else {
         plot <- plot_data %>%
@@ -350,7 +350,7 @@ server <-	function(input, output, session) {
           geom_line() +
           xlab("Time (Years)") +
           ylab("Survival Function (%)") +
-          theme_bw(base_size = 20) 
+          theme_bw(base_size = 15) 
         
       }
       
@@ -361,7 +361,7 @@ server <-	function(input, output, session) {
                                expand = c(0.02,0.02)) +
             scale_x_continuous(expand = c(0.02,0.02),
                                breaks = pretty_breaks(n = 10)) +
-            theme(strip.text = element_text(size = 20, face = "bold"))
+            theme(strip.text = element_text(size = 15, face = "bold"))
                                         
                                         
       

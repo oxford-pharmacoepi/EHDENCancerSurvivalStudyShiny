@@ -154,7 +154,17 @@ survival_median_table <- dplyr::bind_rows(survival_median_table) %>%
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
   relocate(Database, .before = 1) %>% 
-  select(!c(study_period))
+  select(!c(study_period)) %>% 
+  rename(
+    "1-year Survival (95% CI)" = `Survival Rate % (95% CI) year 1`,
+    "5-year Survival (95% CI)" = `Survival Rate % (95% CI) year 5`,
+    "10-year Survival (95% CI)" = `Survival Rate % (95% CI) year 10`,
+     "5-year RMST (SE)" = `rmean 5yrs in years (SE)`,
+    "10-year RMST (SE)" = `rmean 10yrs in years (SE)`,
+    "Mean Survival (SE)" = `rmean in years (SE)`,
+    "Median Survival (95% CI)" = `Median Survival in Years (95% CI)`
+    
+  )
 
 survival_median_table_prostate <- survival_median_table %>% 
   filter(Cancer == "Prostate") %>% 
