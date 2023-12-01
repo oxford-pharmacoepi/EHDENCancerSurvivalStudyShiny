@@ -213,6 +213,9 @@ snapshotcdm <- bind_rows(snapshotcdm) %>%
          "Database CDM Version" = "cdm_version",
          "Database Description" = "cdm_description" ) 
 
+snapshotcdm <- full_join(snapshotcdm, database_details, by = "Database name" ) %>% 
+  relocate("Database Description", .after = last_col())
+
 # attrition ----------
 attrition_files <- results[stringr::str_detect(results, ".csv")]
 attrition_files <- results[stringr::str_detect(results, "attrition")]

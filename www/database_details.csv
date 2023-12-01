@@ -1,2 +1,2 @@
-Database Name,Country,Database type,Cancer Diagnoses,Death,Description
-CPRD GOLD,United Kingdom,Primary Care,Primary Care validated,98% accurate,CPRD GOLD is a primary care database xxx
+Database name,Country,Database type,Cancer Diagnoses,How is death captured
+CPRD GOLD,United Kingdom,Primary Care,Primary Care validated,98% accurate
