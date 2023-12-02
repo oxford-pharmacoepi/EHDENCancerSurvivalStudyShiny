@@ -45,13 +45,13 @@ server <-	function(input, output, session) {
     patient_characteristics <- tableone_whole %>% 
       filter(strata_level %in% input$demographics_selector) %>% 
       filter(group_level %in% input$demographics_cohort_selector) %>% 
-      filter(group_level %in%  
-               stringr::str_replace_all(
-                 stringr::str_to_sentence(input$demographics_cohort_selector),
-                 "_", " ")
-      )
-    
-    
+      filter(cdm_name %in% input$demographics_database_selector)
+      # filter(group_level %in%  
+      #          stringr::str_replace_all(
+      #            stringr::str_to_sentence(input$demographics_cohort_selector),
+      #            "_", " ")
+      # )
+
     patient_characteristics
   })
   

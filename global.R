@@ -114,7 +114,6 @@ survival_estimates <- bind_rows(survival_estimates,
                                 survival_estimates_prostate)
 rm(survival_estimates_prostate)
 
-  
 # risk tables ----------
 survival_risk_table_files <- results[stringr::str_detect(results, ".csv")]
 survival_risk_table_files <- results[stringr::str_detect(results, "risk_table")]
@@ -188,7 +187,7 @@ for(i in seq_along(tableone_whole_files)){
 }
 tableone_whole <- bind_rows(tableone_whole) %>% 
   dplyr::mutate(group_level = replace(group_level, group_level == "Head_and_neck", "Head and Neck")) %>%
-  dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "CPRDGold", "CPRD GOLD"))
+  dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "CPRD_GOLD", "CPRD GOLD"))
 
 # cdm snapshot ------
 snapshot_files <- results[stringr::str_detect(results, ".csv")]

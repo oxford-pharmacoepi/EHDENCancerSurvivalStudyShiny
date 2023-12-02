@@ -51,10 +51,6 @@ ui <- dashboardPage(
         menuSubItem(
           text = "Snapshot",
           tabName = "snapshotcdm"
-        ),
-        menuSubItem(
-          text = "Description",
-          tabName = "database_details"
         )
       ),
       
@@ -162,10 +158,21 @@ ui <- dashboardPage(
         div(
           style = "display: inline-block;vertical-align:top; width: 150px;",
           pickerInput(
+            inputId = "demographics_database_selector",
+            label = "Database",
+            choices = unique(tableone_whole$cdm_name),
+            selected = unique(tableone_whole$cdm_name),
+            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
+            multiple = TRUE
+          )
+        ),
+        div(
+          style = "display: inline-block;vertical-align:top; width: 150px;",
+          pickerInput(
             inputId = "demographics_cohort_selector",
             label = "Cancer",
-            choices = unique(attritioncdm$Cancer),
-            selected = unique(attritioncdm$Cancer),
+            choices = unique(tableone_whole$group_level),
+            selected = unique(tableone_whole$group_level)[1:8],
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
             multiple = TRUE
           )
