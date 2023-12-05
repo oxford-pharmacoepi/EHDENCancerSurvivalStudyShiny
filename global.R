@@ -165,8 +165,8 @@ survival_median_table <- dplyr::bind_rows(survival_median_table) %>%
     "10-year RMST (SE)" = `rmean 10yrs in years (SE)`,
     "Mean Survival (SE)" = `rmean in years (SE)`,
     "Median Survival (95% CI)" = `Median Survival in Years (95% CI)`
-    
-  )
+  ) %>% 
+  select(!c("5-year RMST (SE)", "10-year RMST (SE)"))
 
 survival_median_table_prostate <- survival_median_table %>% 
   filter(Cancer == "Prostate") %>% 
