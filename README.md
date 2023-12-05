@@ -12,7 +12,7 @@ This is the repository to view the cancer survival results from the EHDEN wp2 st
    - y (to accept all the packages that are needed to install, this step can take several minutes)
 4. Run the local shiny app
    - shiny::runApp() or open up the UI.R file and click "Run App"
-5. Youre local shiny app is ready!
+5. Your local shiny app is ready!
 
 Any problems with the Shiny please contact danielle.newby@ndorms.ox.ac.uk
 
