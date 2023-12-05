@@ -1,8 +1,9 @@
 .RData
 .Rhistory
 .Rprofile
-data\*
 renv\*
 .Rproj*
 rsconnect*
-data/*
+data/*.csv
+data/*.zip
+data/*.txt
