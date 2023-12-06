@@ -172,7 +172,7 @@ ui <- dashboardPage(
             inputId = "demographics_cohort_selector",
             label = "Cancer",
             choices = unique(tableone_whole$group_level),
-            selected = unique(tableone_whole$group_level)[1:8],
+            selected = unique(tableone_whole$group_level)[9],
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
             multiple = TRUE
           )
