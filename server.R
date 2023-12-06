@@ -46,11 +46,6 @@ server <-	function(input, output, session) {
       filter(strata_level %in% input$demographics_selector) %>% 
       filter(group_level %in% input$demographics_cohort_selector) %>% 
       filter(cdm_name %in% input$demographics_database_selector)
-      # filter(group_level %in%  
-      #          stringr::str_replace_all(
-      #            stringr::str_to_sentence(input$demographics_cohort_selector),
-      #            "_", " ")
-      # )
 
     patient_characteristics
   })
@@ -75,6 +70,14 @@ server <-	function(input, output, session) {
   # clinical codelists ----------------
   
   get_codelists <- reactive({
+    
+    validate(
+      need(input$codelist_cohort_selector != "", "Please select a cohort")
+    )
+    
+    validate(
+      need(input$codelist_vocab_selector != "", "Please select a vocab")
+    )
     
     table <- concepts_lists %>%
       filter(Vocabulary %in% input$codelist_vocab_selector) %>%
@@ -103,6 +106,22 @@ server <-	function(input, output, session) {
   # table one --------
 
   get_table_one <- reactive({
+    
+    validate(
+      need(input$tableone_cohort_name_selector != "", "Please select a cohort")
+    )
+    
+    validate(
+      need(input$tableone_sex_selector != "", "Please select sex group")
+    )
+    
+    validate(
+      need(input$tableone_age_selector != "", "Please select age group")
+    )
+    
+    validate(
+      need(input$tableone_database_name_selector != "", "Please select a database")
+    )
 
     table <- tableone_final %>%
       filter(Cancer %in% input$tableone_cohort_name_selector) %>%
@@ -135,6 +154,14 @@ server <-	function(input, output, session) {
 
   # attrition --------
   get_attrition <- reactive({
+    
+    validate(
+      need(input$attrition_cohort_name_selector != "", "Please select a cohort")
+    )
+    
+    validate(
+      need(input$attrition_database_name_selector != "", "Please select a database")
+    )
 
     table <- attritioncdm %>%
       filter(Cancer %in% input$attrition_cohort_name_selector) %>%
@@ -161,6 +188,22 @@ server <-	function(input, output, session) {
 
   # surv stats --------
   get_surv_est <- reactive({
+    
+    validate(
+      need(input$surv_est_cohort_name_selector != "", "Please select a cohort")
+    )
+    
+    validate(
+      need(input$surv_est_sex_selector != "", "Please select sex group")
+    )
+    
+    validate(
+      need(input$surv_est_age_selector != "", "Please select age group")
+    )
+    
+    validate(
+      need(input$surv_est_database_name_selector != "", "Please select a database")
+    )
     
     table <- med_surv_km %>%
       filter(Cancer %in% input$surv_est_cohort_name_selector) %>%
@@ -191,6 +234,22 @@ server <-	function(input, output, session) {
   
   # surv stats --------
   get_risk_table <- reactive({
+    
+    validate(
+      need(input$risk_table_cohort_name_selector != "", "Please select a cohort")
+    )
+    
+    validate(
+      need(input$risk_table_sex_selector != "", "Please select sex group")
+    )
+    
+    validate(
+      need(input$risk_table_age_selector != "", "Please select age group")
+    )
+    
+    validate(
+      need(input$risk_table_database_name_selector != "", "Please select a database")
+    )
     
     table <- survival_risk_table %>%
       filter(Cancer %in% input$risk_table_cohort_name_selector) %>%
