@@ -337,8 +337,6 @@ server <-	function(input, output, session) {
           facet_wrap(vars(facet_var), ncol = 2) +
           theme_bw(base_size = 15) 
         
-        
-        
       } else if (!is.null(input$surv_plot_group) && is.null(input$surv_plot_facet)) {
         plot <- plot_data %>%
           unite("Group", c(all_of(input$surv_plot_group)), remove = FALSE, sep = "; ") %>%
