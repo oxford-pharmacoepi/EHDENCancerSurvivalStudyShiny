@@ -252,5 +252,37 @@ med_surv_km <- survival_median_table %>%
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) 
 
+med_surv_km_sex_age <- survival_median_table %>% 
+  filter(Method == "Kaplan-Meier",
+         Adjustment == "None") %>% 
+  select(!c(Adjustment, 
+            `Median Survival (95% CI)`,
+            `Mean Survival (SE)`,
+            `1-year Survival (95% CI)`,
+            `5-year Survival (95% CI)`,
+            `10-year Survival (95% CI)`,
+            n,
+            events,
+            se,
+            se5yr,
+            se10yr,
+            rmean5yr, 
+            rmean10yr,
+            Method,
+            Stratification
+  )) %>% 
+  dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
+  dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
+  pivot_longer(
+    cols = c(rmean, median, `surv year 1`, `surv year 5`,`surv year 10` ),
+    names_to = "Variable",
+    values_to = "Value"
+  ) %>% 
+  dplyr::mutate(Variable = replace(Variable, Variable == "median", "Median")) %>%
+  dplyr::mutate(Variable = replace(Variable, Variable == "rmean", "Restricted Mean")) %>%
+  dplyr::mutate(Variable = replace(Variable, Variable == "surv year 1", "One Year Survival")) %>%
+  dplyr::mutate(Variable = replace(Variable, Variable == "surv year 5", "Five Year Survival")) %>%
+  dplyr::mutate(Variable = replace(Variable, Variable == "surv year 10", "Ten Year Survival"))
+
 rm(survival_estimates)
 rm(survival_median_table)

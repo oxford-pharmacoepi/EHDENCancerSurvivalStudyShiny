@@ -25,6 +25,10 @@ ui <- dashboardPage(
           tabName = "survival_results"
         ),
         menuSubItem(
+          text = "Summary Survival Plots",
+          tabName = "summary_plots"
+        ),
+        menuSubItem(
           text = "Risk Table",
           tabName = "risk_results"
         ),
@@ -154,7 +158,7 @@ ui <- dashboardPage(
 
       tabItem(
         tabName = "demographics",
-        tags$h5("UNDER DEVELOPMENT!!"),
+        tags$h5("The patient characteristics for the study populations are presented below:"),
         div(
           style = "display: inline-block;vertical-align:top; width: 150px;",
           pickerInput(
@@ -206,6 +210,7 @@ ui <- dashboardPage(
       
       tabItem(
         tabName = "stats_results",
+        tags$h5("Survival results containing one, five and ten year survival, restricted mean survival and median survival for each database are presented below:"),
         div(
           style = "display: inline-block;vertical-align:top; width: 150px;",
           pickerInput(
@@ -266,6 +271,7 @@ ui <- dashboardPage(
 
       tabItem(
         tabName = "risk_results",
+        tags$h5("The risk table showing the numbers at risk are presented below:"),
         div(
           style = "display: inline-block;vertical-align:top; width: 150px;",
           pickerInput(
@@ -327,6 +333,7 @@ ui <- dashboardPage(
       
       tabItem(
         tabName = "tableone",
+        tags$h5("The patient characteristics for the study populations are presented below:"),
         div(
           style = "display: inline-block;vertical-align:top; width: 150px;",
           pickerInput(
@@ -385,11 +392,8 @@ ui <- dashboardPage(
         
       ),
       
-      
-      
-      
       tabItem(
-        tags$h5("UNDER DEVELOPMENT!! Description of database details used in study"),
+        tags$h5("Description of database details used in study are presented below:"),
         tabName = "database_details",
         htmlOutput('tbl_database_details'),
         tags$hr(),
@@ -404,7 +408,7 @@ ui <- dashboardPage(
       ) ,
       
       tabItem(
-        tags$h5("Clinical codelists for cancers"),
+        tags$h5("The clinical codelists for each cancer used in this study are presented below:"),
         tabName = "cohort_concepts",
         div(
           style = "display: inline-block;vertical-align:top; width: 150px;",
@@ -445,6 +449,7 @@ ui <- dashboardPage(
       ) , 
       
       tabItem(
+        tags$h5("The cohort attrition showing how the final study populations were obtained are presented below:"),
         tabName = "cohort_attrition",
         div(
           style = "display: inline-block;vertical-align:top; width: 150px;",
@@ -480,7 +485,131 @@ ui <- dashboardPage(
       ),
       
       tabItem(
+        tabName = "summary_plots",
+        tags$h5("Plots of summary survival statistics for the study are presented below:"),
+        div(
+          style = "display: inline-block;vertical-align:top; width: 150px;",
+          pickerInput(
+            inputId = "survivalsum_database_selector",
+            label = "Database",
+            choices = unique(med_surv_km_sex_age$Database),
+            selected = unique(med_surv_km_sex_age$Database),
+            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
+            multiple = TRUE
+          )
+        ),
+        div(
+          style = "display: inline-block;vertical-align:top; width: 150px;",
+          pickerInput(
+            inputId = "survivalsum_cohort_name_selector",
+            label = "Cancer",
+            choices = unique(med_surv_km_sex_age$Cancer),
+            selected = unique(med_surv_km_sex_age$Cancer),
+            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
+            multiple = TRUE
+          )
+        ),
+        div(
+          style = "display: inline-block;vertical-align:top; width: 150px;",
+          pickerInput(
+            inputId = "survivalsum_sex_selector",
+            label = "Sex",
+            choices = unique(med_surv_km_sex_age$Sex),
+            selected = "Both",
+            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
+            multiple = TRUE
+          )
+        ),
+        
+        div(
+          style = "display: inline-block;vertical-align:top; width: 150px;",
+          pickerInput(
+            inputId = "survivalsum_age_selector",
+            label = "Age",
+            choices = unique(med_surv_km_sex_age$Age),
+            selected = "All",
+            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
+            multiple = TRUE
+          )
+        ),
+        
+        div(
+          style = "display: inline-block;vertical-align:top; width: 150px;",
+          pickerInput(
+            inputId = "survivalsum_variable_selector",
+            label = "Summary Statistic",
+            choices = unique(med_surv_km_sex_age$Variable),
+            selected = "One Year Survival",
+            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
+            multiple = FALSE
+          )
+        ),
+        
+        div(style="display: inline-block;vertical-align:top; width: 150px;",
+            pickerInput(inputId = "survsum_plot_facet",
+                        label = "Facet by",
+                        choices = c("Cancer",
+                                    "Database",
+                                    "Sex",
+                                    "Age"
+                        ),
+                        selected = c("Cancer" ),
+                        options = list(
+                          `actions-box` = TRUE,
+                          size = 10,
+                          `selected-text-format` = "count > 3"),
+                        multiple = FALSE)
+        ),
+        div(style="display: inline-block;vertical-align:top; width: 150px;",
+            pickerInput(inputId = "survsum_plot_group",
+                        label = "Colour by",
+                        choices = c("Sex",
+                                    "Age",
+                                    "Cancer",
+                                    "Database"),
+                        selected = c("Sex"),
+                        options = list(
+                          `actions-box` = TRUE,
+                          size = 10,
+                          `selected-text-format` = "count > 3"),
+                        multiple = FALSE)
+        ),
+        # div(
+        #   style = "width: 80vh; height: 5vh;",  # Set width to 100% for responsive design
+        #   checkboxInput("show_ci", "Show Confidence Intervals", value = TRUE)
+        # ),
+        
+        div(
+          style = "width: 80%; height: 90%;",  # Set width to 100% for responsive design
+          plotOutput("survivalPlotSum",
+                     height = "800px"
+          ) %>%
+            withSpinner(),
+          h4("Download Figure"),
+          div("Height:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
+          div(
+            style = "display: inline-block;",
+            textInput("survivalsum_download_height", "", 10, width = "50px")
+          ),
+          div("cm", style = "display: inline-block; margin-right: 25px;"),
+          div("Width:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
+          div(
+            style = "display: inline-block;",
+            textInput("survivalsum_download_width", "", 20, width = "50px")
+          ),
+          div("cm", style = "display: inline-block; margin-right: 25px;"),
+          div("dpi:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
+          div(
+            style = "display: inline-block; margin-right:",
+            textInput("survivalsum_download_dpi", "", 600, width = "50px")
+          ),
+          downloadButton("survivalsum_download_plot", "Download plot")
+        )
+        ) ,
+      
+      tabItem(
         tabName = "survival_results",
+        tags$h5("The Kaplan-Meier survival plots are presented below:"),
         div(
           style = "display: inline-block;vertical-align:top; width: 150px;",
           pickerInput(
@@ -526,6 +655,7 @@ ui <- dashboardPage(
             multiple = TRUE
           )
         ),
+        
         
         div(style="display: inline-block;vertical-align:top; width: 150px;",
             pickerInput(inputId = "surv_plot_facet",

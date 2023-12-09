@@ -392,8 +392,7 @@ server <-	function(input, output, session) {
           ylab("Survival Function (%)") +
           facet_wrap(vars(facet_var), ncol = 2) +
           theme_bw(base_size = 15) 
-        
-        
+
         
       } else if (!is.null(input$surv_plot_group) && is.null(input$surv_plot_facet)) {
         plot <- plot_data %>%
@@ -449,6 +448,169 @@ server <-	function(input, output, session) {
   
   output$survivalPlot <- renderPlot(
     get_surv_plot()
+  )
+  
+  # visulisations for sex and overal stratification
+   get_surv_plot_sum <- reactive({
+    validate(
+      need(input$survivalsum_cohort_name_selector != "", "Please select a cohort")
+    )
+    validate(
+      need(input$survivalsum_database_selector != "", "Please select a database")
+    )
+    validate(
+      need(input$survivalsum_sex_selector != "", "Please select a sex")
+    )
+
+    validate(
+      need(input$survsum_plot_group != "", "Please select a group to colour by")
+    )
+
+    validate(
+      need(input$survsum_plot_facet != "", "Please select a group to facet by")
+    )
+
+
+    validate(
+      need(input$survivalsum_variable_selector != "", "Please select a summary variable")
+    )
+
+
+    plot_data <- med_surv_km_sex_age %>%
+      filter(Database %in% input$survivalsum_database_selector) %>%
+      filter(Cancer %in% input$survivalsum_cohort_name_selector) %>%
+      filter(Sex %in% input$survivalsum_sex_selector) %>%
+      filter(Age %in% input$survivalsum_age_selector) %>% 
+      filter(Variable %in% input$survivalsum_variable_selector) 
+
+    if (!is.null(input$survsum_plot_group) && !is.null(input$survsum_plot_facet)) {
+      plot <- plot_data %>%
+        unite("Group", c(all_of(input$survsum_plot_group)), remove = FALSE, sep = "; ") %>%
+        unite("facet_var", c(all_of(input$survsum_plot_facet)), remove = FALSE, sep = "; ") %>%
+        ggplot(aes(x = Database, 
+                   y = Value, 
+                   group = Group, 
+                   colour = Group)) +
+        geom_point(position = position_dodge(width = 0.8), size = 4, shape = 1, stroke = 1.5, color = "black") +
+        geom_point(position = position_dodge(width = 0.8), size = 4) +
+        xlab("Database") +
+        ylab(input$survivalsum_variable_selector) +
+        facet_wrap(vars(facet_var), ncol = 2) +
+        theme_bw(base_size = 15)
+      
+    } else if (!is.null(input$survsum_plot_group) && is.null(input$survsum_plot_facet)) {
+      plot <- plot_data %>%
+        unite("Group", c(all_of(input$survsum_plot_group)), remove = FALSE, sep = "; ") %>%
+        ggplot(aes(x = Database, y = Value, group = Group, colour = Group)) +
+        geom_point(position = position_dodge(width = 0.8), size = 4, shape = 1, color = "black") +
+        geom_point(position = position_dodge(width = 0.8), size = 4) +
+        xlab("Database") +
+        ylab(input$survivalsum_variable_selector) +
+        theme_bw(base_size = 15)
+      
+    } else if (is.null(input$survsum_plot_group) && !is.null(input$survsum_plot_facet)) {
+      plot <- plot_data %>%
+        unite("facet_var", c(all_of(input$survsum_plot_facet)), remove = FALSE, sep = "; ") %>%
+        ggplot(aes(x = Database, y = Value, group = Group, colour = Group)) +
+        geom_point(position = position_dodge(width = 0.8), size = 4, shape = 1, color = "black") +
+        geom_point(position = position_dodge(width = 0.8), size = 4) +
+        xlab("Database") +
+        ylab(input$survivalsum_variable_selector) +
+        facet_wrap(vars(facet_var), ncol = 2, scales = "free_y") +
+        theme_bw(base_size = 15)
+      
+    } else {
+      plot <- plot_data %>%
+        ggplot(aes(x = Database, y = Value, group = Group, colour = Group)) +
+        #geom_point(position = position_dodge(width = 0.8), size = 4) +
+        geom_point(position = position_dodge(width = 0.8), size = 4, shape = 1, color = "black") +
+        geom_point(position = position_dodge(width = 0.8), size = 4) +
+        
+        xlab("Database") +
+        ylab(input$survivalsum_variable_selector) +
+        facet_wrap(vars(facet_var), ncol = 2, scales = "free_y") +
+        theme_bw(base_size = 15)
+    }
+
+    # Move scale_y_continuous outside of ggplot
+    plot <- plot +
+      theme(strip.text = element_text(size = 15, face = "bold"),
+            axis.text.x = element_text(angle = 45, hjust = 1))
+
+    plot
+  })
+
+  
+  
+  # get_surv_plot_sum <- reactive({
+  #   validate(
+  #     need(input$survivalsum_cohort_name_selector != "", "Please select a cohort")
+  #   )
+  #   validate(
+  #     need(input$survivalsum_database_selector != "", "Please select a database")
+  #   )
+  #   validate(
+  #     need(input$survivalsum_sex_selector != "", "Please select a sex")
+  #   )
+  #   
+  #   validate(
+  #     need(input$survsum_plot_group != "", "Please select a group to color by")
+  #   )
+  #   
+  #   validate(
+  #     need(input$survsum_plot_facet != "", "Please select a group to facet by")
+  #   )
+  #   
+  #   validate(
+  #     need(input$survivalsum_variable_selector != "", "Please select a summary variable")
+  #   )
+  #   
+  #   plot_data <- med_surv_km_sex_age %>%
+  #     filter(Database %in% input$survivalsum_database_selector) %>%
+  #     filter(Cancer %in% input$survivalsum_cohort_name_selector) %>%
+  #     filter(Age %in% input$survivalsum_age_selector) %>%
+  #     filter(Sex %in% input$survivalsum_sex_selector) %>%
+  #     filter(Variable %in% input$survivalsum_variable_selector)
+  #   
+  #   jitter_values <- data.frame(
+  #     Database = unique(plot_data$Database),
+  #     jitter = runif(length(unique(plot_data$Database)), min = -0.4, max = 0.4)
+  #   )
+  #   
+  #   
+  #   if (!is.null(input$survsum_plot_group) && !is.null(input$survsum_plot_facet)) {
+  #     plot <- plot_data %>%
+  #       unite("Group", c(all_of(input$survsum_plot_group)), remove = FALSE, sep = "; ") %>%
+  #       unite("facet_var", c(all_of(input$survsum_plot_facet)), remove = FALSE, sep = "; ") %>%
+  #       left_join(jitter_values, by = "Database") %>%
+  #       ggplot(aes(x = as.numeric(factor(Database)) + jitter, y = Value, group = Group, color = Group, shape = Sex)) +
+  #       geom_point(position = position_jitterdodge(jitter.width = 0.8, dodge.width = 0.8), size = 3) +
+  #       xlab("Database") +
+  #       ylab(input$survivalsum_variable_selector) +
+  #       facet_wrap(vars(facet_var), ncol = 2) +
+  #       theme_bw(base_size = 15)
+  #   } else {
+  #     plot <- plot_data %>%
+  #       left_join(jitter_values, by = "Database") %>%
+  #       ggplot(aes(x = as.numeric(factor(Database)) + jitter, y = Value, group = Group, color = Group)) +
+  #       geom_point(position = position_jitterdodge(jitter.width = 0.8, dodge.width = 0.8), size = 3) +
+  #       xlab("Database") +
+  #       ylab(input$survivalsum_variable_selector) +
+  #       facet_wrap(vars(facet_var), ncol = 2) +
+  #       theme_bw(base_size = 15)
+  #   }
+  #   
+  #   # Move scale_y_continuous outside of ggplot
+  #   plot <- plot +
+  #     theme(strip.text = element_text(size = 15, face = "bold"),
+  #           axis.text.x = element_text(angle = 45, hjust = 1))
+  #   
+  #   plot
+  # })
+  
+  
+  output$survivalPlotSum <- renderPlot(
+    get_surv_plot_sum()
   )
   
    
