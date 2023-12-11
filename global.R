@@ -213,7 +213,7 @@ survival_median_table <- survival_median_table %>%
            lower_5yrsurv, upper_5yrsurv ,
            lower_10yrsurv, upper_10yrsurv,
            lower_medsurv , upper_medsurv,
-           lower_rmean ,upper_rmean
+           lower_rmean, upper_rmean
            ), ~ifelse(is.na(.), NA, .))) %>% 
   filter(complete.cases(Database)) %>% 
   mutate(`surv year 1` = ifelse(is.na(`1-year Survival (95% CI)`), NA, `surv year 1`),
