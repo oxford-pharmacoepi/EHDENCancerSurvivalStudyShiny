@@ -68,7 +68,6 @@ server <-	function(input, output, session) {
   
   
   # clinical codelists ----------------
-  
   get_codelists <- reactive({
     
     validate(
@@ -104,7 +103,6 @@ server <-	function(input, output, session) {
   
   
   # table one --------
-
   get_table_one <- reactive({
     
     validate(
@@ -150,7 +148,6 @@ server <-	function(input, output, session) {
     }
   )
   
-
 
   # attrition --------
   get_attrition <- reactive({
@@ -209,7 +206,9 @@ server <-	function(input, output, session) {
       filter(Cancer %in% input$surv_est_cohort_name_selector) %>%
       filter(Database %in% input$surv_est_database_name_selector) %>% 
       filter(Age %in% input$surv_est_age_selector) %>% 
-    filter(Sex %in% input$surv_est_sex_selector)
+    filter(Sex %in% input$surv_est_sex_selector) %>% 
+      select(-starts_with("upper_"), -starts_with("lower_")) %>% 
+      select(-c(study_period))
     
     table
     
@@ -232,7 +231,7 @@ server <-	function(input, output, session) {
   
   
   
-  # surv stats --------
+  # surv risk table --------
   get_risk_table <- reactive({
     
     validate(
@@ -296,7 +295,6 @@ server <-	function(input, output, session) {
   )
   
 # survival plots -------
-  
   get_surv_plot <- reactive({
     
     validate(
@@ -308,7 +306,6 @@ server <-	function(input, output, session) {
     validate(
       need(input$survival_sex_selector != "", "Please select a sex")
     )
-
     validate(
       need(input$surv_plot_group != "", "Please select a group to colour by")
     )
@@ -450,7 +447,7 @@ server <-	function(input, output, session) {
     get_surv_plot()
   )
   
-  # visulisations for sex and overal stratification
+  # visualizations for sex and overall stratification
    get_surv_plot_sum <- reactive({
     validate(
       need(input$survivalsum_cohort_name_selector != "", "Please select a cohort")
@@ -539,74 +536,6 @@ server <-	function(input, output, session) {
 
     plot
   })
-
-  
-  
-  # get_surv_plot_sum <- reactive({
-  #   validate(
-  #     need(input$survivalsum_cohort_name_selector != "", "Please select a cohort")
-  #   )
-  #   validate(
-  #     need(input$survivalsum_database_selector != "", "Please select a database")
-  #   )
-  #   validate(
-  #     need(input$survivalsum_sex_selector != "", "Please select a sex")
-  #   )
-  #   
-  #   validate(
-  #     need(input$survsum_plot_group != "", "Please select a group to color by")
-  #   )
-  #   
-  #   validate(
-  #     need(input$survsum_plot_facet != "", "Please select a group to facet by")
-  #   )
-  #   
-  #   validate(
-  #     need(input$survivalsum_variable_selector != "", "Please select a summary variable")
-  #   )
-  #   
-  #   plot_data <- med_surv_km_sex_age %>%
-  #     filter(Database %in% input$survivalsum_database_selector) %>%
-  #     filter(Cancer %in% input$survivalsum_cohort_name_selector) %>%
-  #     filter(Age %in% input$survivalsum_age_selector) %>%
-  #     filter(Sex %in% input$survivalsum_sex_selector) %>%
-  #     filter(Variable %in% input$survivalsum_variable_selector)
-  #   
-  #   jitter_values <- data.frame(
-  #     Database = unique(plot_data$Database),
-  #     jitter = runif(length(unique(plot_data$Database)), min = -0.4, max = 0.4)
-  #   )
-  #   
-  #   
-  #   if (!is.null(input$survsum_plot_group) && !is.null(input$survsum_plot_facet)) {
-  #     plot <- plot_data %>%
-  #       unite("Group", c(all_of(input$survsum_plot_group)), remove = FALSE, sep = "; ") %>%
-  #       unite("facet_var", c(all_of(input$survsum_plot_facet)), remove = FALSE, sep = "; ") %>%
-  #       left_join(jitter_values, by = "Database") %>%
-  #       ggplot(aes(x = as.numeric(factor(Database)) + jitter, y = Value, group = Group, color = Group, shape = Sex)) +
-  #       geom_point(position = position_jitterdodge(jitter.width = 0.8, dodge.width = 0.8), size = 3) +
-  #       xlab("Database") +
-  #       ylab(input$survivalsum_variable_selector) +
-  #       facet_wrap(vars(facet_var), ncol = 2) +
-  #       theme_bw(base_size = 15)
-  #   } else {
-  #     plot <- plot_data %>%
-  #       left_join(jitter_values, by = "Database") %>%
-  #       ggplot(aes(x = as.numeric(factor(Database)) + jitter, y = Value, group = Group, color = Group)) +
-  #       geom_point(position = position_jitterdodge(jitter.width = 0.8, dodge.width = 0.8), size = 3) +
-  #       xlab("Database") +
-  #       ylab(input$survivalsum_variable_selector) +
-  #       facet_wrap(vars(facet_var), ncol = 2) +
-  #       theme_bw(base_size = 15)
-  #   }
-  #   
-  #   # Move scale_y_continuous outside of ggplot
-  #   plot <- plot +
-  #     theme(strip.text = element_text(size = 15, face = "bold"),
-  #           axis.text.x = element_text(angle = 45, hjust = 1))
-  #   
-  #   plot
-  # })
   
   
   output$survivalPlotSum <- renderPlot(

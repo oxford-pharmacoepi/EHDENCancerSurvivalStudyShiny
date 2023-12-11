@@ -156,7 +156,7 @@ survival_median_table <- dplyr::bind_rows(survival_median_table) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
   relocate(Database, .before = 1) %>% 
   relocate(`rmean in years (SE)`, .after = `Median Survival in Years (95% CI)` ) %>% 
-  select(!c(study_period)) %>% 
+  #select(!c(study_period)) %>% 
   rename(
     "1-year Survival (95% CI)" = `Survival Rate % (95% CI) year 1`,
     "5-year Survival (95% CI)" = `Survival Rate % (95% CI) year 5`,
@@ -166,7 +166,12 @@ survival_median_table <- dplyr::bind_rows(survival_median_table) %>%
     "Mean Survival (SE)" = `rmean in years (SE)`,
     "Median Survival (95% CI)" = `Median Survival in Years (95% CI)`
   ) %>% 
-  select(!c("5-year RMST (SE)", "10-year RMST (SE)"))
+  select(!c("5-year RMST (SE)",
+            "10-year RMST (SE)",
+            "rmean5yr",
+            "se5yr",
+            "rmean10yr",
+            "se10yr"))
 
 survival_median_table_prostate <- survival_median_table %>% 
   filter(Cancer == "Prostate") %>% 
@@ -175,6 +180,47 @@ survival_median_table_prostate <- survival_median_table %>%
 survival_median_table <- bind_rows(survival_median_table,
                                    survival_median_table_prostate)
 rm(survival_median_table_prostate)
+
+# extract upper and low confidence intervals from survival estimates
+# suppressing warnings as it NA values are bring up an error
+suppressWarnings(
+survival_median_table <- survival_median_table %>%
+  filter(Method == "Kaplan-Meier") %>% 
+  #mutate(across(c(rmean5yr, se5yr), ~ifelse(study_period < 5, NA, .))) %>% 
+  #mutate(across(c(rmean10yr, se10yr), ~ifelse(study_period < 10, NA, .))) %>% 
+  mutate(across(where(is.character) | where(is.numeric), ~ifelse(n == "<10" & events == "0", NA, .))) %>%
+  mutate(across(c(`1-year Survival (95% CI)`, `5-year Survival (95% CI)`, `10-year Survival (95% CI)`), 
+                ~ifelse(grepl("0.0 \\(0.0-0.0\\)", .), NA, .))) %>% 
+  mutate(across(c(`1-year Survival (95% CI)`, `5-year Survival (95% CI)`, `10-year Survival (95% CI)`), 
+                ~ifelse(grepl("0.0 \\(NA-NA\\)", .), NA, .))) %>% 
+  # mutate(across(c(`1-year Survival (95% CI)`, `5-year Survival (95% CI)`, `10-year Survival (95% CI)`), 
+  #               ~ifelse(grepl("100.0 \\(100.0-100.0\\)", .), NA, .))) %>% 
+  mutate(lower_upper_1yrsurv = stringr::str_extract(`1-year Survival (95% CI)`, "\\((.*?)\\)")) %>%
+  separate(lower_upper_1yrsurv, into = c("lower_1yrsurv", "upper_1yrsurv"), sep = "-") %>%
+  mutate(lower_upper_5yrsurv = stringr::str_extract(`5-year Survival (95% CI)`, "\\((.*?)\\)")) %>%
+  separate(lower_upper_5yrsurv, into = c("lower_5yrsurv", "upper_5yrsurv"), sep = "-") %>%
+  mutate(lower_upper_10yrsurv = stringr::str_extract(`10-year Survival (95% CI)`, "\\((.*?)\\)")) %>%
+  separate(lower_upper_10yrsurv, into = c("lower_10yrsurv", "upper_10yrsurv"), sep = "-") %>%
+  mutate(lower_upper_median = stringr::str_extract(`Median Survival (95% CI)`, "\\((.*?)\\)")) %>%
+  separate(lower_upper_median, into = c("lower_medsurv", "upper_medsurv"), sep = "-") %>%
+  mutate(across(c(lower_1yrsurv, upper_1yrsurv,
+                  lower_5yrsurv, upper_5yrsurv ,
+                  lower_10yrsurv, upper_10yrsurv,
+                  lower_medsurv , upper_medsurv), ~as.numeric(stringr::str_remove_all(.,"[()]")))) %>%
+  mutate(lower_rmean = rmean - se,
+         upper_rmean = rmean + se) %>% 
+  mutate(across(c(lower_1yrsurv, upper_1yrsurv,
+           lower_5yrsurv, upper_5yrsurv ,
+           lower_10yrsurv, upper_10yrsurv,
+           lower_medsurv , upper_medsurv,
+           lower_rmean ,upper_rmean
+           ), ~ifelse(is.na(.), NA, .))) %>% 
+  filter(complete.cases(Database)) %>% 
+  mutate(`surv year 1` = ifelse(is.na(`1-year Survival (95% CI)`), NA, `surv year 1`),
+         `surv year 5` = ifelse(is.na(`5-year Survival (95% CI)`), NA, `surv year 5`),
+         `surv year 10` = ifelse(is.na(`10-year Survival (95% CI)`), NA, `surv year 10`) ) 
+
+)
 
 
 # table one ------
@@ -239,10 +285,6 @@ med_surv_km <- survival_median_table %>%
             rmean,
             se,
             median,
-            rmean10yr,
-            se10yr,
-            rmean5yr,
-            se5yr,
             `surv year 1`,
             `surv year 5`,
             `surv year 10`,
@@ -264,10 +306,6 @@ med_surv_km_sex_age <- survival_median_table %>%
             n,
             events,
             se,
-            se5yr,
-            se10yr,
-            rmean5yr, 
-            rmean10yr,
             Method,
             Stratification
   )) %>% 
