@@ -186,8 +186,8 @@ rm(survival_median_table_prostate)
 suppressWarnings(
 survival_median_table <- survival_median_table %>%
   filter(Method == "Kaplan-Meier") %>% 
-  #mutate(across(c(rmean5yr, se5yr), ~ifelse(study_period < 5, NA, .))) %>% 
-  #mutate(across(c(rmean10yr, se10yr), ~ifelse(study_period < 10, NA, .))) %>% 
+  # mutate(across(c(rmean5yr, se5yr), ~ifelse(study_period < 5, NA, .))) %>%
+  # mutate(across(c(rmean10yr, se10yr), ~ifelse(study_period < 10, NA, .))) %>%
   mutate(across(where(is.character) | where(is.numeric), ~ifelse(n == "<10" & events == "0", NA, .))) %>%
   mutate(across(c(`1-year Survival (95% CI)`, `5-year Survival (95% CI)`, `10-year Survival (95% CI)`), 
                 ~ifelse(grepl("0.0 \\(0.0-0.0\\)", .), NA, .))) %>% 
