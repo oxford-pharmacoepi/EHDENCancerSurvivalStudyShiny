@@ -276,24 +276,6 @@ server <-	function(input, output, session) {
   )  
   
   
-  
-### download survival plot ----
-  output$survival_download_plot <- downloadHandler(
-    filename = function() {
-      "Survival_plot.png"
-    },
-    content = function(file) {
-      ggsave(
-        file,
-        get_surv_plot(),
-        width = as.numeric(input$survival_download_width),
-        height = as.numeric(input$survival_download_height),
-        dpi = as.numeric(input$survival_download_dpi),
-        units = "cm"
-      )
-    }
-  )
-  
 # survival plots -------
   get_surv_plot <- reactive({
     
@@ -447,6 +429,24 @@ server <-	function(input, output, session) {
     get_surv_plot()
   )
   
+  
+  ### download survival plot ----
+  output$survival_download_plot <- downloadHandler(
+    filename = function() {
+      "Survival_plot.png"
+    },
+    content = function(file) {
+      ggsave(
+        file,
+        get_surv_plot(),
+        width = as.numeric(input$survival_download_width),
+        height = as.numeric(input$survival_download_height),
+        dpi = as.numeric(input$survival_download_dpi),
+        units = "cm"
+      )
+    }
+  )
+  
   # visualizations for sex and overall stratification
    get_surv_plot_sum <- reactive({
     validate(
@@ -458,16 +458,12 @@ server <-	function(input, output, session) {
     validate(
       need(input$survivalsum_sex_selector != "", "Please select a sex")
     )
-
     validate(
       need(input$survsum_plot_group != "", "Please select a group to colour by")
     )
-
     validate(
       need(input$survsum_plot_facet != "", "Please select a group to facet by")
     )
-
-
     validate(
       need(input$survivalsum_variable_selector != "", "Please select a summary variable")
     )
@@ -481,26 +477,124 @@ server <-	function(input, output, session) {
       filter(Variable %in% input$survivalsum_variable_selector) 
 
     if (!is.null(input$survsum_plot_group) && !is.null(input$survsum_plot_facet)) {
+
+      # plot <- plot_data %>%
+      #   unite("Group", c(all_of(input$survsum_plot_group)), remove = FALSE, sep = "; ") %>%
+      #   unite("facet_var", c(all_of(input$survsum_plot_facet)), remove = FALSE, sep = "; ") %>%
+      #   ggplot(aes(x = Database, 
+      #              y = Value, 
+      #              ymin = lower_1yrsurv,
+      #              ymax = upper_1yrsurv ,
+      #              group = Group, 
+      #              colour = Group,
+      #              fill = Group)) +
+      #   geom_errorbar(position = position_dodge(width = 0.6), width = 0, aes(ymin = lower_1yrsurv, ymax = upper_1yrsurv, color = Group), size = 1) +
+      #   geom_point(position = position_dodge(width = 0.6), size = 2, shape = 21, stroke = 0.75, color = "black") +
+      #   xlab("Database") +
+      #   ylab(input$survivalsum_variable_selector) +
+      #   facet_wrap(vars(facet_var), ncol = 2, scales = "free_y") +
+      #   theme_bw(base_size = 15)
+      
+      # plot <- plot_data %>%
+      #   unite("Group", c(all_of(input$survsum_plot_group)), remove = FALSE, sep = "; ") %>%
+      #   unite("facet_var", c(all_of(input$survsum_plot_facet)), remove = FALSE, sep = "; ") %>%
+      #   ggplot(aes(x = Database, 
+      #              y = Value,
+      #              
+      #              ymin = (if(input$survivalsum_variable_selector == "One Year Survival") {
+      #                lower_1yrsurv
+      #              } else { 
+      #                if(input$survivalsum_variable_selector == "Five Year Survival") {
+      #              lower_5yrsurv 
+      #                } else { 
+      #                lower_10yrsurv }) ,
+      #                
+      #                ymax = if(input$survivalsum_variable_selector == "One Year Survival") {
+      #                  upper_1yrsurv
+      #                } else { 
+      #                  if(input$survivalsum_variable_selector == "Five Year Survival") {
+      #                    upper_5yrsurv 
+      #                  } else { 
+      #                    upper_10yrsurv } ,
+      #              group = Group, 
+      #              colour = Group,
+      #              fill = Group)) +
+      #   geom_errorbar(position = position_dodge(width = 0.6), width = 0, aes(ymin = lower_1yrsurv, ymax = upper_1yrsurv, color = Group), size = 1) +
+      #   geom_point(position = position_dodge(width = 0.6), size = 2, shape = 21, stroke = 0.75, color = "black") +
+      #   xlab("Database") +
+      #   ylab(input$survivalsum_variable_selector) +
+      #   facet_wrap(vars(facet_var), ncol = 2, scales = "free_y") +
+      #   theme_bw(base_size = 15)
+      
       plot <- plot_data %>%
         unite("Group", c(all_of(input$survsum_plot_group)), remove = FALSE, sep = "; ") %>%
         unite("facet_var", c(all_of(input$survsum_plot_facet)), remove = FALSE, sep = "; ") %>%
         ggplot(aes(x = Database, 
-                   y = Value, 
+                   y = Value,
+                   ymin = if (input$survivalsum_variable_selector == "One Year Survival") {
+                     lower_1yrsurv
+                   } else if (input$survivalsum_variable_selector == "Five Year Survival") {
+                     lower_5yrsurv 
+                   } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
+                     lower_10yrsurv   
+                   } else if (input$survivalsum_variable_selector == "Restricted Mean") {
+                     lower_rmean 
+                   } else {
+                     lower_medsurv
+                   },
+                   ymax = if (input$survivalsum_variable_selector == "One Year Survival") {
+                     upper_1yrsurv
+                   } else if (input$survivalsum_variable_selector == "Five Year Survival") {
+                     upper_5yrsurv 
+                   } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
+                     upper_10yrsurv   
+                   } else if (input$survivalsum_variable_selector == "Restricted Mean") {
+                     upper_rmean 
+                   } else {
+                     upper_medsurv
+                   },
                    group = Group, 
-                   colour = Group)) +
-        geom_point(position = position_dodge(width = 0.8), size = 4, shape = 1, stroke = 1.5, color = "black") +
-        geom_point(position = position_dodge(width = 0.8), size = 4) +
+                   colour = Group,
+                   fill = Group)) +
+        geom_errorbar(position = position_dodge(width = 0.6), width = 0, aes(color = Group), size = 1) +
+        geom_point(position = position_dodge(width = 0.6), size = 2, shape = 21, stroke = 0.75, color = "black") +
         xlab("Database") +
         ylab(input$survivalsum_variable_selector) +
-        facet_wrap(vars(facet_var), ncol = 2) +
+        facet_wrap(vars(facet_var), ncol = 2, scales = "free_y") +
         theme_bw(base_size = 15)
       
     } else if (!is.null(input$survsum_plot_group) && is.null(input$survsum_plot_facet)) {
       plot <- plot_data %>%
         unite("Group", c(all_of(input$survsum_plot_group)), remove = FALSE, sep = "; ") %>%
-        ggplot(aes(x = Database, y = Value, group = Group, colour = Group)) +
-        geom_point(position = position_dodge(width = 0.8), size = 4, shape = 1, color = "black") +
-        geom_point(position = position_dodge(width = 0.8), size = 4) +
+        ggplot(aes(x = Database, 
+                   y = Value,
+                   ymin = if (input$survivalsum_variable_selector == "One Year Survival") {
+                     lower_1yrsurv
+                   } else if (input$survivalsum_variable_selector == "Five Year Survival") {
+                     lower_5yrsurv 
+                   } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
+                     lower_10yrsurv   
+                   } else if (input$survivalsum_variable_selector == "Restricted Mean") {
+                     lower_rmean 
+                   } else {
+                     lower_medsurv
+                   },
+                   ymax = if (input$survivalsum_variable_selector == "One Year Survival") {
+                     upper_1yrsurv
+                   } else if (input$survivalsum_variable_selector == "Five Year Survival") {
+                     upper_5yrsurv 
+                   } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
+                     upper_10yrsurv   
+                   } else if (input$survivalsum_variable_selector == "Restricted Mean") {
+                     upper_rmean 
+                   } else {
+                     upper_medsurv
+                   },
+                   group = Group, 
+                   colour = Group,
+                   fill = Group)) +
+        geom_errorbar(position = position_dodge(width = 0.6), width = 0, aes(ymin = lower_1yrsurv, ymax = upper_1yrsurv, color = Group), size = 1) +
+        geom_point(position = position_dodge(width = 0.6), size = 2, shape = 21, stroke = 0.75, color = "black") +
         xlab("Database") +
         ylab(input$survivalsum_variable_selector) +
         theme_bw(base_size = 15)
@@ -508,9 +602,35 @@ server <-	function(input, output, session) {
     } else if (is.null(input$survsum_plot_group) && !is.null(input$survsum_plot_facet)) {
       plot <- plot_data %>%
         unite("facet_var", c(all_of(input$survsum_plot_facet)), remove = FALSE, sep = "; ") %>%
-        ggplot(aes(x = Database, y = Value, group = Group, colour = Group)) +
-        geom_point(position = position_dodge(width = 0.8), size = 4, shape = 1, color = "black") +
-        geom_point(position = position_dodge(width = 0.8), size = 4) +
+        ggplot(aes(x = Database, 
+                   y = Value,
+                   ymin = if (input$survivalsum_variable_selector == "One Year Survival") {
+                     lower_1yrsurv
+                   } else if (input$survivalsum_variable_selector == "Five Year Survival") {
+                     lower_5yrsurv 
+                   } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
+                     lower_10yrsurv   
+                   } else if (input$survivalsum_variable_selector == "Restricted Mean") {
+                     lower_rmean 
+                   } else {
+                     lower_medsurv
+                   },
+                   ymax = if (input$survivalsum_variable_selector == "One Year Survival") {
+                     upper_1yrsurv
+                   } else if (input$survivalsum_variable_selector == "Five Year Survival") {
+                     upper_5yrsurv 
+                   } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
+                     upper_10yrsurv   
+                   } else if (input$survivalsum_variable_selector == "Restricted Mean") {
+                     upper_rmean 
+                   } else {
+                     upper_medsurv
+                   },
+                   group = Group, 
+                   colour = Group,
+                   fill = Group)) +
+        geom_errorbar(position = position_dodge(width = 0.6), width = 0, aes(ymin = lower_1yrsurv, ymax = upper_1yrsurv, color = Group), size = 1) +
+        geom_point(position = position_dodge(width = 0.6), size = 2, shape = 21, stroke = 0.75, color = "black") +
         xlab("Database") +
         ylab(input$survivalsum_variable_selector) +
         facet_wrap(vars(facet_var), ncol = 2, scales = "free_y") +
@@ -518,14 +638,37 @@ server <-	function(input, output, session) {
       
     } else {
       plot <- plot_data %>%
-        ggplot(aes(x = Database, y = Value, group = Group, colour = Group)) +
-        #geom_point(position = position_dodge(width = 0.8), size = 4) +
-        geom_point(position = position_dodge(width = 0.8), size = 4, shape = 1, color = "black") +
-        geom_point(position = position_dodge(width = 0.8), size = 4) +
-        
+        ggplot(aes(x = Database, 
+                   y = Value,
+                   ymin = if (input$survivalsum_variable_selector == "One Year Survival") {
+                     lower_1yrsurv
+                   } else if (input$survivalsum_variable_selector == "Five Year Survival") {
+                     lower_5yrsurv 
+                   } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
+                     lower_10yrsurv   
+                   } else if (input$survivalsum_variable_selector == "Restricted Mean") {
+                     lower_rmean 
+                   } else {
+                     lower_medsurv
+                   },
+                   ymax = if (input$survivalsum_variable_selector == "One Year Survival") {
+                     upper_1yrsurv
+                   } else if (input$survivalsum_variable_selector == "Five Year Survival") {
+                     upper_5yrsurv 
+                   } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
+                     upper_10yrsurv   
+                   } else if (input$survivalsum_variable_selector == "Restricted Mean") {
+                     upper_rmean 
+                   } else {
+                     upper_medsurv
+                   },
+                   group = Group, 
+                   colour = Group,
+                   fill = Group)) +
+        geom_errorbar(position = position_dodge(width = 0.6), width = 0, aes(ymin = lower_1yrsurv, ymax = upper_1yrsurv, color = Group), size = 1) +
+        geom_point(position = position_dodge(width = 0.6), size = 2, shape = 21, stroke = 0.75, color = "black") +
         xlab("Database") +
         ylab(input$survivalsum_variable_selector) +
-        facet_wrap(vars(facet_var), ncol = 2, scales = "free_y") +
         theme_bw(base_size = 15)
     }
 
@@ -541,6 +684,25 @@ server <-	function(input, output, session) {
   output$survivalPlotSum <- renderPlot(
     get_surv_plot_sum()
   )
+  
+  ### download survival plot ----
+  output$survivalsum_download_plot <- downloadHandler(
+    filename = function() {
+      "Survival_summary_plot.png"
+    },
+    content = function(file) {
+      ggsave(
+        file,
+        get_surv_plot_sum(),
+        width = as.numeric(input$survivalsum_download_width),
+        height = as.numeric(input$survivalsum_download_height),
+        dpi = as.numeric(input$survivalsum_download_dpi),
+        units = "cm"
+      )
+    }
+  ) 
+  
+  
   
    
 }
