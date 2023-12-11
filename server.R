@@ -477,54 +477,6 @@ server <-	function(input, output, session) {
       filter(Variable %in% input$survivalsum_variable_selector) 
 
     if (!is.null(input$survsum_plot_group) && !is.null(input$survsum_plot_facet)) {
-
-      # plot <- plot_data %>%
-      #   unite("Group", c(all_of(input$survsum_plot_group)), remove = FALSE, sep = "; ") %>%
-      #   unite("facet_var", c(all_of(input$survsum_plot_facet)), remove = FALSE, sep = "; ") %>%
-      #   ggplot(aes(x = Database, 
-      #              y = Value, 
-      #              ymin = lower_1yrsurv,
-      #              ymax = upper_1yrsurv ,
-      #              group = Group, 
-      #              colour = Group,
-      #              fill = Group)) +
-      #   geom_errorbar(position = position_dodge(width = 0.6), width = 0, aes(ymin = lower_1yrsurv, ymax = upper_1yrsurv, color = Group), size = 1) +
-      #   geom_point(position = position_dodge(width = 0.6), size = 2, shape = 21, stroke = 0.75, color = "black") +
-      #   xlab("Database") +
-      #   ylab(input$survivalsum_variable_selector) +
-      #   facet_wrap(vars(facet_var), ncol = 2, scales = "free_y") +
-      #   theme_bw(base_size = 15)
-      
-      # plot <- plot_data %>%
-      #   unite("Group", c(all_of(input$survsum_plot_group)), remove = FALSE, sep = "; ") %>%
-      #   unite("facet_var", c(all_of(input$survsum_plot_facet)), remove = FALSE, sep = "; ") %>%
-      #   ggplot(aes(x = Database, 
-      #              y = Value,
-      #              
-      #              ymin = (if(input$survivalsum_variable_selector == "One Year Survival") {
-      #                lower_1yrsurv
-      #              } else { 
-      #                if(input$survivalsum_variable_selector == "Five Year Survival") {
-      #              lower_5yrsurv 
-      #                } else { 
-      #                lower_10yrsurv }) ,
-      #                
-      #                ymax = if(input$survivalsum_variable_selector == "One Year Survival") {
-      #                  upper_1yrsurv
-      #                } else { 
-      #                  if(input$survivalsum_variable_selector == "Five Year Survival") {
-      #                    upper_5yrsurv 
-      #                  } else { 
-      #                    upper_10yrsurv } ,
-      #              group = Group, 
-      #              colour = Group,
-      #              fill = Group)) +
-      #   geom_errorbar(position = position_dodge(width = 0.6), width = 0, aes(ymin = lower_1yrsurv, ymax = upper_1yrsurv, color = Group), size = 1) +
-      #   geom_point(position = position_dodge(width = 0.6), size = 2, shape = 21, stroke = 0.75, color = "black") +
-      #   xlab("Database") +
-      #   ylab(input$survivalsum_variable_selector) +
-      #   facet_wrap(vars(facet_var), ncol = 2, scales = "free_y") +
-      #   theme_bw(base_size = 15)
       
       plot <- plot_data %>%
         unite("Group", c(all_of(input$survsum_plot_group)), remove = FALSE, sep = "; ") %>%
@@ -593,7 +545,7 @@ server <-	function(input, output, session) {
                    group = Group, 
                    colour = Group,
                    fill = Group)) +
-        geom_errorbar(position = position_dodge(width = 0.6), width = 0, aes(ymin = lower_1yrsurv, ymax = upper_1yrsurv, color = Group), size = 1) +
+        geom_errorbar(position = position_dodge(width = 0.6), width = 0, aes(color = Group), size = 1) +
         geom_point(position = position_dodge(width = 0.6), size = 2, shape = 21, stroke = 0.75, color = "black") +
         xlab("Database") +
         ylab(input$survivalsum_variable_selector) +
@@ -629,7 +581,7 @@ server <-	function(input, output, session) {
                    group = Group, 
                    colour = Group,
                    fill = Group)) +
-        geom_errorbar(position = position_dodge(width = 0.6), width = 0, aes(ymin = lower_1yrsurv, ymax = upper_1yrsurv, color = Group), size = 1) +
+        geom_errorbar(position = position_dodge(width = 0.6), width = 0, aes(color = Group), size = 1) +
         geom_point(position = position_dodge(width = 0.6), size = 2, shape = 21, stroke = 0.75, color = "black") +
         xlab("Database") +
         ylab(input$survivalsum_variable_selector) +
@@ -665,7 +617,7 @@ server <-	function(input, output, session) {
                    group = Group, 
                    colour = Group,
                    fill = Group)) +
-        geom_errorbar(position = position_dodge(width = 0.6), width = 0, aes(ymin = lower_1yrsurv, ymax = upper_1yrsurv, color = Group), size = 1) +
+        geom_errorbar(position = position_dodge(width = 0.6), width = 0, aes(color = Group), size = 1) +
         geom_point(position = position_dodge(width = 0.6), size = 2, shape = 21, stroke = 0.75, color = "black") +
         xlab("Database") +
         ylab(input$survivalsum_variable_selector) +
