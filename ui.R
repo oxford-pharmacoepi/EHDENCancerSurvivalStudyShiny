@@ -67,8 +67,12 @@ ui <- dashboardPage(
           tabName = "cohort_concepts"
         ),
         menuSubItem(
-          text = "Cohort attrition",
+          text = "Cohort Attrition Table",
           tabName = "cohort_attrition"
+        ),
+        menuSubItem(
+          text = "Cohort Attrition Figures",
+          tabName = "cohort_attr_fig"
         )
       ),
       
