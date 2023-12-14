@@ -411,16 +411,11 @@ server <-	function(input, output, session) {
                                breaks = pretty_breaks(n = 10)) +
             theme(strip.text = element_text(size = 15, face = "bold"))
                                         
-                                        
-      
       
       plot      
       
       
     }
-    
-    
-    
     
     
   })
