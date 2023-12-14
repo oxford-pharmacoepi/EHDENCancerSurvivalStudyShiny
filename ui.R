@@ -67,8 +67,12 @@ ui <- dashboardPage(
           tabName = "cohort_concepts"
         ),
         menuSubItem(
-          text = "Cohort attrition",
+          text = "Cohort Attrition Table",
           tabName = "cohort_attrition"
+        ),
+        menuSubItem(
+          text = "Cohort Attrition Figures",
+          tabName = "cohort_attr_fig"
         )
       ),
       
@@ -327,6 +331,64 @@ ui <- dashboardPage(
               label = "Download table as word"
             ), 
             style="display:inline-block; float:right")
+        
+      ),
+      
+      
+      tabItem(
+        tabName = "cohort_attr_fig",
+        tags$h5("TBC Will contain Attrition Diagrams for study populations:"),
+        
+        div(
+          style = "display: inline-block;vertical-align:top; width: 150px;",
+          pickerInput(
+            inputId = "attrition_database_selector",
+            label = "Database",
+            choices = unique(attritioncdm$Database),
+            selected = unique(attritioncdm$Database),
+            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
+            multiple = TRUE
+          )
+        ),
+        div(
+          style = "display: inline-block;vertical-align:top; width: 150px;",
+          pickerInput(
+            inputId = "attrition_cohort_name_selector",
+            label = "Cancer",
+            choices = unique(attritioncdm$Cancer),
+            selected = "Breast",
+            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
+            multiple = TRUE
+          )
+        ),
+        
+        
+        div(
+          style = "width: 80%; height: 90%;",  # Set width to 100% for responsive design
+          plotOutput("AttritionPlot",
+                     height = "800px"
+          ) %>%
+            withSpinner(),
+          h4("Download Figure"),
+          div("Height:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
+          div(
+            style = "display: inline-block;",
+            textInput("attrition_download_height", "", 30, width = "50px")
+          ),
+          div("cm", style = "display: inline-block; margin-right: 25px;"),
+          div("Width:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
+          div(
+            style = "display: inline-block;",
+            textInput("attrition_download_width", "", 60, width = "50px")
+          ),
+          div("cm", style = "display: inline-block; margin-right: 25px;"),
+          div("dpi:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
+          div(
+            style = "display: inline-block; margin-right:",
+            textInput("attrition_download_dpi", "", 600, width = "50px")
+          ),
+          downloadButton("attrition_download_plot", "Download plot")
+        )
         
       ),
       

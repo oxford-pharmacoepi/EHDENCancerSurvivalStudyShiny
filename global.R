@@ -129,16 +129,16 @@ for(i in seq_along(survival_risk_table_files)){
 survival_risk_table <- dplyr::bind_rows(survival_risk_table) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
-  select(-c("details", "Method", "Stratification", "Adjustment" )) %>% 
+  select(-c("Method", "Stratification", "Adjustment" )) %>% 
   relocate(Database, .before = 1)
-
 
 survival_risk_table_prostate <- survival_risk_table %>% 
   filter(Cancer == "Prostate") %>% 
   mutate(Sex = "Both")
 
 survival_risk_table <- bind_rows(survival_risk_table,
-                                survival_risk_table_prostate)
+                                survival_risk_table_prostate) %>% 
+  mutate_all(~ ifelse(is.na(.), "-", .))
 rm(survival_risk_table_prostate)
 
 
@@ -260,6 +260,11 @@ snapshotcdm <- bind_rows(snapshotcdm) %>%
 
 snapshotcdm <- full_join(snapshotcdm, database_details, by = "Database name" ) %>% 
   relocate("Database Description", .after = last_col())
+
+snapshotcdm <- snapshotcdm %>%
+  mutate(`Database Description` = ifelse(`Database name` == "MAITT", 
+                                         "MAITT is a dataset specifically composed for RITA1/02-96-11 project (https://www.etis.ee/Portal/Projects/Display/7c765be1-d8a7-44e3-8789-1760ccbf00e3?lang=ENG, ethics committee approval number 268/T-12) from three national health databases in Estonia: digital prescription, claims, and EHR. It contains 10% random sample from Estonian population. For each individual in the sample, it contains all records from these three databases from 2012-2019", 
+                                         `Database Description`))
 
 # attrition ----------
 attrition_files <- results[stringr::str_detect(results, ".csv")]
