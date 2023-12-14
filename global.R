@@ -132,13 +132,13 @@ survival_risk_table <- dplyr::bind_rows(survival_risk_table) %>%
   select(-c("Method", "Stratification", "Adjustment" )) %>% 
   relocate(Database, .before = 1)
 
-
 survival_risk_table_prostate <- survival_risk_table %>% 
   filter(Cancer == "Prostate") %>% 
   mutate(Sex = "Both")
 
 survival_risk_table <- bind_rows(survival_risk_table,
-                                survival_risk_table_prostate)
+                                survival_risk_table_prostate) %>% 
+  mutate_all(~ ifelse(is.na(.), "-", .))
 rm(survival_risk_table_prostate)
 
 

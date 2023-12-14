@@ -337,7 +337,7 @@ ui <- dashboardPage(
       
       tabItem(
         tabName = "cohort_attr_fig",
-        tags$h5("TBC Will contain Attrition for study populations:"),
+        tags$h5("TBC Will contain Attrition Diagrams for study populations:"),
         
         div(
           style = "display: inline-block;vertical-align:top; width: 150px;",

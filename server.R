@@ -208,12 +208,13 @@ server <-	function(input, output, session) {
       filter(Age %in% input$surv_est_age_selector) %>% 
     filter(Sex %in% input$surv_est_sex_selector) %>% 
       select(-starts_with("upper_"), -starts_with("lower_")) %>% 
-      select(-c(study_period))
+      select(-c(study_period)) %>% 
+      mutate_all(~ ifelse(is.na(.), "-", .))
+     
     
     table
     
   })
-  
   
   output$dt_surv_est <- renderText(kable(get_surv_est()) %>%
                                       kable_styling("striped", full_width = F) )
