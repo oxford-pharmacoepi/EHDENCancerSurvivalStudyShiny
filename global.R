@@ -244,7 +244,9 @@ tableone_whole <- bind_rows(tableone_whole) %>%
   dplyr::mutate(variable = if_else(variable == "Visits count from -365 to 0",
                                    "Visits count -365 to 0 days", variable)) %>% 
   dplyr::mutate(variable = if_else(variable == "Obesity flag from any time prior to 0",
-                                   "Obesity flag -inf to 0 days", variable)) %>% 
+                                   "Conditions flag -inf to 0 days", variable)) %>% 
+  dplyr::mutate(variable = if_else(variable == "Obesity flag -inf to 0 days",
+                                   "Conditions flag -inf to 0 days", variable)) %>% 
   dplyr::mutate(variable_level = if_else(variable_level == "Visit occurrence",
                                    "Any", variable_level)) %>% 
   filter(variable_level != "Obesity",
@@ -253,9 +255,9 @@ tableone_whole <- bind_rows(tableone_whole) %>%
          estimate_type != "q05",
          estimate_type != "q95",
          estimate_type != "sd"
-         ) 
-
-
+         ) %>% 
+  dplyr::mutate(variable_level = if_else(variable_level == "Obesitycharybdis",
+                                         "Obesity", variable_level))
 
 
 # cdm snapshot ------
