@@ -220,8 +220,8 @@ ui <- dashboardPage(
           pickerInput(
             inputId = "surv_est_database_name_selector",
             label = "Database",
-            choices = unique(attritioncdm$Database),
-            selected = unique(attritioncdm$Database),
+            choices = unique(survival_km$Database),
+            selected = unique(survival_km$Database),
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
             multiple = TRUE
           )
@@ -231,7 +231,7 @@ ui <- dashboardPage(
           pickerInput(
             inputId = "surv_est_cohort_name_selector",
             label = "Cancer",
-            choices = unique(attritioncdm$Cancer),
+            choices = unique(survival_km$Cancer),
             selected = "Breast",
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
             multiple = TRUE
@@ -281,8 +281,8 @@ ui <- dashboardPage(
           pickerInput(
             inputId = "risk_table_database_name_selector",
             label = "Database",
-            choices = unique(attritioncdm$Database),
-            selected = unique(attritioncdm$Database),
+            choices = unique(survival_risk_table$Database),
+            selected = unique(survival_risk_table$Database),
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
             multiple = TRUE
           )
@@ -292,7 +292,7 @@ ui <- dashboardPage(
           pickerInput(
             inputId = "risk_table_cohort_name_selector",
             label = "Cancer",
-            choices = unique(attritioncdm$Cancer),
+            choices = unique(survival_risk_table$Cancer),
             selected = "Breast",
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
             multiple = TRUE
@@ -304,7 +304,7 @@ ui <- dashboardPage(
           pickerInput(
             inputId = "risk_table_sex_selector",
             label = "Sex",
-            choices = unique(survival_km$Sex),
+            choices = unique(survival_risk_table$Sex),
             selected = "Both",
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
             multiple = TRUE
@@ -316,7 +316,7 @@ ui <- dashboardPage(
           pickerInput(
             inputId = "risk_table_age_selector",
             label = "Age",
-            choices = unique(survival_km$Age),
+            choices = unique(survival_risk_table$Age),
             selected = "All",
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
             multiple = TRUE
@@ -342,7 +342,7 @@ ui <- dashboardPage(
         div(
           style = "display: inline-block;vertical-align:top; width: 150px;",
           pickerInput(
-            inputId = "attrition_database_selector",
+            inputId = "attrition_database_name_selector1",
             label = "Database",
             choices = unique(attritioncdm$Database),
             selected = unique(attritioncdm$Database),
@@ -353,7 +353,7 @@ ui <- dashboardPage(
         div(
           style = "display: inline-block;vertical-align:top; width: 150px;",
           pickerInput(
-            inputId = "attrition_cohort_name_selector",
+            inputId = "attrition_cohort_name_selector1",
             label = "Cancer",
             choices = unique(attritioncdm$Cancer),
             selected = "Breast",
@@ -401,8 +401,8 @@ ui <- dashboardPage(
           pickerInput(
             inputId = "tableone_database_name_selector",
             label = "Database",
-            choices = unique(attritioncdm$Database),
-            selected = unique(attritioncdm$Database),
+            choices = unique(tableone_whole$cdm_name),
+            selected = unique(tableone_whole$cdm_name),
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
             multiple = TRUE
           )
@@ -412,7 +412,7 @@ ui <- dashboardPage(
           pickerInput(
             inputId = "tableone_cohort_name_selector",
             label = "Cancer",
-            choices = unique(attritioncdm$Cancer),
+            choices = unique(tableone_whole$group_level),
             selected = "Breast",
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
             multiple = FALSE
@@ -424,7 +424,7 @@ ui <- dashboardPage(
           pickerInput(
             inputId = "tableone_sex_selector",
             label = "Sex",
-            choices = unique(survival_km$Sex),
+            choices = c("Both", "Female", "Male") ,
             selected = "Both",
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
             multiple = FALSE
