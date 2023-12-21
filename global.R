@@ -150,7 +150,8 @@ survival_median_table <- list()
 for(i in seq_along(survival_median_files)){
   survival_median_table[[i]]<-readr::read_csv(survival_median_files[[i]],
                                               show_col_types = FALSE) %>% 
-    mutate(n = as.character(n))
+    mutate(n = as.character(n),
+           events = as.character(events))
 }
 survival_median_table <- dplyr::bind_rows(survival_median_table) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
