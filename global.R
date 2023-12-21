@@ -110,7 +110,12 @@ survival_estimates_prostate <- survival_estimates %>%
   filter(Cancer == "Prostate") %>% 
   mutate(Sex = "Both")
 
+survival_estimates_ECI <- survival_estimates %>% 
+  filter(Database == "ECI") %>% 
+  dplyr::mutate(Sex = replace(Sex, Sex == "Both", "Female"))
+
 survival_estimates <- bind_rows(survival_estimates,
+                                survival_estimates_ECI,
                                 survival_estimates_prostate)
 rm(survival_estimates_prostate)
 
@@ -132,11 +137,16 @@ survival_risk_table <- dplyr::bind_rows(survival_risk_table) %>%
   select(-c("Method", "Stratification", "Adjustment" )) %>% 
   relocate(Database, .before = 1)
 
+survival_risk_table_ECI <- survival_risk_table %>% 
+  filter(Database == "ECI") %>% 
+  dplyr::mutate(Sex = replace(Sex, Sex == "Both", "Female"))
+
 survival_risk_table_prostate <- survival_risk_table %>% 
   filter(Cancer == "Prostate") %>% 
   mutate(Sex = "Both")
 
 survival_risk_table <- bind_rows(survival_risk_table,
+                                 survival_risk_table_ECI,
                                 survival_risk_table_prostate) %>% 
   mutate_all(~ ifelse(is.na(.), "-", .))
 rm(survival_risk_table_prostate)
@@ -179,7 +189,12 @@ survival_median_table_prostate <- survival_median_table %>%
   filter(Cancer == "Prostate") %>% 
   mutate(Sex = "Both")
 
+survival_median_table_ECI <- survival_median_table %>% 
+  filter(Database == "ECI") %>% 
+  dplyr::mutate(Sex = replace(Sex, Sex == "Both", "Female"))
+
 survival_median_table <- bind_rows(survival_median_table,
+                                   survival_median_table_ECI,
                                    survival_median_table_prostate)
 rm(survival_median_table_prostate)
 
