@@ -18,7 +18,7 @@ ui <- dashboardPage(
       menuItem(
         text = "Overall Survival",
         tabName = "os",
-        icon = shiny::icon("skull")
+        icon = shiny::icon("line-chart")
         ,
         menuSubItem(
           text = "Survival Plots",
