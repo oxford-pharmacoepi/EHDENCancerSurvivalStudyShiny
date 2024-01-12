@@ -167,6 +167,30 @@ server <-	function(input, output, session) {
     table
 
   })
+  
+  output$attrition_diagram <- renderGrViz({
+    table <- get_attrition()
+    validate(need(nrow(table) > 0, "No results for selected inputs"))
+    render_graph(attritionChart(table))
+  })
+  
+  output$cohort_attrition_download_figure <- downloadHandler(
+    filename = function() {
+      paste0(
+        "cohort_attrition_", input$attrition_database_name_selector1, "_", 
+        input$attrition_cohort_name_selector1, ".png"
+      )
+    },
+    content = function(file) {
+      table <- get_attrition()
+      export_graph(
+        graph = attritionChart(table),
+        file_name = file,
+        file_type = "png",
+        width = input$attrition_download_width
+      )
+    }
+  )
 
 
   output$dt_attrition <- renderText(kable(get_attrition()) %>%
