@@ -187,7 +187,7 @@ server <-	function(input, output, session) {
         graph = attritionChart(table),
         file_name = file,
         file_type = "png",
-        width = input$attrition_download_width
+        width = input$attrition_download_width |> as.numeric()
       )
     }
   )

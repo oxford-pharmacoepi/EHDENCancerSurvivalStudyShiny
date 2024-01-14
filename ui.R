@@ -371,14 +371,9 @@ ui <- dashboardPage(
           div("Width:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
           div(
             style = "display: inline-block;",
-            textInput("attrition_download_width", "", 60, width = "50px")
+            textInput("attrition_download_width", "", 600, width = "50px")
           ),
-          div("cm", style = "display: inline-block; margin-right: 25px;"),
-          div("dpi:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
-          div(
-            style = "display: inline-block; margin-right:",
-            textInput("attrition_download_dpi", "", 600, width = "50px")
-          ),
+          div("pixels", style = "display: inline-block; margin-right: 25px;"),
           downloadButton("cohort_attrition_download_figure", "Download plot")
         )
         
@@ -771,15 +766,8 @@ ui <- dashboardPage(
           ),
           downloadButton("survival_download_plot", "Download plot")
         )
-        
       )
-      
-      
-      # more tabs here
     )
-    
   )  
-  
-  
 )
 

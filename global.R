@@ -22,6 +22,7 @@ library(bslib)
 library(PatientProfiles)
 library(DiagrammeR)
 library(DiagrammeRsvg)
+library(rsvg)
 
 mytheme <- create_theme(
   adminlte_color(
@@ -378,10 +379,11 @@ rm(survival_median_table)
 # attrition functions ----
 attritionChart <- function(x) {
   formatNum <- function(col) {
+    col <- round(as.numeric(col))
     if_else(
-      !is.na(as.numeric(col)),
+      !is.na(col),
       gsub(" ", "", format(as.integer(col), big.mark=",")),
-      col
+      as.character(col)
     )
   }
   
@@ -444,20 +446,35 @@ attritionChart <- function(x) {
         add_edge(from = k - 1, to = k, edge_aes = edge_aes(color = "black"))
     }
   }
+  salt <- function(x) {
+    s <- 50
+    x <- strsplit(x = x, split = " ") |> unlist()
+    nn <- (nchar(x) + c(0, rep(1, length(x)-1))) |> cumsum()
+    id <- which(nn > s)
+    if (length(id) > 0) {
+      id <- id[1] - 1
+      x <- paste0(paste0(x[1:id], collapse = " "), "\n", paste0(x[-(1:id)], collapse = " "))
+    } else {
+      x <- paste0(x, collapse = " ")
+    }
+    return(x)
+  }
   if (n > 1) {
     for (k in seq_len(nrow(att))) {
+      res <- att$reason[k]
+      res <- salt(res)
       xg <- xg %>%
         add_node(
           label = att$label[k],
           node_aes = node_aes(
-            shape = "box", x = 3, width = 1.2, y = n + 0.5 - k, height = 0.4,
+            shape = "box", x = 3.5, width = 1.2, y = n + 0.5 - k, height = 0.4,
             fontsize = 8, fillcolor = "grey", fontcolor = "black", color = "black"
           )
         ) %>%
         add_node(
-          label = att$reason[k],
+          label = res,
           node_aes = node_aes(
-            shape = "box", x = 1, width = 2, y = n + 0.5 - k, height = 0.2, fillcolor = "white", color = "black", fontcolor = "back"
+            shape = "box", x = 1, width = 3.2, y = n + 0.5 - k, height = 0.35, fillcolor = "white", color = "black", fontcolor = "back"
           )
         ) %>%
         add_edge(
@@ -468,3 +485,4 @@ attritionChart <- function(x) {
   
   return(xg)
 }
+
