@@ -153,16 +153,16 @@ server <-	function(input, output, session) {
   get_attrition <- reactive({
     
     validate(
-      need(input$attrition_cohort_name_selector != "", "Please select a cohort")
+      need(input$attrition_cohort_name_selector1 != "", "Please select a cohort")
     )
     
     validate(
-      need(input$attrition_database_name_selector != "", "Please select a database")
+      need(input$attrition_database_name_selector1 != "", "Please select a database")
     )
 
     table <- attritioncdm %>%
-      filter(Cancer %in% input$attrition_cohort_name_selector) %>%
-      filter(Database %in% input$attrition_database_name_selector) 
+      filter(Cancer %in% input$attrition_cohort_name_selector1) %>%
+      filter(Database %in% input$attrition_database_name_selector1) 
 
     table
 
