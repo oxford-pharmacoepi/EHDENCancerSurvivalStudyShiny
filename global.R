@@ -120,7 +120,8 @@ survival_estimates_ECI <- survival_estimates %>%
 survival_estimates <- bind_rows(survival_estimates,
                                 survival_estimates_ECI,
                                 survival_estimates_prostate)
-rm(survival_estimates_prostate)
+rm(survival_estimates_prostate,
+   survival_estimates_ECI)
 
 # risk tables ----------
 survival_risk_table_files <- results[stringr::str_detect(results, ".csv")]
