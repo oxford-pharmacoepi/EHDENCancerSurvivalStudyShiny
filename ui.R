@@ -14,39 +14,6 @@ ui <- dashboardPage(
         tabName = "background",
         icon = shiny::icon("book")
       ),
-
-      menuItem(
-        text = "Overall Survival",
-        tabName = "os",
-        icon = shiny::icon("line-chart")
-        ,
-        menuSubItem(
-          text = "Survival Plots",
-          tabName = "survival_results"
-        ),
-        menuSubItem(
-          text = "Summary Survival Plots",
-          tabName = "summary_plots"
-        ),
-        menuSubItem(
-          text = "Risk Table",
-          tabName = "risk_results"
-        ),
-        menuSubItem(
-          text = "Survival Estimates",
-          tabName = "stats_results"
-        ) 
-      ),
-
-      menuItem(
-        text = "Characteristics",
-        tabName = "char",
-        icon = shiny::icon("hospital-user"),
-        menuSubItem(
-          text = "Demographics",
-          tabName = "demographics"
-        )
-      ),
       
       menuItem(
         text = "Databases",
@@ -74,6 +41,39 @@ ui <- dashboardPage(
           text = "Cohort Attrition Figures",
           tabName = "cohort_attr_fig"
         )
+      ),
+      
+      menuItem(
+        text = "Characteristics",
+        tabName = "char",
+        icon = shiny::icon("hospital-user"),
+        menuSubItem(
+          text = "Demographics",
+          tabName = "demographics"
+        )
+      ),
+
+      menuItem(
+        text = "Overall Survival",
+        tabName = "os",
+        icon = shiny::icon("line-chart")
+        ,
+        menuSubItem(
+          text = "Survival Plots",
+          tabName = "survival_results"
+        ),
+        menuSubItem(
+          text = "Summary Survival Plots",
+          tabName = "summary_plots"
+        ),
+        menuSubItem(
+          text = "Risk Table",
+          tabName = "risk_results"
+        ),
+        menuSubItem(
+          text = "Survival Estimates",
+          tabName = "stats_results"
+        ) 
       ),
       
       # Logo 
@@ -337,7 +337,7 @@ ui <- dashboardPage(
       
       tabItem(
         tabName = "cohort_attr_fig",
-        tags$h5("TBC Will contain Attrition Diagrams for study populations:"),
+        tags$h5("Attrition Diagrams for study populations:"),
         
         div(
           style = "display: inline-block;vertical-align:top; width: 150px;",
@@ -345,9 +345,9 @@ ui <- dashboardPage(
             inputId = "attrition_database_name_selector1",
             label = "Database",
             choices = unique(attritioncdm$Database),
-            selected = unique(attritioncdm$Database),
+            selected = unique(attritioncdm$Database)[1],
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
-            multiple = TRUE
+            multiple = FALSE
           )
         ),
         div(
@@ -358,36 +358,23 @@ ui <- dashboardPage(
             choices = unique(attritioncdm$Cancer),
             selected = "Breast",
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
-            multiple = TRUE
+            multiple = FALSE
           )
         ),
         
         
         div(
           style = "width: 80%; height: 90%;",  # Set width to 100% for responsive design
-          plotOutput("AttritionPlot",
-                     height = "800px"
-          ) %>%
+          grVizOutput("attrition_diagram", width = "400px", height = "100%") %>%
             withSpinner(),
           h4("Download Figure"),
-          div("Height:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
-          div(
-            style = "display: inline-block;",
-            textInput("attrition_download_height", "", 30, width = "50px")
-          ),
-          div("cm", style = "display: inline-block; margin-right: 25px;"),
           div("Width:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
           div(
             style = "display: inline-block;",
-            textInput("attrition_download_width", "", 60, width = "50px")
+            textInput("attrition_download_width", "", 600, width = "50px")
           ),
-          div("cm", style = "display: inline-block; margin-right: 25px;"),
-          div("dpi:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
-          div(
-            style = "display: inline-block; margin-right:",
-            textInput("attrition_download_dpi", "", 600, width = "50px")
-          ),
-          downloadButton("attrition_download_plot", "Download plot")
+          div("pixels", style = "display: inline-block; margin-right: 25px;"),
+          downloadButton("cohort_attrition_download_figure", "Download plot")
         )
         
       ),
@@ -779,15 +766,8 @@ ui <- dashboardPage(
           ),
           downloadButton("survival_download_plot", "Download plot")
         )
-        
       )
-      
-      
-      # more tabs here
     )
-    
   )  
-  
-  
 )
 
