@@ -267,8 +267,29 @@ tableone_whole <- bind_rows(tableone_whole) %>%
                                    "Conditions flag -inf to 0 days", variable)) %>% 
   dplyr::mutate(variable = if_else(variable == "Obesity flag -inf to 0 days",
                                    "Conditions flag -inf to 0 days", variable)) %>% 
-  dplyr::mutate(variable_level = if_else(variable_level == "Visit occurrence",
-                                   "Any", variable_level)) %>% 
+  
+  dplyr::mutate(variable = if_else(variable == "Obesity flag -inf to 0 days",
+                                   "Conditions flag -inf to 0 days", variable)) %>%  
+  
+  dplyr::mutate(variable_level = if_else(variable_level == "18 To 39",
+                                   "18 to 39", variable_level)) %>% 
+  
+  dplyr::mutate(variable_level = if_else(variable_level == "40 To 49",
+                                         "40 to 49", variable_level)) %>% 
+  
+  dplyr::mutate(variable_level = if_else(variable_level == "50 To 59",
+                                         "50 to 59", variable_level)) %>% 
+  
+  dplyr::mutate(variable_level = if_else(variable_level == "60 To 69",
+                                         "60 to 69", variable_level)) %>% 
+  
+  dplyr::mutate(variable_level = if_else(variable_level == "70 To 79",
+                                         "70 to 79", variable_level)) %>% 
+  
+  dplyr::mutate(variable_level = if_else(variable_level == "80 To 150",
+                                         "80 to 150", variable_level)) %>% 
+  
+  
   filter(variable_level != "Obesity",
          variable_level != "None",
          estimate_type != "mean",
@@ -292,16 +313,18 @@ for(i in seq_along(snapshot_files)){
 }
 snapshotcdm <- bind_rows(snapshotcdm) %>% 
   select("cdm_name", "person_count", "observation_period_count" ,
-         "vocabulary_version", "cdm_version", "cdm_description",) %>% 
+         "vocabulary_version", "cdm_version", "cdm_description", "StudyPeriodStartDate", "earliest_observation_period_start_date" ,) %>% 
   mutate(person_count = nice.num.count(person_count), 
          observation_period_count = nice.num.count(observation_period_count)) %>% 
   dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "CPRD_GOLD", "CPRD GOLD")) %>% 
   rename("Database name" = "cdm_name",
-         "Persons in the database" = "person_count",
+         "Persons in the cancer cohorts" = "person_count",
          "Number of observation periods" = "observation_period_count",
          "OMOP CDM vocabulary version" = "vocabulary_version",
          "Database CDM Version" = "cdm_version",
-         "Database Description" = "cdm_description" ) 
+         "Database Description" = "cdm_description",
+         "Study Start Date" = "StudyPeriodStartDate",
+         "Database Start Date" = "earliest_observation_period_start_date" ) 
 
 snapshotcdm <- full_join(snapshotcdm, database_details, by = "Database name" ) %>% 
   relocate("Database Description", .after = last_col()) %>% 

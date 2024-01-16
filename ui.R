@@ -506,7 +506,7 @@ ui <- dashboardPage(
             inputId = "attrition_database_name_selector",
             label = "Database",
             choices = unique(attritioncdm$Database),
-            selected = unique(attritioncdm$Database),
+            selected = unique(attritioncdm$Database)[1],
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
             multiple = TRUE
           )

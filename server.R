@@ -153,6 +153,20 @@ server <-	function(input, output, session) {
   get_attrition <- reactive({
     
     validate(
+      need(input$attrition_database_name_selector != "", "Please select a database")
+    )
+    
+    table <- attritioncdm %>%
+      filter(Database %in% input$attrition_database_name_selector) 
+    
+    table
+    
+  })
+  
+  
+  get_attrition1 <- reactive({
+    
+    validate(
       need(input$attrition_cohort_name_selector1 != "", "Please select a cohort")
     )
     
@@ -169,7 +183,7 @@ server <-	function(input, output, session) {
   })
   
   output$attrition_diagram <- renderGrViz({
-    table <- get_attrition()
+    table <- get_attrition1()
     validate(need(nrow(table) > 0, "No results for selected inputs"))
     render_graph(attritionChart(table))
   })
@@ -182,7 +196,7 @@ server <-	function(input, output, session) {
       )
     },
     content = function(file) {
-      table <- get_attrition()
+      table <- get_attrition1()
       export_graph(
         graph = attritionChart(table),
         file_name = file,
