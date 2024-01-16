@@ -104,7 +104,7 @@ ui <- dashboardPage(
         
         tags$h5(
           "This app is a companion to the study focussing on the overall survival for eight different cancers
-        (Breast, Colorectal, Lung, Liver, Stomach, Head & Neck, Prostate, and Pancreas) for a variety of different electronic health records and cancer registries across Europe (Spain, Netherlands, Italy, Germany, Norway, Finland, Portugal, Estonia, Switzerland, Hungary, and the United Kingdom)."
+        (Breast, Colorectal, Lung, Liver, Stomach, Head & Neck, Prostate, and Pancreas) for a variety of different electronic health records and cancer registries across Europe (Spain, Netherlands, Norway, Finland, Portugal, Estonia, Switzerland, and the United Kingdom)."
         ),
         
         

@@ -289,6 +289,12 @@ tableone_whole <- bind_rows(tableone_whole) %>%
   dplyr::mutate(variable_level = if_else(variable_level == "80 To 150",
                                          "80 to 150", variable_level)) %>% 
   
+  dplyr::mutate(variable = if_else(variable == "Analysis flag from 0 to 0",
+                                         "Outcome flag 0 to 0", variable)) %>%
+  
+  dplyr::mutate(variable_level = if_else(variable == "Visits count -365 to 0 days",
+                                   "Visit occurrence", variable_level)) %>%
+  
   
   filter(variable_level != "Obesity",
          variable_level != "None",
