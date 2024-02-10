@@ -159,89 +159,77 @@ rm(survival_risk_table_prostate)
 # median and survival probabilities ------
 survival_median_files <- results[stringr::str_detect(results, ".csv")]
 survival_median_files <- results[stringr::str_detect(results, "median_mean")]
-
+  
 survival_median_table <- list()
 for(i in seq_along(survival_median_files)){
+  suppressWarnings(
   survival_median_table[[i]]<-readr::read_csv(survival_median_files[[i]],
                                               show_col_types = FALSE) %>% 
     mutate(n = as.character(n),
            events = as.character(events))
+  )
 }
+
+
 survival_median_table <- dplyr::bind_rows(survival_median_table) %>% 
-  dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
+  filter(Truncated != "Yes", Method == "Kaplan-Meier") %>% 
   relocate(Database, .before = 1) %>% 
-  relocate(`rmean in years (SE)`, .after = `Median Survival in Years (95% CI)` ) %>% 
-  #select(!c(study_period)) %>% 
-  rename(
-    "1-year Survival (95% CI)" = `Survival Rate % (95% CI) year 1`,
-    "5-year Survival (95% CI)" = `Survival Rate % (95% CI) year 5`,
-    "10-year Survival (95% CI)" = `Survival Rate % (95% CI) year 10`,
-     "5-year RMST (SE)" = `rmean 5yrs in years (SE)`,
-    "10-year RMST (SE)" = `rmean 10yrs in years (SE)`,
-    "Mean Survival (SE)" = `rmean in years (SE)`,
-    "Median Survival (95% CI)" = `Median Survival in Years (95% CI)`
+  mutate(
+    "1-year Survival (95% CI)"= ifelse(!is.na(`surv year 1`),
+                                       paste0(paste0(nice.num(`surv year 1`)), " (",
+                                              paste0(nice.num(`lower year 1`)),"-",
+                                              paste0(nice.num(`upper year 1`)), ")"),
+                                       NA),
+    
+    "5-year Survival (95% CI)"= ifelse(!is.na(`surv year 5`),
+                                       paste0(paste0(nice.num(`surv year 5`)), " (",
+                                              paste0(nice.num(`lower year 5`)),"-",
+                                              paste0(nice.num(`upper year 5`)), ")"),
+                                       NA) ,
+    "10-year Survival (95% CI)"= ifelse(!is.na(`surv year 10`),
+                                        paste0(paste0(nice.num(`surv year 10`)), " (",
+                                               paste0(nice.num(`lower year 10`)),"-",
+                                               paste0(nice.num(`upper year 10`)), ")"),
+                                        NA) ,
+    
+    "Median Survival (95% CI)" = ifelse(!is.na(median),
+                                        paste0(paste0(nice.num(median)), " (",
+                                               paste0(nice.num(lower_median)),"-",
+                                               paste0(nice.num(upper_median)), ")"),
+                                        NA) ,
+    
+    "Mean Survival (SE)" = ifelse(!is.na(rmean),
+                                  paste0(paste0(nice.num2(rmean)), " (",
+                                         paste0(nice.num2(se)), ")"),
+                                  NA),
+    
+    "Mean Survival 5 years (SE)" = ifelse(!is.na(rmean5yr),
+                                          paste0(paste0(nice.num2(rmean5yr)), " (",
+                                                 paste0(nice.num2(se5yr)), ")"),
+                                          NA),
+    
+    "Mean Survival 10 years (SE)" = ifelse(!is.na(rmean10yr),
+                                           paste0(paste0(nice.num2(rmean10yr)), " (",
+                                                  paste0(nice.num2(se10yr)), ")"),
+                                           NA)
+    
+    
+    
   ) %>% 
-  select(!c("5-year RMST (SE)",
-            "10-year RMST (SE)",
-            "rmean5yr",
-            "se5yr",
-            "rmean10yr",
-            "se10yr"))
+
+  
+  select(!c(Adjustment, 
+            Stratification, Truncated
+  )) 
 
 survival_median_table_prostate <- survival_median_table %>% 
   filter(Cancer == "Prostate") %>% 
   mutate(Sex = "Both")
 
-survival_median_table_ECI <- survival_median_table %>% 
-  filter(Database == "ECI") %>% 
-  dplyr::mutate(Sex = replace(Sex, Sex == "Both", "Female"))
-
 survival_median_table <- bind_rows(survival_median_table,
-                                   survival_median_table_ECI,
                                    survival_median_table_prostate)
 rm(survival_median_table_prostate)
-
-# extract upper and low confidence intervals from survival estimates
-# suppressing warnings as it NA values are bring up an error
-suppressWarnings(
-survival_median_table <- survival_median_table %>%
-  filter(Method == "Kaplan-Meier") %>% 
-  # mutate(across(c(rmean5yr, se5yr), ~ifelse(study_period < 5, NA, .))) %>%
-  # mutate(across(c(rmean10yr, se10yr), ~ifelse(study_period < 10, NA, .))) %>%
-  mutate(across(where(is.character) | where(is.numeric), ~ifelse(n == "<10" & events == "0", NA, .))) %>%
-  mutate(across(c(`1-year Survival (95% CI)`, `5-year Survival (95% CI)`, `10-year Survival (95% CI)`), 
-                ~ifelse(grepl("0.0 \\(0.0-0.0\\)", .), NA, .))) %>% 
-  mutate(across(c(`1-year Survival (95% CI)`, `5-year Survival (95% CI)`, `10-year Survival (95% CI)`), 
-                ~ifelse(grepl("0.0 \\(NA-NA\\)", .), NA, .))) %>% 
-  # mutate(across(c(`1-year Survival (95% CI)`, `5-year Survival (95% CI)`, `10-year Survival (95% CI)`), 
-  #               ~ifelse(grepl("100.0 \\(100.0-100.0\\)", .), NA, .))) %>% 
-  mutate(lower_upper_1yrsurv = stringr::str_extract(`1-year Survival (95% CI)`, "\\((.*?)\\)")) %>%
-  separate(lower_upper_1yrsurv, into = c("lower_1yrsurv", "upper_1yrsurv"), sep = "-") %>%
-  mutate(lower_upper_5yrsurv = stringr::str_extract(`5-year Survival (95% CI)`, "\\((.*?)\\)")) %>%
-  separate(lower_upper_5yrsurv, into = c("lower_5yrsurv", "upper_5yrsurv"), sep = "-") %>%
-  mutate(lower_upper_10yrsurv = stringr::str_extract(`10-year Survival (95% CI)`, "\\((.*?)\\)")) %>%
-  separate(lower_upper_10yrsurv, into = c("lower_10yrsurv", "upper_10yrsurv"), sep = "-") %>%
-  mutate(lower_upper_median = stringr::str_extract(`Median Survival (95% CI)`, "\\((.*?)\\)")) %>%
-  separate(lower_upper_median, into = c("lower_medsurv", "upper_medsurv"), sep = "-") %>%
-  mutate(across(c(lower_1yrsurv, upper_1yrsurv,
-                  lower_5yrsurv, upper_5yrsurv ,
-                  lower_10yrsurv, upper_10yrsurv,
-                  lower_medsurv , upper_medsurv), ~as.numeric(stringr::str_remove_all(.,"[()]")))) %>%
-  mutate(lower_rmean = rmean - se,
-         upper_rmean = rmean + se) %>% 
-  mutate(across(c(lower_1yrsurv, upper_1yrsurv,
-           lower_5yrsurv, upper_5yrsurv ,
-           lower_10yrsurv, upper_10yrsurv,
-           lower_medsurv , upper_medsurv,
-           lower_rmean, upper_rmean
-           ), ~ifelse(is.na(.), NA, .))) %>% 
-  filter(complete.cases(Database)) %>% 
-  mutate(`surv year 1` = ifelse(is.na(`1-year Survival (95% CI)`), NA, `surv year 1`),
-         `surv year 5` = ifelse(is.na(`5-year Survival (95% CI)`), NA, `surv year 5`),
-         `surv year 10` = ifelse(is.na(`10-year Survival (95% CI)`), NA, `surv year 10`) ) 
-
-)
 
 
 # table one ------
@@ -253,58 +241,44 @@ for(i in seq_along(tableone_whole_files)){
                                          show_col_types = FALSE)
 }
 tableone_whole <- bind_rows(tableone_whole) %>% 
-  dplyr::mutate(group_level = replace(group_level, group_level == "Head_and_neck", "Head and Neck")) %>%
-  dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "CPRD_GOLD", "CPRD GOLD")) %>% 
-  dplyr::mutate(variable = if_else(variable == "Conditions flag from any time prior to 0",
-                            "Conditions flag -inf to 0 days", variable)) %>% 
-  dplyr::mutate(variable = if_else(variable == "Medications flag from -365 to 0",
-                                   "Medications flag -365 to 0 days", variable)) %>% 
-  dplyr::mutate(variable = if_else(variable == "Outcome flag from 0 to 0",
-                                   "Outcome flag 0 to 0", variable)) %>% 
-  dplyr::mutate(variable = if_else(variable == "Visits count from -365 to 0",
-                                   "Visits count -365 to 0 days", variable)) %>% 
-  dplyr::mutate(variable = if_else(variable == "Obesity flag from any time prior to 0",
-                                   "Conditions flag -inf to 0 days", variable)) %>% 
-  dplyr::mutate(variable = if_else(variable == "Obesity flag -inf to 0 days",
-                                   "Conditions flag -inf to 0 days", variable)) %>% 
-  
-  dplyr::mutate(variable = if_else(variable == "Obesity flag -inf to 0 days",
-                                   "Conditions flag -inf to 0 days", variable)) %>%  
-  
-  dplyr::mutate(variable_level = if_else(variable_level == "18 To 39",
-                                   "18 to 39", variable_level)) %>% 
-  
-  dplyr::mutate(variable_level = if_else(variable_level == "40 To 49",
-                                         "40 to 49", variable_level)) %>% 
-  
-  dplyr::mutate(variable_level = if_else(variable_level == "50 To 59",
-                                         "50 to 59", variable_level)) %>% 
-  
-  dplyr::mutate(variable_level = if_else(variable_level == "60 To 69",
-                                         "60 to 69", variable_level)) %>% 
-  
-  dplyr::mutate(variable_level = if_else(variable_level == "70 To 79",
-                                         "70 to 79", variable_level)) %>% 
-  
-  dplyr::mutate(variable_level = if_else(variable_level == "80 To 150",
-                                         "80 to 150", variable_level)) %>% 
-  
-  dplyr::mutate(variable = if_else(variable == "Analysis flag from 0 to 0",
-                                         "Outcome flag 0 to 0", variable)) %>%
-  
-  dplyr::mutate(variable_level = if_else(variable == "Visits count -365 to 0 days",
-                                   "Visit occurrence", variable_level)) %>%
-  
-  
-  filter(variable_level != "Obesity",
-         variable_level != "None",
-         estimate_type != "mean",
-         estimate_type != "q05",
-         estimate_type != "q95",
-         estimate_type != "sd"
-         ) %>% 
-  dplyr::mutate(variable_level = if_else(variable_level == "Obesitycharybdis",
-                                         "Obesity", variable_level))
+
+dplyr::mutate(variable_level = if_else(variable_level == "18 To 39",
+                                 "18 to 39", variable_level)) %>%
+
+dplyr::mutate(variable_level = if_else(variable_level == "40 To 49",
+                                       "40 to 49", variable_level)) %>%
+
+dplyr::mutate(variable_level = if_else(variable_level == "50 To 59",
+                                       "50 to 59", variable_level)) %>%
+
+dplyr::mutate(variable_level = if_else(variable_level == "60 To 69",
+                                       "60 to 69", variable_level)) %>%
+
+dplyr::mutate(variable_level = if_else(variable_level == "70 To 79",
+                                       "70 to 79", variable_level)) %>%
+
+dplyr::mutate(variable_level = if_else(variable_level == "80 To 150",
+                                       "80 to 150", variable_level)) %>% 
+  filter(estimate_type != "q05",
+         estimate_type != "q95"
+         ) 
+
+#%>% 
+  # 
+  # dplyr::mutate(variable = if_else(variable == "Analysis flag from 0 to 0",
+  #                                        "Outcome flag 0 to 0", variable)) %>%
+  # 
+  # dplyr::mutate(variable_level = if_else(variable == "Visits count -365 to 0 days",
+  #                                  "Visit occurrence", variable_level)) %>%
+  # 
+  # 
+  # filter(estimate_type != "q05",
+  #        estimate_type != "q95",
+  #        estimate_type != "q25",
+  #        estimate_type != "q75"
+  #        ) %>%
+  # dplyr::mutate(variable_level = if_else(variable_level == "Obesitycharybdis",
+  #                                        "Obesity", variable_level))
 
 
 # cdm snapshot ------
@@ -360,35 +334,41 @@ survival_km <- survival_estimates %>%
   filter(Method == "Kaplan-Meier")
 
 med_surv_km <- survival_median_table %>% 
-  filter(Method == "Kaplan-Meier",
-         Adjustment == "None") %>% 
-  select(!c(Adjustment, 
-            rmean,
-            se,
-            median,
-            `surv year 1`,
-            `surv year 5`,
-            `surv year 10`,
-            Method,
-            Stratification
-            )) %>% 
+  select(c(Cancer, 
+           n,
+           events,
+           Sex,
+           Age,
+           `1-year Survival (95% CI)`,
+           `5-year Survival (95% CI)`,
+           `10-year Survival (95% CI)`  ,
+           `Median Survival (95% CI)`   ,
+           `Mean Survival (SE)` ,
+           Database
+  )) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) 
 
 med_surv_km_sex_age <- survival_median_table %>% 
-  filter(Method == "Kaplan-Meier",
-         Adjustment == "None") %>% 
-  select(!c(Adjustment, 
-            `Median Survival (95% CI)`,
+  filter(Method == "Kaplan-Meier") %>% 
+  mutate(upper_rmean = rmean + se,
+         lower_rmean = rmean - se) %>% 
+  select(!c(`Median Survival (95% CI)`,
             `Mean Survival (SE)`,
+            `Mean Survival 5 years (SE)` ,
+            `Mean Survival 10 years (SE)`,
             `1-year Survival (95% CI)`,
             `5-year Survival (95% CI)`,
             `10-year Survival (95% CI)`,
+            rmean10yr   ,
+            se10yr,
+            rmean5yr   ,
+            se5yr,
             n,
             events,
             se,
-            Method,
-            Stratification
+            Method                
+            
   )) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 

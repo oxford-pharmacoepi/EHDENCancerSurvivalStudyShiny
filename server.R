@@ -523,26 +523,26 @@ server <-	function(input, output, session) {
         ggplot(aes(x = Database, 
                    y = Value,
                    ymin = if (input$survivalsum_variable_selector == "One Year Survival") {
-                     lower_1yrsurv
+                     `lower year 1`
                    } else if (input$survivalsum_variable_selector == "Five Year Survival") {
-                     lower_5yrsurv 
+                     `lower year 5`
                    } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
-                     lower_10yrsurv   
+                     `lower year 10`  
                    } else if (input$survivalsum_variable_selector == "Restricted Mean") {
                      lower_rmean 
                    } else {
-                     lower_medsurv
+                     lower_median
                    },
                    ymax = if (input$survivalsum_variable_selector == "One Year Survival") {
-                     upper_1yrsurv
+                     `upper year 1`
                    } else if (input$survivalsum_variable_selector == "Five Year Survival") {
-                     upper_5yrsurv 
+                     `upper year 5`
                    } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
-                     upper_10yrsurv   
+                     `lower year 10`   
                    } else if (input$survivalsum_variable_selector == "Restricted Mean") {
                      upper_rmean 
                    } else {
-                     upper_medsurv
+                     upper_median
                    },
                    group = Group, 
                    colour = Group,
@@ -560,26 +560,26 @@ server <-	function(input, output, session) {
         ggplot(aes(x = Database, 
                    y = Value,
                    ymin = if (input$survivalsum_variable_selector == "One Year Survival") {
-                     lower_1yrsurv
+                     `lower year 1`
                    } else if (input$survivalsum_variable_selector == "Five Year Survival") {
-                     lower_5yrsurv 
+                     `lower year 5`
                    } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
-                     lower_10yrsurv   
+                     `lower year 10`  
                    } else if (input$survivalsum_variable_selector == "Restricted Mean") {
                      lower_rmean 
                    } else {
-                     lower_medsurv
+                     lower_median
                    },
                    ymax = if (input$survivalsum_variable_selector == "One Year Survival") {
-                     upper_1yrsurv
+                     `upper year 1`
                    } else if (input$survivalsum_variable_selector == "Five Year Survival") {
-                     upper_5yrsurv 
+                     `upper year 5`
                    } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
-                     upper_10yrsurv   
+                     `lower year 10`   
                    } else if (input$survivalsum_variable_selector == "Restricted Mean") {
                      upper_rmean 
                    } else {
-                     upper_medsurv
+                     upper_median
                    },
                    group = Group, 
                    colour = Group,
@@ -596,26 +596,26 @@ server <-	function(input, output, session) {
         ggplot(aes(x = Database, 
                    y = Value,
                    ymin = if (input$survivalsum_variable_selector == "One Year Survival") {
-                     lower_1yrsurv
+                     `lower year 1`
                    } else if (input$survivalsum_variable_selector == "Five Year Survival") {
-                     lower_5yrsurv 
+                     `lower year 5`
                    } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
-                     lower_10yrsurv   
+                     `lower year 10`  
                    } else if (input$survivalsum_variable_selector == "Restricted Mean") {
                      lower_rmean 
                    } else {
-                     lower_medsurv
+                     lower_median
                    },
                    ymax = if (input$survivalsum_variable_selector == "One Year Survival") {
-                     upper_1yrsurv
+                     `upper year 1`
                    } else if (input$survivalsum_variable_selector == "Five Year Survival") {
-                     upper_5yrsurv 
+                     `upper year 5`
                    } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
-                     upper_10yrsurv   
+                     `lower year 10`   
                    } else if (input$survivalsum_variable_selector == "Restricted Mean") {
                      upper_rmean 
                    } else {
-                     upper_medsurv
+                     upper_median
                    },
                    group = Group, 
                    colour = Group,
@@ -632,26 +632,26 @@ server <-	function(input, output, session) {
         ggplot(aes(x = Database, 
                    y = Value,
                    ymin = if (input$survivalsum_variable_selector == "One Year Survival") {
-                     lower_1yrsurv
+                     `lower year 1`
                    } else if (input$survivalsum_variable_selector == "Five Year Survival") {
-                     lower_5yrsurv 
+                     `lower year 5`
                    } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
-                     lower_10yrsurv   
+                     `lower year 10`  
                    } else if (input$survivalsum_variable_selector == "Restricted Mean") {
                      lower_rmean 
                    } else {
-                     lower_medsurv
+                     lower_median
                    },
                    ymax = if (input$survivalsum_variable_selector == "One Year Survival") {
-                     upper_1yrsurv
+                     `upper year 1`
                    } else if (input$survivalsum_variable_selector == "Five Year Survival") {
-                     upper_5yrsurv 
+                     `upper year 5`
                    } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
-                     upper_10yrsurv   
+                     `lower year 10`   
                    } else if (input$survivalsum_variable_selector == "Restricted Mean") {
                      upper_rmean 
                    } else {
-                     upper_medsurv
+                     upper_median
                    },
                    group = Group, 
                    colour = Group,
