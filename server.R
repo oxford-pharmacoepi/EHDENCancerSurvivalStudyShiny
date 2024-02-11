@@ -249,10 +249,7 @@ server <-	function(input, output, session) {
       filter(Cancer %in% input$surv_est_cohort_name_selector) %>%
       filter(Database %in% input$surv_est_database_name_selector) %>% 
       filter(Age %in% input$surv_est_age_selector) %>% 
-    filter(Sex %in% input$surv_est_sex_selector) %>% 
-      select(-starts_with("upper_"), -starts_with("lower_")) %>% 
-      select(-c(study_period)) %>% 
-      mutate_all(~ ifelse(is.na(.), "-", .))
+    filter(Sex %in% input$surv_est_sex_selector) 
      
     
     table
