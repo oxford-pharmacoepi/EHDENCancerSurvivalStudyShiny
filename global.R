@@ -241,7 +241,6 @@ for(i in seq_along(tableone_whole_files)){
                                          show_col_types = FALSE)
 }
 tableone_whole <- bind_rows(tableone_whole) %>% 
-
 dplyr::mutate(variable_level = if_else(variable_level == "18 To 39",
                                  "18 to 39", variable_level)) %>%
 
@@ -261,7 +260,13 @@ dplyr::mutate(variable_level = if_else(variable_level == "80 To 150",
                                        "80 to 150", variable_level)) %>% 
   filter(estimate_type != "q05",
          estimate_type != "q95"
-         ) 
+         ) %>% 
+  dplyr::mutate(variable_level = if_else(variable_level == "Obesitycharybdis",
+                                         "Obesity", variable_level)) %>% 
+  dplyr::mutate(group_level = if_else(group_level == "cohort_name",
+                                         "All Cancers", group_level))  %>% 
+  dplyr::mutate(group_name = if_else(group_name == "cohort_name",
+                                      "Overall", group_name))
 
 #%>% 
   # 
