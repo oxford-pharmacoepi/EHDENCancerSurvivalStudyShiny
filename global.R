@@ -334,6 +334,9 @@ attritioncdm <- bind_rows(attritioncdm) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
   select(!c(cohort_definition_id))
 
+attritioncdm <- attritioncdm %>% 
+  dplyr::mutate(reason = replace(reason, reason == "Removing patients in registry", "Excluding patients not in tumor registry"))
+
 # filter results for just km results
 survival_km <- survival_estimates %>% 
   filter(Method == "Kaplan-Meier")
