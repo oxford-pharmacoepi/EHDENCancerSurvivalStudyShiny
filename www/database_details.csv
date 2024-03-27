@@ -11,4 +11,4 @@ GCR,Geneva Cancer Registry Data-Base,Switzerland,Cancer Registry,,From national 
 HUS,Hospital District of Helsinki and Uusimaa,Finland,Hospital,,From national death registry
 ULSM,Egas Moniz Health Alliance/Unidade Local de Saúde de Matosinhos,Portugal,,,From national and population registry
 IDIAP,The Information System for Research on Primary Care,Spain,Primary Care and hospital,,
-HUVM,Hospital Universitario Virgen Macarena,Spain,Hospital,,in house hospital deaths only?
+HUVM,Hospital Universitario Virgen Macarena,Spain,Hospital,Medical diagnosis,Deaths from cancer registry

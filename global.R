@@ -107,7 +107,9 @@ for(i in seq_along(survival_estimates_files)){
 }
 survival_estimates <- dplyr::bind_rows(survival_estimates) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
-  dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD"))
+  dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "HUS2000wtrunc", "HUS Finland")) 
+  
 
 survival_estimates_prostate <- survival_estimates %>% 
   filter(Cancer == "Prostate") %>% 
@@ -138,6 +140,7 @@ for(i in seq_along(survival_risk_table_files)){
 survival_risk_table <- dplyr::bind_rows(survival_risk_table) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "HUS2000wtrunc", "HUS Finland")) %>% 
   select(-c("Method", "Stratification", "Adjustment" )) %>% 
   relocate(Database, .before = 1)
 
@@ -172,7 +175,8 @@ for(i in seq_along(survival_median_files)){
 
 
 survival_median_table <- dplyr::bind_rows(survival_median_table) %>% 
-  dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>%
+  dplyr::mutate(Database = replace(Database, Database == "HUS2000wtrunc", "HUS Finland")) %>% 
   filter(Truncated != "Yes", Method == "Kaplan-Meier") %>% 
   relocate(Database, .before = 1) %>% 
   mutate(
@@ -241,6 +245,7 @@ for(i in seq_along(tableone_whole_files)){
                                          show_col_types = FALSE)
 }
 tableone_whole <- bind_rows(tableone_whole) %>% 
+dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "HUS2000", "HUS Finland")) %>% 
 dplyr::mutate(variable_level = if_else(variable_level == "18 To 39",
                                  "18 to 39", variable_level)) %>%
 
@@ -301,7 +306,8 @@ snapshotcdm <- bind_rows(snapshotcdm) %>%
          "vocabulary_version", "cdm_version", "cdm_description", "StudyPeriodStartDate", "earliest_observation_period_start_date" ,) %>% 
   mutate(person_count = nice.num.count(person_count), 
          observation_period_count = nice.num.count(observation_period_count)) %>% 
-  dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "CPRD_GOLD", "CPRD GOLD")) %>% 
+  dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "CPRD_GOLD", "CPRD GOLD")) %>%
+  dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "HUS2000", "HUS Finland")) %>% 
   rename("Database name" = "cdm_name",
          "Persons in the cancer cohorts" = "person_count",
          "Number of observation periods" = "observation_period_count",
@@ -317,7 +323,14 @@ snapshotcdm <- full_join(snapshotcdm, database_details, by = "Database name" ) %
 
 snapshotcdm <- snapshotcdm %>%
   mutate(`Database Description` = ifelse(`Database name` == "MAITT", 
-                                         "MAITT is a dataset specifically composed for RITA1/02-96-11 project (https://www.etis.ee/Portal/Projects/Display/7c765be1-d8a7-44e3-8789-1760ccbf00e3?lang=ENG, ethics committee approval number 268/T-12) from three national health databases in Estonia: digital prescription, claims, and EHR. It contains 10% random sample from Estonian population. For each individual in the sample, it contains all records from these three databases from 2012-2019",                                        `Database Description`))
+                                         "MAITT is a dataset specifically composed for RITA1/02-96-11 project (https://www.etis.ee/Portal/Projects/Display/7c765be1-d8a7-44e3-8789-1760ccbf00e3?lang=ENG, ethics committee approval number 268/T-12) from three national health databases in Estonia: digital prescription, claims, and EHR. It contains 10% random sample from Estonian population. For each individual in the sample, it contains all records from these three databases from 2012-2019",  `Database Description`))
+
+snapshotcdm <- snapshotcdm %>%
+  mutate(`Database Description` = ifelse(`Database name` == "HUVM", 
+                                         "Virgen Macarena University Hospital provides hospital and community care services to 480,000 people. The hospital belongs to the Andalusian Public Health System as 3erd level hospital in Seville and Huelva areas (Spain). The hospital includes 37 medical specialties provided with state of the art technology for complex and advanced healthcare treatments. Its infrastructure includes 800 beds, 25 surgical theather distributed in 7 buildings. The hospital has 6000 professionals and its budget is more than €398 Million.  The hospital currently participates in more than 435 in phase I, II and III clinical trials and produced scientific publications with 1187 impact factor points during last year. Our EHR system has been in use for more than a decade and it contains more than 10 million episodes and 1 million discharge summaries.", 
+                                         `Database Description`))
+
+
 snapshotcdm <- snapshotcdm %>%
   distinct()
 
@@ -332,6 +345,7 @@ for(i in seq_along(attrition_files)){
 attritioncdm <- bind_rows(attritioncdm) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "HUS2000", "HUS Finland")) %>% 
   select(!c(cohort_definition_id))
 
 attritioncdm <- attritioncdm %>% 
@@ -355,6 +369,7 @@ med_surv_km <- survival_median_table %>%
            Database
   )) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
+  dplyr::mutate(Database = replace(Database, Database == "HUS2000", "HUS Finland")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) 
 
 med_surv_km_sex_age <- survival_median_table %>% 
@@ -379,6 +394,7 @@ med_surv_km_sex_age <- survival_median_table %>%
             
   )) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
+  dplyr::mutate(Database = replace(Database, Database == "HUS2000", "HUS Finland")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
   pivot_longer(
     cols = c(rmean, median, `surv year 1`, `surv year 5`,`surv year 10` ),
