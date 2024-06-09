@@ -4,8 +4,6 @@ IPCI,Integrated Primary Care Information,Netherlands,Primary Care,,From primary 
 IMASIS,Institut Municipal Assistència Sanitària Information System,Spain,Hospital,,Deaths from cancer registry
 CRN,Cancer Registry of Norway,Norway,Cancer Registry,,From national and population registry
 NCR,Netherlands Cancer Registry,Netherlands,Cancer Registry,,From national death registry
-VARHA FINLAND,Auria Clinical Informatics at Turku University Hospital,Finland,Hospital,,From national death registry for every resident in Southwest Finland. Irregular update for the 5-10% of residents outside Southwest Finland.
-MAITT,Estonian Biobank,Estonia,Population biobank,,67% of deaths recorded not linked to death registry
 ECI,South East Scotland Cancer Database,Scotland,Cancer Registry,,From national death registry
 GCR,Geneva Cancer Registry Data-Base,Switzerland,Cancer Registry,,From national and population registry
 HUS Finland,Hospital District of Helsinki and Uusimaa,Finland,Hospital,,From national death registry
