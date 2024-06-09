@@ -160,7 +160,9 @@ survival_risk_table_prostate <- survival_risk_table %>%
 survival_risk_table <- bind_rows(survival_risk_table,
                                  survival_risk_table_ECI,
                                 survival_risk_table_prostate) %>% 
-  mutate_all(~ ifelse(is.na(.), "-", .))
+  mutate_all(~ ifelse(is.na(.), "-", .)) %>%
+  filter(!(Database == "UTARTU" & !Cancer %in% c("Breast", "Prostate", "Lung")))
+
 rm(survival_risk_table_prostate)
 
 
@@ -237,7 +239,9 @@ survival_median_table_prostate <- survival_median_table %>%
   mutate(Sex = "Both")
 
 survival_median_table <- bind_rows(survival_median_table,
-                                   survival_median_table_prostate)
+                                   survival_median_table_prostate) %>%
+  filter(!(Database == "UTARTU" & !Cancer %in% c("Breast", "Prostate", "Lung")))
+
 rm(survival_median_table_prostate)
 
 
@@ -276,24 +280,8 @@ dplyr::mutate(variable_level = if_else(variable_level == "80 To 150",
   dplyr::mutate(group_level = if_else(group_level == "cohort_name",
                                          "All Cancers", group_level))  %>% 
   dplyr::mutate(group_name = if_else(group_name == "cohort_name",
-                                      "Overall", group_name))
-
-#%>% 
-  # 
-  # dplyr::mutate(variable = if_else(variable == "Analysis flag from 0 to 0",
-  #                                        "Outcome flag 0 to 0", variable)) %>%
-  # 
-  # dplyr::mutate(variable_level = if_else(variable == "Visits count -365 to 0 days",
-  #                                  "Visit occurrence", variable_level)) %>%
-  # 
-  # 
-  # filter(estimate_type != "q05",
-  #        estimate_type != "q95",
-  #        estimate_type != "q25",
-  #        estimate_type != "q75"
-  #        ) %>%
-  # dplyr::mutate(variable_level = if_else(variable_level == "Obesitycharybdis",
-  #                                        "Obesity", variable_level))
+                                      "Overall", group_name)) %>%
+  filter(!(cdm_name == "UTARTU" & !group_level %in% c("Breast", "Prostate", "Lung")))
 
 
 # cdm snapshot ------
@@ -358,7 +346,8 @@ attritioncdm <- attritioncdm %>%
 
 # only keep results for ECI breast
 attritioncdm <- attritioncdm %>% 
-  dplyr::filter(!(Database == "ECI" & Cancer != "Breast"))
+  dplyr::filter(!(Database == "ECI" & Cancer != "Breast")) %>%
+  filter(!(Database == "UTARTU" & !Cancer %in% c("Breast", "Prostate", "Lung")))
        
 # filter results for just km results
 survival_km <- survival_estimates %>% 
