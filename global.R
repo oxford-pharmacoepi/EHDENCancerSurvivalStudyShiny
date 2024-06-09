@@ -351,6 +351,10 @@ attritioncdm <- bind_rows(attritioncdm) %>%
 attritioncdm <- attritioncdm %>% 
   dplyr::mutate(reason = replace(reason, reason == "Removing patients in registry", "Excluding patients not in tumor registry"))
 
+# only keep results for ECI breast
+attritioncdm <- attritioncdm %>% 
+  dplyr::filter(!(Database == "ECI" & Cancer != "Breast"))
+       
 # filter results for just km results
 survival_km <- survival_estimates %>% 
   filter(Method == "Kaplan-Meier")
