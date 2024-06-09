@@ -125,9 +125,9 @@ survival_estimates <- bind_rows(survival_estimates,
 rm(survival_estimates_prostate,
    survival_estimates_ECI)
 
-# # only include breast, prostate and lung for tartu
+# # # only include breast, prostate and lung for tartu
 survival_estimates <- survival_estimates %>%
-  filter(!(Database == "UTARTU" & !(Cancer %in% c("breast", "prostate", "lung"))))
+  filter(!(Database == "UTARTU" & !Cancer %in% c("Breast", "Prostate", "Lung")))
 
 
 # risk tables ----------
