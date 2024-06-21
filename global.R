@@ -23,6 +23,10 @@ library(PatientProfiles)
 library(DiagrammeR)
 library(DiagrammeRsvg)
 library(rsvg)
+library(CDMConnector)
+library(CirceR)
+library(rjson)
+library(rclipboard)
 
 mytheme <- create_theme(
   adminlte_color(
@@ -47,6 +51,16 @@ mytheme <- create_theme(
     
   )
 )
+
+# format markdown
+formatMarkdown <- function(x) {
+  lines <- strsplit(x, "\r\n\r\n") |> unlist()
+  getFormat <- function(line) {
+    if (grepl("###", line)) {return(h3(gsub("###", "", line)))} 
+    else {h4(line)} 
+  }
+  purrr::map(lines, ~ getFormat(.))
+}
 
 # printing numbers with 1 decimal place and commas 
 nice.num<-function(x) {
@@ -94,7 +108,70 @@ results <- list.files(
 database_details <- read_csv(here::here("www", "database_details.csv"), show_col_types = FALSE)
 
 # clinical code lists
-concepts_lists <- read_csv(here::here("www", "concept_list.csv"), show_col_types = FALSE)
+cohort_set <- CDMConnector::read_cohort_set(here::here(
+  "www", "cohorts" ))
+
+cohort_set$markdown <- ""
+
+for (n in  row_number(cohort_set) ) {
+  
+  cohort <- cohort_set$cohort_name[n]  
+  json <- paste0(cohort_set$json[n]  )
+  cohortExpresion <- CirceR::cohortExpressionFromJson(json)
+  markdown <- CirceR::cohortPrintFriendly(cohortExpresion)
+  cohort_set$markdown[n] <-  markdown
+  
+} 
+
+
+# Get concept ids from a provided path to cohort json files
+# in dataframe
+# Get a list of JSON files in the directory
+json_files <- list.files(path = here("www", "cohorts"), pattern = "\\.json$", full.names = TRUE)
+concept_lists_temp <- list()
+concept_lists <- list()
+concept_sets <- list()
+
+if(length(json_files > 0)){
+  
+  for(i in seq_along(json_files)){
+    concept_lists_temp[[i]] <- fromJSON(file = json_files[[i]]) 
+    
+  } 
+  
+  for(i in 1:length(concept_lists_temp)){
+    
+    for(k in 1:length(concept_lists_temp[[i]]$ConceptSets[[1]]$expression$items)){  
+      
+      concept_sets[[k]] <- bind_rows(concept_lists_temp[[i]]$ConceptSets[[1]]$expression$items[[k]]$concept)  
+      
+    }
+    
+    concept_lists[[i]] <- bind_rows(concept_sets) %>% 
+      mutate(name = concept_lists_temp[[i]]$ConceptSets[[1]]$name)
+    
+    
+  }
+  
+  
+  concept_sets_final <- bind_rows(concept_lists) %>% 
+    mutate(name = case_when(
+      name == "Breast" ~ "incidentbreastcancer",
+      name == "Colorectal" ~    "incidentcolorectalcancer" ,
+      name == "Head_and_neck" ~  "incidentheadneckcancer"  ,
+      name == "Liver" ~   "incidentlivercancer"  ,
+      name == "Lung" ~  "incidentlungcancer"    ,
+      name == "Pancreatic" ~  "incidentpancreaticcancer" ,
+      name == "Prostate" ~  "incidentprostatecancer" ,
+      name == "Stomach" ~  "incidentstomachcancer" ,
+      
+      
+      
+      TRUE ~ name
+    ))
+  
+}
+
 
 # survival estimates
 survival_estimates_files <- results[stringr::str_detect(results, ".csv")]

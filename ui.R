@@ -78,7 +78,20 @@ ui <- dashboardPage(
       
       # Logo 
       tags$div(
-        style = "position: relative; margin-top: -10px; text-align: center; margin-bottom: 0;",
+        style = "position: relative; margin-top: 20px; text-align: center; margin-bottom: 0;",
+        a(img(
+          src = "Logo_HDS.png",  # Replace with the correct file name and extension
+          height = "150px",  # Adjust the height as needed
+          width = "auto"     # Let the width adjust proportionally
+        ),
+        href = "https://www.ndorms.ox.ac.uk/research/research-groups/Musculoskeletal-Pharmacoepidemiology",
+        target = "_blank"
+        )
+      ) ,
+      
+      # Logo 
+      tags$div(
+        style = "position: relative; margin-top: -20px; text-align: center; margin-bottom: 0;",
         a(img(
           src = "logoOxford.png",  # Replace with the correct file name and extension
           height = "150px",  # Adjust the height as needed
@@ -88,6 +101,8 @@ ui <- dashboardPage(
         target = "_blank"
         )
       )
+      
+      
     )
   ),
   
@@ -389,61 +404,49 @@ ui <- dashboardPage(
       ),
       
       
+      # cohort definition ------
       tabItem(
-        tags$h5("Description of database details used in study are presented below:"),
-        tabName = "database_details",
-        htmlOutput('tbl_database_details'),
-        tags$hr(),
-        div(
-          style = "display:inline-block",
-          downloadButton(
-            outputId = "gt_database_details_word",
-            label = "Download table as word"
-          ),
-          style = "display:inline-block; float:right"
-        )
-      ) ,
-      
-      tabItem(
-        tags$h5("The clinical codelists for each cancer used in this study are presented below:"),
         tabName = "cohort_concepts",
-        div(
-          style = "display: inline-block;vertical-align:top; width: 150px;",
-          pickerInput(
-            inputId = "codelist_cohort_selector",
-            label = "Cancer",
-            choices = unique(concepts_lists$Cancer),
-            selected = "Breast",
-            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
-            multiple = TRUE
-          )
+        
+        pickerInput(
+          inputId = "cohort_set_input",
+          label = "Cohort Set",
+          choices = unique(cohort_set$cohort_name),
+          selected = unique(cohort_set$cohort_name)[1],
+          options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
+          multiple = FALSE
         ),
-        
-        div(
-          style = "display: inline-block;vertical-align:top; width: 150px;",
-          pickerInput(
-            inputId = "codelist_vocab_selector",
-            label = "Vocabulary",
-            choices = unique(concepts_lists$Vocabulary),
-            selected = unique(concepts_lists$Vocabulary),
-            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
-            multiple = TRUE
-          )
-        ),
-        
-        htmlOutput('tbl_codelists'),
-        
-        tags$hr(),
-        
-        div(
-          style = "display:inline-block",
-          downloadButton(
-            outputId = "gt_codelists_word",
-            label = "Download table as word"
+        tabsetPanel(
+          type = "tabs",
+          tabPanel(
+            "Cohort definition",
+            uiOutput("markdown")
           ),
-          style = "display:inline-block; float:right"
+          tabPanel(
+            "JSON",
+            h4(),
+            rclipboardSetup(),
+            uiOutput("clip"),
+            verbatimTextOutput("verb"),
+          ) ,
+          tabPanel(
+            "Concept sets",
+            
+            
+            htmlOutput('tbl_concept_sets'),
+            
+            div(style="display:inline-block",
+                downloadButton(
+                  outputId = "dt_concept_sets_word",
+                  label = "Download table as word"
+                ), 
+                style="display:inline-block; float:right")
+            
+          ),
+          
         )
-      ) , 
+
+      ),
       
       tabItem(
         tags$h5("The cohort attrition showing how the final study populations were obtained are presented below:"),
