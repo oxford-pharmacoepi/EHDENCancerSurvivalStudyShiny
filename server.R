@@ -516,11 +516,14 @@ server <-	function(input, output, session) {
                    colour = Group,
                    fill = Group)) +
         geom_errorbar(position = position_dodge(width = 0.6), width = 0, aes(color = Group), size = 1) +
-        geom_point(position = position_dodge(width = 0.6), size = 2, shape = 21, stroke = 0.75, color = "black") +
+        geom_point(position = position_dodge(width = 0.6), size = 3, shape = 21, stroke = 0.75, color = "black") +
         xlab("Database") +
         ylab(input$survivalsum_variable_selector) +
-        facet_wrap(vars(facet_var), ncol = 2, scales = "free_y") +
-        theme_bw(base_size = 20)
+        # facet_wrap(vars(facet_var), ncol = 2, scales = "free_x") +
+        # theme_bw(base_size = 20) +
+        # coord_flip()
+      facet_wrap(vars(facet_var), ncol = 2, scales = "free_y") +
+        theme_bw(base_size = 20) 
       
     } else if (!is.null(input$survsum_plot_group) && is.null(input$survsum_plot_facet)) {
       plot <- plot_data %>%

@@ -698,13 +698,13 @@ ui <- dashboardPage(
           div("Height:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
           div(
             style = "display: inline-block;",
-            textInput("survival_download_height", "", 10, width = "50px")
+            textInput("survival_download_height", "", 30, width = "50px")
           ),
           div("cm", style = "display: inline-block; margin-right: 25px;"),
           div("Width:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
           div(
             style = "display: inline-block;",
-            textInput("survival_download_width", "", 20, width = "50px")
+            textInput("survival_download_width", "", 35, width = "50px")
           ),
           div("cm", style = "display: inline-block; margin-right: 25px;"),
           div("dpi:", style = "display: inline-block; font-weight: bold; margin-right: 5px;"),
