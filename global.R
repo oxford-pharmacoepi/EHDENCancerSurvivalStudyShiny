@@ -107,9 +107,21 @@ for(i in seq_along(survival_estimates_files)){
 }
 survival_estimates <- dplyr::bind_rows(survival_estimates) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
-  dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
-  dplyr::mutate(Database = replace(Database, Database == "HUS2000wtrunc", "HUS Finland")) 
-  
+  dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD (UK)")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "CRN", "CRN (Norway)")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "ECI", "ECI (Scotland)")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "GCR", "GCR (Switzerland)")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "HUVM", "HUVM (Spain)")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "IMASIS", "IMASIS (Spain)")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "IPCI", "IPCI (Netherlands)")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "NCR", "NCR (Netherlands)")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "SIDIAP", "SIDIAP (Spain)")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "ULSM", "ULSM (Portugal)")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "ULSGE", "ULSGE (Portugal)")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "ULSEDV", "ULSEDV (Portugal)")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "ULSRA", "ULSRA (Portugal)")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "UTARTU", "UTARTU (Estonia)")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "HUS2000wtrunc", "HUS (Finland)")) 
 
 survival_estimates_prostate <- survival_estimates %>% 
   filter(Cancer == "Prostate") %>% 
@@ -147,7 +159,8 @@ survival_risk_table <- dplyr::bind_rows(survival_risk_table) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "HUS2000wtrunc", "HUS Finland")) %>% 
   select(-c("Method", "Stratification", "Adjustment" )) %>% 
-  relocate(Database, .before = 1)
+  relocate(Database, .before = 1) %>% 
+  filter(details != "n.censor")
 
 survival_risk_table_ECI <- survival_risk_table %>% 
   filter(Database == "ECI") %>% 
@@ -273,15 +286,41 @@ dplyr::mutate(variable_level = if_else(variable_level == "70 To 79",
 dplyr::mutate(variable_level = if_else(variable_level == "80 To 150",
                                        "80 to 150", variable_level)) %>% 
   filter(estimate_type != "q05",
-         estimate_type != "q95"
+         estimate_type != "q95",
+         estimate_type != "mean",
+         estimate_type != "sd"
          ) %>% 
   dplyr::mutate(variable_level = if_else(variable_level == "Obesitycharybdis",
                                          "Obesity", variable_level)) %>% 
-  dplyr::mutate(group_level = if_else(group_level == "cohort_name",
-                                         "All Cancers", group_level))  %>% 
+  dplyr::mutate(variable = if_else(variable == "age",
+                                         "Age", variable))  %>%
+  dplyr::mutate(variable = if_else(variable == "age_gr",
+                                   "Age group", variable))  %>%
+  dplyr::mutate(variable = if_else(variable == "cohort_end_date",
+                                   "Cohort end date", variable))  %>%
+  dplyr::mutate(variable = if_else(variable == "cohort_start_date",
+                                   "Cohort start date", variable))  %>%
+  
+  dplyr::mutate(variable = if_else(variable == "future_observation",
+                                   "Future observation", variable))  %>%
+  dplyr::mutate(variable = if_else(variable == "number records",
+                                   "Number records", variable))  %>%
+  dplyr::mutate(variable = if_else(variable == "number subjects",
+                                   "Number subjects", variable))  %>%
+  dplyr::mutate(variable = if_else(variable == "sex",
+                                   "Sex", variable))  %>%
+  
+  dplyr::mutate(variable = if_else(variable == "Outcome flag from 0 to 0",
+                                   "outcome", variable))  %>%
+  
+  dplyr::mutate(group_level = if_else(group_level == "Overall",
+                                         "cohort_name", group_level))  %>%
   dplyr::mutate(group_name = if_else(group_name == "cohort_name",
                                       "Overall", group_name)) %>%
-  filter(!(cdm_name == "UTARTU" & !group_level %in% c("Breast", "Prostate", "Lung")))
+  filter(!(variable == "Sex" & variable_level == "None")) %>% 
+  filter(!(cdm_name == "UTARTU" & !group_level %in% c("Breast", "Prostate", "Lung"))) %>% 
+  mutate_all(~ str_replace_all(., "Head_and_neck", "Head and neck")) 
+  
 
 
 # cdm snapshot ------

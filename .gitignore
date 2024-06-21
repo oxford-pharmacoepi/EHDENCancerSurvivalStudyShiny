@@ -7,3 +7,4 @@ rsconnect*
 data/*.csv
 data/*.zip
 data/*.txt
+/data

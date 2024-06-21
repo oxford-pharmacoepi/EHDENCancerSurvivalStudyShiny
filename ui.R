@@ -163,6 +163,9 @@ ui <- dashboardPage(
       tabItem(
         tabName = "demographics",
         tags$h5("The patient characteristics for the study populations are presented below:"),
+        
+
+        
         div(
           style = "display: inline-block;vertical-align:top; width: 150px;",
           pickerInput(
@@ -180,7 +183,7 @@ ui <- dashboardPage(
             inputId = "demographics_cohort_selector",
             label = "Cancer",
             choices = unique(tableone_whole$group_level),
-            selected = unique(tableone_whole$group_level)[9],
+            selected = "cohort_name",
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
             multiple = TRUE
           )
@@ -197,6 +200,12 @@ ui <- dashboardPage(
             multiple = TRUE
           )
         ),
+        
+        div(
+          style = "width: 80vh; height: 5vh;",  # Set width to 100% for responsive design
+          checkboxInput("show_cond_meds", "Include Comorbidities & Medications", value = FALSE)
+        ),
+
         
         # tags$hr(),
         gt_output("gt_patient_characteristics") %>% 
@@ -220,8 +229,8 @@ ui <- dashboardPage(
           pickerInput(
             inputId = "surv_est_database_name_selector",
             label = "Database",
-            choices = unique(survival_km$Database),
-            selected = unique(survival_km$Database),
+            choices = unique(med_surv_km_sex_age$Database),
+            selected = unique(med_surv_km_sex_age$Database),
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
             multiple = TRUE
           )
@@ -379,67 +388,6 @@ ui <- dashboardPage(
         
       ),
       
-      
-      tabItem(
-        tabName = "tableone",
-        tags$h5("The patient characteristics for the study populations are presented below:"),
-        div(
-          style = "display: inline-block;vertical-align:top; width: 150px;",
-          pickerInput(
-            inputId = "tableone_database_name_selector",
-            label = "Database",
-            choices = unique(tableone_whole$cdm_name),
-            selected = unique(tableone_whole$cdm_name),
-            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
-            multiple = TRUE
-          )
-        ),
-        div(
-          style = "display: inline-block;vertical-align:top; width: 150px;",
-          pickerInput(
-            inputId = "tableone_cohort_name_selector",
-            label = "Cancer",
-            choices = unique(tableone_whole$group_level),
-            selected = "Breast",
-            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
-            multiple = FALSE
-          )
-        ),
-        
-        div(
-          style = "display: inline-block;vertical-align:top; width: 150px;",
-          pickerInput(
-            inputId = "tableone_sex_selector",
-            label = "Sex",
-            choices = c("Both", "Female", "Male") ,
-            selected = "Both",
-            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
-            multiple = FALSE
-          )
-        ),
-        
-        div(
-          style = "display: inline-block;vertical-align:top; width: 150px;",
-          pickerInput(
-            inputId = "tableone_age_selector",
-            label = "Age",
-            choices = unique(survival_km$Age),
-            selected = "All",
-            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
-            multiple = FALSE
-          )
-        ),
-        
-        htmlOutput('dt_tableone'),
-        
-        div(style="display:inline-block",
-            downloadButton(
-              outputId = "gt_tableone_word",
-              label = "Download table as word"
-            ), 
-            style="display:inline-block; float:right")
-        
-      ),
       
       tabItem(
         tags$h5("Description of database details used in study are presented below:"),
@@ -737,7 +685,7 @@ ui <- dashboardPage(
         ),
         div(
           style = "width: 80vh; height: 5vh;",  # Set width to 100% for responsive design
-          checkboxInput("show_ci", "Show Confidence Intervals", value = TRUE)
+          checkboxInput("show_ci", "Show Confidence Intervals", value = FALSE)
         ),
         
         div(
