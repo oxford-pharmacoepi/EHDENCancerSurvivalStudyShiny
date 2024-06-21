@@ -395,7 +395,7 @@ dplyr::mutate(variable_level = if_else(variable_level == "80 To 150",
   dplyr::mutate(group_name = if_else(group_name == "cohort_name",
                                       "Overall", group_name)) %>%
   filter(!(variable == "Sex" & variable_level == "None")) %>% 
-  filter(!(cdm_name == "UTARTU" & !group_level %in% c("Breast", "Prostate", "Lung"))) %>% 
+  #filter(!(cdm_name == "UTARTU" & !group_level %in% c("Breast", "Prostate", "Lung"))) %>% 
   mutate_all(~ str_replace_all(., "Head_and_neck", "Head and neck")) 
   
 
