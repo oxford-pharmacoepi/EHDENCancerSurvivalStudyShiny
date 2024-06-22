@@ -362,19 +362,18 @@ dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "HUS2000", "HUS Finland")
                                    "Number records", variable))  %>%
   dplyr::mutate(variable = if_else(variable == "number subjects",
                                    "Number subjects", variable))  %>%
-  dplyr::mutate(variable = if_else(variable_level == "18 To 39",
+  dplyr::mutate(variable_level = if_else(variable_level == "18 To 39",
                                    "18 to 39", variable_level))  %>%
-  dplyr::mutate(variable = if_else(variable_level == "40 To 49",
+  dplyr::mutate(variable_level = if_else(variable_level == "40 To 49",
                                    "40 to 49", variable_level))  %>%
-  dplyr::mutate(variable = if_else(variable_level == "50 To 59",
+  dplyr::mutate(variable_level = if_else(variable_level == "50 To 59",
                                    "50 to 59", variable_level))  %>%
-  dplyr::mutate(variable = if_else(variable_level == "60 To 69",
+  dplyr::mutate(variable_level = if_else(variable_level == "60 To 69",
                                    "60 to 69", variable_level))  %>%
-  dplyr::mutate(variable = if_else(variable_level == "70 To 79",
+  dplyr::mutate(variable_level = if_else(variable_level == "70 To 79",
                                    "70 to 79", variable_level))  %>%
-  dplyr::mutate(variable = if_else(variable_level == "sex",
-                                   "Sex", variable_level))  %>%
-  
+  dplyr::mutate(variable = if_else(variable == "sex",
+                                   "Sex", variable))  %>%
   dplyr::mutate(variable = if_else(variable == "Outcome flag from 0 to 0",
                                    "outcome", variable))  %>%
   dplyr::mutate(group_level = if_else(group_level == "Overall",
