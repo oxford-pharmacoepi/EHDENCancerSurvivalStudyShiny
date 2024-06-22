@@ -558,7 +558,7 @@ ui <- dashboardPage(
                           `actions-box` = TRUE,
                           size = 10,
                           `selected-text-format` = "count > 3"),
-                        multiple = FALSE)
+                        multiple = TRUE)
         ),
         div(style="display: inline-block;vertical-align:top; width: 150px;",
             pickerInput(inputId = "survsum_plot_group",
@@ -567,17 +567,13 @@ ui <- dashboardPage(
                                     "Age",
                                     "Cancer",
                                     "Database"),
-                        selected = c("Sex"),
+                        selected = c("Cancer"),
                         options = list(
                           `actions-box` = TRUE,
                           size = 10,
                           `selected-text-format` = "count > 3"),
-                        multiple = FALSE)
+                        multiple = TRUE)
         ),
-        # div(
-        #   style = "width: 80vh; height: 5vh;",  # Set width to 100% for responsive design
-        #   checkboxInput("show_ci", "Show Confidence Intervals", value = TRUE)
-        # ),
         
         div(
           style = "width: 80%; height: 90%;",  # Set width to 100% for responsive design
