@@ -164,14 +164,14 @@ if(length(json_files > 0)){
       name == "Pancreatic" ~  "incidentpancreaticcancer" ,
       name == "Prostate" ~  "incidentprostatecancer" ,
       name == "Stomach" ~  "incidentstomachcancer" ,
-      
-      
-      
       TRUE ~ name
     ))
   
 }
 
+rm(concept_lists)
+rm(concept_lists_temp)
+rm(concept_sets)
 
 # survival estimates
 survival_estimates_files <- results[stringr::str_detect(results, ".csv")]
@@ -214,11 +214,6 @@ survival_estimates <- bind_rows(survival_estimates,
 rm(survival_estimates_prostate,
    survival_estimates_ECI)
 
-# # # only include breast, prostate and lung for tartu
-survival_estimates <- survival_estimates %>%
-  filter(!(Database == "UTARTU" & !Cancer %in% c("Breast", "Prostate", "Lung")))
-
-
 # risk tables ----------
 survival_risk_table_files <- results[stringr::str_detect(results, ".csv")]
 survival_risk_table_files <- results[stringr::str_detect(results, "risk_table")]
@@ -250,10 +245,11 @@ survival_risk_table_prostate <- survival_risk_table %>%
 survival_risk_table <- bind_rows(survival_risk_table,
                                  survival_risk_table_ECI,
                                 survival_risk_table_prostate) %>% 
-  mutate_all(~ ifelse(is.na(.), "-", .)) %>%
-  filter(!(Database == "UTARTU" & !Cancer %in% c("Breast", "Prostate", "Lung")))
+  mutate_all(~ ifelse(is.na(.), "-", .)) 
 
-rm(survival_risk_table_prostate)
+rm(survival_risk_table_prostate,
+   survival_risk_table_ECI
+   )
 
 
 # median and survival probabilities ------
@@ -329,8 +325,7 @@ survival_median_table_prostate <- survival_median_table %>%
   mutate(Sex = "Both")
 
 survival_median_table <- bind_rows(survival_median_table,
-                                   survival_median_table_prostate) %>%
-  filter(!(Database == "UTARTU" & !Cancer %in% c("Breast", "Prostate", "Lung")))
+                                   survival_median_table_prostate) 
 
 rm(survival_median_table_prostate)
 
@@ -345,27 +340,9 @@ for(i in seq_along(tableone_whole_files)){
 }
 tableone_whole <- bind_rows(tableone_whole) %>% 
 dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "HUS2000", "HUS Finland")) %>% 
-dplyr::mutate(variable_level = if_else(variable_level == "18 To 39",
-                                 "18 to 39", variable_level)) %>%
-
-dplyr::mutate(variable_level = if_else(variable_level == "40 To 49",
-                                       "40 to 49", variable_level)) %>%
-
-dplyr::mutate(variable_level = if_else(variable_level == "50 To 59",
-                                       "50 to 59", variable_level)) %>%
-
-dplyr::mutate(variable_level = if_else(variable_level == "60 To 69",
-                                       "60 to 69", variable_level)) %>%
-
-dplyr::mutate(variable_level = if_else(variable_level == "70 To 79",
-                                       "70 to 79", variable_level)) %>%
-
-dplyr::mutate(variable_level = if_else(variable_level == "80 To 150",
-                                       "80 to 150", variable_level)) %>% 
+  dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "CPRD_GOLD", "CPRD GOLD")) %>% 
   filter(estimate_type != "q05",
          estimate_type != "q95",
-         estimate_type != "q25",
-         estimate_type != "q75",
          estimate_type != "mean",
          estimate_type != "sd"
          ) %>% 
@@ -379,19 +356,27 @@ dplyr::mutate(variable_level = if_else(variable_level == "80 To 150",
                                    "Cohort end date", variable))  %>%
   dplyr::mutate(variable = if_else(variable == "cohort_start_date",
                                    "Cohort start date", variable))  %>%
-  
   dplyr::mutate(variable = if_else(variable == "future_observation",
                                    "Future observation", variable))  %>%
   dplyr::mutate(variable = if_else(variable == "number records",
                                    "Number records", variable))  %>%
   dplyr::mutate(variable = if_else(variable == "number subjects",
                                    "Number subjects", variable))  %>%
-  dplyr::mutate(variable = if_else(variable == "sex",
-                                   "Sex", variable))  %>%
+  dplyr::mutate(variable = if_else(variable_level == "18 To 39",
+                                   "18 to 39", variable_level))  %>%
+  dplyr::mutate(variable = if_else(variable_level == "40 To 49",
+                                   "40 to 49", variable_level))  %>%
+  dplyr::mutate(variable = if_else(variable_level == "50 To 59",
+                                   "50 to 59", variable_level))  %>%
+  dplyr::mutate(variable = if_else(variable_level == "60 To 69",
+                                   "60 to 69", variable_level))  %>%
+  dplyr::mutate(variable = if_else(variable_level == "70 To 79",
+                                   "70 to 79", variable_level))  %>%
+  dplyr::mutate(variable = if_else(variable_level == "sex",
+                                   "Sex", variable_level))  %>%
   
   dplyr::mutate(variable = if_else(variable == "Outcome flag from 0 to 0",
                                    "outcome", variable))  %>%
-  
   dplyr::mutate(group_level = if_else(group_level == "Overall",
                                          "cohort_name", group_level))  %>%
   dplyr::mutate(group_name = if_else(group_name == "cohort_name",
@@ -399,8 +384,6 @@ dplyr::mutate(variable_level = if_else(variable_level == "80 To 150",
   filter(!(variable == "Sex" & variable_level == "None")) %>% 
   mutate_all(~ str_replace_all(., "Head_and_neck", "Head and neck")) 
   
-
-
 # cdm snapshot ------
 snapshot_files <- results[stringr::str_detect(results, ".csv")]
 snapshot_files <- results[stringr::str_detect(results, "cdm_snapshot")]
@@ -432,14 +415,9 @@ snapshotcdm <- full_join(snapshotcdm, database_details, by = "Database name" ) %
   relocate("Full name", .after = `Database name`)
 
 snapshotcdm <- snapshotcdm %>%
-  mutate(`Database Description` = ifelse(`Database name` == "MAITT", 
-                                         "MAITT is a dataset specifically composed for RITA1/02-96-11 project (https://www.etis.ee/Portal/Projects/Display/7c765be1-d8a7-44e3-8789-1760ccbf00e3?lang=ENG, ethics committee approval number 268/T-12) from three national health databases in Estonia: digital prescription, claims, and EHR. It contains 10% random sample from Estonian population. For each individual in the sample, it contains all records from these three databases from 2012-2019",  `Database Description`))
-
-snapshotcdm <- snapshotcdm %>%
   mutate(`Database Description` = ifelse(`Database name` == "HUVM", 
                                          "Virgen Macarena University Hospital provides hospital and community care services to 480,000 people. The hospital belongs to the Andalusian Public Health System as 3erd level hospital in Seville and Huelva areas (Spain). The hospital includes 37 medical specialties provided with state of the art technology for complex and advanced healthcare treatments. Its infrastructure includes 800 beds, 25 surgical theather distributed in 7 buildings. The hospital has 6000 professionals and its budget is more than €398 Million.  The hospital currently participates in more than 435 in phase I, II and III clinical trials and produced scientific publications with 1187 impact factor points during last year. Our EHR system has been in use for more than a decade and it contains more than 10 million episodes and 1 million discharge summaries.", 
                                          `Database Description`))
-
 
 snapshotcdm <- snapshotcdm %>%
   distinct()
@@ -455,16 +433,12 @@ for(i in seq_along(attrition_files)){
 attritioncdm <- bind_rows(attritioncdm) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
-  dplyr::mutate(Database = replace(Database, Database == "HUS2000", "HUS Finland")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "HUS2000", "HUS")) %>% 
   select(!c(cohort_definition_id))
-
-attritioncdm <- attritioncdm %>% 
-  dplyr::mutate(reason = replace(reason, reason == "Removing patients in registry", "Excluding patients not in tumor registry"))
 
 # only keep results for ECI breast
 attritioncdm <- attritioncdm %>% 
-  dplyr::filter(!(Database == "ECI" & Cancer != "Breast")) %>%
-  filter(!(Database == "UTARTU" & !Cancer %in% c("Breast", "Prostate", "Lung")))
+  dplyr::filter(!(Database == "ECI" & Cancer != "Breast"))
        
 # filter results for just km results
 survival_km <- survival_estimates %>% 
