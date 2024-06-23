@@ -287,21 +287,59 @@ server <-	function(input, output, session) {
     
   })
   
-  output$dt_surv_est <- renderText(kable(get_surv_est()) %>%
-                                      kable_styling("striped", full_width = F) )
+  # output$dt_surv_est <- renderText(kable(get_surv_est()) %>%
+  #                                     kable_styling("striped", full_width = F) )
+  
+  output$dt_surv_est <- renderDT({
+    datatable(get_surv_est(), options = list(pageLength = 100000, order = list(list(0, 'asc'))))
+  })
+
   
   
+
+  
+  # Capture the table's current state
+  table_proxy <- dataTableProxy('dt_surv_est')
+  
+  # Function to get the sorted and filtered data
+  get_table_state <- reactive({
+    req(input$dt_surv_est_rows_all)
+    get_surv_est()[input$dt_surv_est_rows_all, ]
+  })
+  
+  # Download Handler for the Word Document
   output$gt_surv_est_word <- downloadHandler(
     filename = function() {
       "survival_estimates.docx"
     },
     content = function(file) {
-      x <- gt(get_surv_est())
+      x <- get_table_state() %>% select(Database, everything(), -Sex, -Age, - 'Mean Survival (SE)') %>% gt()
       gtsave(x, file)
     }
-  )  
+  )
   
+#   output$gt_surv_est_word <- downloadHandler(
+#     filename = function() {
+#       "survival_estimates.docx"
+#     },
+#     content = function(file) {
+#       # Remove the 'Sex' and 'Age' columns
+#       x <- get_table_state() %>% select(-Sex, -Age) %>% gt()
+#       gtsave(x, file)
+#     }
+#   )
+# }
+
   
+  # output$gt_surv_est_word <- downloadHandler(
+  #   filename = function() {
+  #     "survival_estimates.docx"
+  #   },
+  #   content = function(file) {
+  #     x <- gt(get_surv_est())
+  #     gtsave(x, file)
+  #   }
+  # )  
   
   # surv risk table --------
   get_risk_table <- reactive({
