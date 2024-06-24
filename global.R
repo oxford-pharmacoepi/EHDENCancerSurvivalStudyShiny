@@ -633,12 +633,6 @@ calculate_age_standardized_survival <- function(data, standard_population) {
   return(data)
 }
 
-# Example usage:
-# test <- survival_median_table %>%
-#   filter(Sex == "Both" & Cancer == "Breast" & Database == "CPRD GOLD" & Age != "All") %>%
-#   calculate_age_standardized_survival(standard_population = ICSS_1) %>% 
-#   filter(Age == "Age Standardized") 
-
 
 results_database <- list()
 results_cancer <- list()
@@ -674,7 +668,6 @@ for(db in 1:length(table(survival_median_table$Database ))){
   print(names(table(survival_median_table$Database))[db])
   
 }
-
 
 final_results_age_std <- bind_rows(results_database)
 

@@ -321,7 +321,8 @@ server <-	function(input, output, session) {
       }
       
       # Conditionally remove the 'Age' column if 'All' is selected
-      if (input$survival_age_selector == "All") {
+      if (input$survival_age_selector == "All" |
+          input$survival_age_selector == "Age Standardized" ) {
         data <- data %>% select(-Age)
       }
 
