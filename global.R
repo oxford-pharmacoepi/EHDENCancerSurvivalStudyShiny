@@ -494,8 +494,8 @@ calculate_age_standardized_survival <- function(data, standard_population) {
            age_standard_upper_10year = (`upper year 10`) * ICSS,
            
            age_standard_median = median * ICSS,
-           age_standard_lower_median = (lower_median) * ICSS,
-           age_standard_upper_median = (upper_median) * ICSS,
+           age_standard_lower_median = lower_median * ICSS,
+           age_standard_upper_median = upper_median * ICSS,
            
            age_standard_rmean = rmean * ICSS,
            age_standard_se = se * ICSS,
@@ -656,7 +656,7 @@ for(db in 1:length(table(survival_median_table$Database ))){
       calculate_age_standardized_survival(standard_population = ICSS_1) %>%
       filter(Age == "Age Standardized")
     
-    print(names(table(survival_median_table_temp$Cancer ))[cancer])
+    #print(names(table(survival_median_table_temp$Cancer ))[cancer])
     
     
   }
@@ -665,7 +665,7 @@ for(db in 1:length(table(survival_median_table$Database ))){
   
   results_cancer <- list()
   
-  print(names(table(survival_median_table$Database))[db])
+  #print(names(table(survival_median_table$Database))[db])
   
 }
 
