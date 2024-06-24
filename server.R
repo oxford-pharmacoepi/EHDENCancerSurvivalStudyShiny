@@ -600,7 +600,7 @@ server <-	function(input, output, session) {
                    } else if (input$survivalsum_variable_selector == "Five Year Survival") {
                      `upper year 5`
                    } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
-                     `lower year 10`   
+                     `upper year 10`   
                    } else if (input$survivalsum_variable_selector == "Restricted Mean") {
                      upper_rmean 
                    } else {
@@ -640,7 +640,7 @@ server <-	function(input, output, session) {
                    } else if (input$survivalsum_variable_selector == "Five Year Survival") {
                      `upper year 5`
                    } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
-                     `lower year 10`   
+                     `upper year 10`   
                    } else if (input$survivalsum_variable_selector == "Restricted Mean") {
                      upper_rmean 
                    } else {
@@ -676,7 +676,7 @@ server <-	function(input, output, session) {
                    } else if (input$survivalsum_variable_selector == "Five Year Survival") {
                      `upper year 5`
                    } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
-                     `lower year 10`   
+                     `upper year 10`   
                    } else if (input$survivalsum_variable_selector == "Restricted Mean") {
                      upper_rmean 
                    } else {
@@ -712,7 +712,7 @@ server <-	function(input, output, session) {
                    } else if (input$survivalsum_variable_selector == "Five Year Survival") {
                      `upper year 5`
                    } else if (input$survivalsum_variable_selector == "Ten Year Survival") {
-                     `lower year 10`   
+                     `upper year 10`   
                    } else if (input$survivalsum_variable_selector == "Restricted Mean") {
                      upper_rmean 
                    } else {
