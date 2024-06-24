@@ -286,7 +286,6 @@ ui <- dashboardPage(
           )
         ),
         
-        #htmlOutput('dt_surv_est'),
         DTOutput("dt_surv_est"),
         
         div(style="display:inline-block",

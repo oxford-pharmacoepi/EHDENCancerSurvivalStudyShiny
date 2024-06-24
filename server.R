@@ -280,22 +280,17 @@ server <-	function(input, output, session) {
       filter(Cancer %in% input$surv_est_cohort_name_selector) %>%
       filter(Database %in% input$surv_est_database_name_selector) %>% 
       filter(Age %in% input$surv_est_age_selector) %>% 
-    filter(Sex %in% input$surv_est_sex_selector) 
+    filter(Sex %in% input$surv_est_sex_selector) %>% 
+      arrange(Cancer)
      
     
     table
     
   })
   
-  # output$dt_surv_est <- renderText(kable(get_surv_est()) %>%
-  #                                     kable_styling("striped", full_width = F) )
-  
   output$dt_surv_est <- renderDT({
     datatable(get_surv_est(), options = list(pageLength = 100000, order = list(list(0, 'asc'))))
   })
-
-  
-  
 
   
   # Capture the table's current state
@@ -307,39 +302,35 @@ server <-	function(input, output, session) {
     get_surv_est()[input$dt_surv_est_rows_all, ]
   })
   
-  # Download Handler for the Word Document
+  
   output$gt_surv_est_word <- downloadHandler(
     filename = function() {
       "survival_estimates.docx"
     },
     content = function(file) {
-      x <- get_table_state() %>% select(Database, everything(), -Sex, -Age, - 'Mean Survival (SE)') %>% gt()
+      # Get the filtered and sorted data
+      data <- get_table_state() %>%
+        select(Cancer, Database, everything(), -`Mean Survival (SE)`) %>%
+        arrange(Cancer) %>% 
+        mutate(across(everything(), ~ gsub("([0-9])\\.([0-9])", "\\1·\\2", .)))
+      
+      
+      # Conditionally remove the 'Sex' column if 'Both' is selected
+      if (input$survival_sex_selector == "Both") {
+        data <- data %>% select(-Sex)
+      }
+      
+      # Conditionally remove the 'Age' column if 'All' is selected
+      if (input$survival_age_selector == "All") {
+        data <- data %>% select(-Age)
+      }
+
+      # Create the gt table and save to Word
+      x <- gt(data)
       gtsave(x, file)
     }
   )
   
-#   output$gt_surv_est_word <- downloadHandler(
-#     filename = function() {
-#       "survival_estimates.docx"
-#     },
-#     content = function(file) {
-#       # Remove the 'Sex' and 'Age' columns
-#       x <- get_table_state() %>% select(-Sex, -Age) %>% gt()
-#       gtsave(x, file)
-#     }
-#   )
-# }
-
-  
-  # output$gt_surv_est_word <- downloadHandler(
-  #   filename = function() {
-  #     "survival_estimates.docx"
-  #   },
-  #   content = function(file) {
-  #     x <- gt(get_surv_est())
-  #     gtsave(x, file)
-  #   }
-  # )  
   
   # surv risk table --------
   get_risk_table <- reactive({
@@ -364,7 +355,8 @@ server <-	function(input, output, session) {
       filter(Cancer %in% input$risk_table_cohort_name_selector) %>%
       filter(Database %in% input$risk_table_database_name_selector) %>% 
       filter(Age %in% input$risk_table_age_selector) %>% 
-      filter(Sex %in% input$risk_table_sex_selector)
+      filter(Sex %in% input$risk_table_sex_selector) %>% 
+      arrange(Cancer)
     
     table
     
