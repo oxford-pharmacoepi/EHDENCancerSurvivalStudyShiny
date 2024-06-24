@@ -279,7 +279,7 @@ ui <- dashboardPage(
           pickerInput(
             inputId = "surv_est_age_selector",
             label = "Age",
-            choices = unique(survival_km$Age),
+            choices = unique(med_surv_km_sex_age$Age),
             selected = "All",
             options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
             multiple = TRUE

@@ -448,6 +448,245 @@ attritioncdm <- attritioncdm %>%
 survival_km <- survival_estimates %>% 
   filter(Method == "Kaplan-Meier")
 
+# age standization for survival
+
+# read in ICCS_1 values (for all cancers in this study apart from prostate)
+ICSS_1 <- readr::read_csv(here("www", "ICSS_1.csv"), 
+                          show_col_types = FALSE) 
+
+# read in ICCS values (for prostate)
+ICSS_prostate <- readr::read_csv(here("www", "ICSS_prostate.csv"), 
+                                 show_col_types = FALSE) 
+
+
+
+# Function to calculate age-standardized survival
+calculate_age_standardized_survival <- function(data, standard_population) {
+  
+  # Filter and summarize the survival rates by age groups
+  age_stds <- standard_population %>%
+    mutate(Age = case_when(
+      Age %in% c("0-14", "15-19") ~ "0 to 19",
+      Age %in% c("20-24", "25-29", "30-34", "35-39") ~ "18 to 39",
+      Age %in% c("40-44", "45-49") ~ "40 to 49",
+      Age %in% c("50-54", "55-59") ~ "50 to 59",
+      Age %in% c("60-64", "65-69") ~ "60 to 69",
+      Age %in% c("70-74", "75-79") ~ "70 to 79",
+      Age %in% c("80-84", "85+") ~ "80 +"
+    )) %>%
+    group_by(Age) %>%
+    filter(Age != "0 to 19") %>% 
+    summarise(ICSS = sum(ICSS)/100000)
+  
+  # Merge age-standardized survival to the original data
+  data <- data %>%
+    left_join(age_stds, by = c("Age")) %>%
+    mutate(age_standard_1year = `surv year 1` * ICSS,
+           age_standard_lower_1year = (`lower year 1`) * ICSS,
+           age_standard_upper_1year = (`upper year 1`) * ICSS,
+           
+           age_standard_5year = `surv year 5` * ICSS,
+           age_standard_lower_5year = (`lower year 5`) * ICSS,
+           age_standard_upper_5year = (`upper year 5`) * ICSS,
+           
+           age_standard_10year = `surv year 10` * ICSS,
+           age_standard_lower_10year = (`lower year 10`) * ICSS,
+           age_standard_upper_10year = (`upper year 10`) * ICSS,
+           
+           age_standard_median = median * ICSS,
+           age_standard_lower_median = (lower_median) * ICSS,
+           age_standard_upper_median = (upper_median) * ICSS,
+           
+           age_standard_rmean = rmean * ICSS,
+           age_standard_se = se * ICSS,
+           
+           age_standard_rmean5year = rmean5yr * ICSS,
+           age_standard_se5year = se5yr * ICSS,
+           
+           age_standard_rmean10year = rmean10yr * ICSS,
+           age_standard_se10year = se10yr * ICSS
+           
+           
+    )  # Calculate age-standardized survival
+  
+  
+  # Summarize to get total age-standardized survival
+  total_age_standard <- data %>%
+    summarise(Age = "Age Standardized", 
+              `1-year Survival (95% CI)` = 
+                paste0(round(sum(age_standard_1year, na.rm = TRUE), 1),
+                       " (",
+                       round(sum(age_standard_lower_1year, na.rm = TRUE),1),
+                       "-",
+                       round(sum(age_standard_upper_1year, na.rm = TRUE), 1),
+                       ")"),
+              
+              `5-year Survival (95% CI)` = 
+                paste0(round(sum(age_standard_5year, na.rm = TRUE), 1),
+                       " (",
+                       round(sum(age_standard_lower_5year, na.rm = TRUE),1),
+                       "-",
+                       round(sum(age_standard_upper_5year, na.rm = TRUE), 1),
+                       ")"),
+              
+              
+              `10-year Survival (95% CI)` = 
+                paste0(round(sum(age_standard_10year, na.rm = TRUE), 1),
+                       " (",
+                       round(sum(age_standard_lower_10year, na.rm = TRUE),1),
+                       "-",
+                       round(sum(age_standard_upper_10year, na.rm = TRUE), 1),
+                       ")"),
+              
+              `surv year 1` = sum(age_standard_1year, na.rm = TRUE) ,
+              `surv year 5` = sum(age_standard_5year, na.rm = TRUE) ,          
+              `surv year 10` = sum(age_standard_10year, na.rm = TRUE)  ,          
+              `lower year 1` =  sum(age_standard_lower_1year, na.rm = TRUE),    
+              `lower year 5` =  sum(age_standard_lower_5year, na.rm = TRUE),
+              `lower year 10` = sum(age_standard_lower_10year, na.rm = TRUE)      ,     
+              `upper year 1`  = sum(age_standard_upper_1year, na.rm = TRUE),
+              `upper year 5`   = sum(age_standard_upper_5year, na.rm = TRUE), 
+              `upper year 10`= sum(age_standard_upper_10year, na.rm = TRUE) ,
+              
+              
+              `Median Survival (95% CI)` = 
+                paste0(round(sum(age_standard_median, na.rm = TRUE), 1),
+                       " (",
+                       round(sum(age_standard_lower_median, na.rm = TRUE),1),
+                       "-",
+                       round(sum(age_standard_upper_median, na.rm = TRUE), 1),
+                       ")"),
+              
+              
+              `Mean Survival (SE)` = 
+                paste0(round(sum(age_standard_rmean, na.rm = TRUE), 1),
+                       " (",
+                       round(
+                         (sum(age_standard_rmean, na.rm = TRUE)) -
+                           (sum(age_standard_se, na.rm = TRUE)) , 1 ) ,
+                       
+                       "-",
+                       round(
+                         (sum(age_standard_rmean, na.rm = TRUE)) +
+                           (sum(age_standard_se, na.rm = TRUE)) , 1 ) ,
+                       
+                       
+                       ")"),
+              
+              
+              `Mean Survival 5 years (SE)` = 
+                paste0(round(sum(age_standard_rmean5year, na.rm = TRUE), 1),
+                       " (",
+                       round(
+                         (sum(age_standard_rmean5year, na.rm = TRUE)) -
+                           (sum(age_standard_se5year, na.rm = TRUE)) , 1 ) ,
+                       
+                       "-",
+                       round(
+                         (sum(age_standard_rmean5year, na.rm = TRUE)) +
+                           (sum(age_standard_se5year, na.rm = TRUE)) , 1 ) ,
+                       
+                       
+                       ")"),
+              
+              
+              `Mean Survival 10 years (SE)` = 
+                paste0(round(sum(age_standard_rmean10year, na.rm = TRUE), 1),
+                       " (",
+                       round(
+                         (sum(age_standard_rmean10year, na.rm = TRUE)) -
+                           (sum(age_standard_se10year, na.rm = TRUE)) , 1 ) ,
+                       
+                       "-",
+                       round(
+                         (sum(age_standard_rmean10year, na.rm = TRUE)) +
+                           (sum(age_standard_se10year, na.rm = TRUE)) , 1 ) ,
+                       
+                       
+                       ")"),
+              
+              
+              
+              rmean = sum(age_standard_rmean, na.rm = TRUE),  
+              se     =      sum(age_standard_se, na.rm = TRUE),                
+              median    =  sum(age_standard_median, na.rm = TRUE),              
+              lower_median = sum(age_standard_lower_median, na.rm = TRUE),
+              upper_median = sum(age_standard_upper_median, na.rm = TRUE),
+              rmean5yr      =     sum(age_standard_rmean5year, na.rm = TRUE)   ,     
+              se5yr = sum(age_standard_se5year, na.rm = TRUE) ,
+              rmean10yr = sum(age_standard_rmean10year, na.rm = TRUE),
+              se10yr = sum(age_standard_se10year, na.rm = TRUE)
+              
+              
+              
+    )  # Calculate sum of age_standard
+  
+  # Combine with the original data
+  data <- bind_rows(data, total_age_standard)
+  
+  # Fill down Database and Sex columns
+  data <- data %>%
+    tidyr::fill(Database, Sex, Cancer, Method, study_period) %>% 
+    select(-matches("age_standard_")) %>% 
+    select(-c(ICSS))
+  
+  return(data)
+}
+
+# Example usage:
+# test <- survival_median_table %>%
+#   filter(Sex == "Both" & Cancer == "Breast" & Database == "CPRD GOLD" & Age != "All") %>%
+#   calculate_age_standardized_survival(standard_population = ICSS_1) %>% 
+#   filter(Age == "Age Standardized") 
+
+
+results_database <- list()
+results_cancer <- list()
+# now for loops
+
+for(db in 1:length(table(survival_median_table$Database ))){
+  
+  # filter to one database
+  survival_median_table_temp <- survival_median_table %>%
+    filter(Database == names(table(survival_median_table$Database ))[db] )
+  
+  
+  for(cancer in 1:length(table(survival_median_table_temp$Cancer ))){
+    
+    
+    survival_median_table_temp_temp <- survival_median_table_temp %>%
+      filter(Cancer == names(table(survival_median_table_temp$Cancer ))[cancer] )
+    
+    results_cancer[[cancer]] <- survival_median_table_temp_temp %>%
+      filter(Sex == "Both" & Age != "All") %>%
+      calculate_age_standardized_survival(standard_population = ICSS_1) %>%
+      filter(Age == "Age Standardized")
+    
+    print(names(table(survival_median_table_temp$Cancer ))[cancer])
+    
+    
+  }
+  
+  results_database[[db]] <- bind_rows(results_cancer)
+  
+  results_cancer <- list()
+  
+  print(names(table(survival_median_table$Database))[db])
+  
+}
+
+
+final_results_age_std <- bind_rows(results_database)
+
+survival_median_table <- bind_rows(survival_median_table,
+                                   final_results_age_std)
+
+rm(final_results_age_std,
+   results_cancer,
+   results_database,
+   survival_median_table_temp,
+   survival_median_table_temp_temp)
+
 med_surv_km <- survival_median_table %>% 
   select(c(Cancer, 
            n,
@@ -464,7 +703,9 @@ med_surv_km <- survival_median_table %>%
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Pancreatic", "Pancreas")) %>%
   dplyr::mutate(Database = replace(Database, Database == "HUS2000", "HUS")) %>% 
-  dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) 
+  dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
+  mutate(across(everything(), ~replace(., . == "0 (0-0)", NA)))
+
 
 med_surv_km_sex_age <- survival_median_table %>% 
   filter(Method == "Kaplan-Meier") %>% 
@@ -616,316 +857,4 @@ attritionChart <- function(x) {
   return(xg)
 }
 
-
-
-# age standization for survival
-
-
-
-# read in ICCS_1 values (for all cancers in this study apart from prostate)
-ICSS_1 <- readr::read_csv(here("www", "ICSS_1.csv"), 
-                         show_col_types = FALSE) 
-
-# read in ICCS values (for prostate)
-ICSS_prostate <- readr::read_csv(here("www", "ICSS_prostate.csv"), 
-                          show_col_types = FALSE) 
-
-
-
-# Function to calculate age-standardized survival
-calculate_age_standardized_survival <- function(data, standard_population) {
-  
-  # Filter and summarize the survival rates by age groups
-  age_stds <- standard_population %>%
-    mutate(Age = case_when(
-      Age %in% c("0-14", "15-19") ~ "0 to 19",
-      Age %in% c("20-24", "25-29", "30-34", "35-39") ~ "18 to 39",
-      Age %in% c("40-44", "45-49") ~ "40 to 49",
-      Age %in% c("50-54", "55-59") ~ "50 to 59",
-      Age %in% c("60-64", "65-69") ~ "60 to 69",
-      Age %in% c("70-74", "75-79") ~ "70 to 79",
-      Age %in% c("80-84", "85+") ~ "80 +"
-    )) %>%
-    group_by(Age) %>%
-    filter(Age != "0 to 19") %>% 
-    summarise(ICSS = sum(ICSS)/100000)
-  
-  # Merge age-standardized survival to the original data
-  data <- data %>%
-    left_join(age_stds, by = c("Age")) %>%
-    mutate(age_standard_1year = `surv year 1` * ICSS,
-           age_standard_lower_1year = (`lower year 1`) * ICSS,
-             age_standard_upper_1year = (`upper year 1`) * ICSS,
-           
-           age_standard_5year = `surv year 5` * ICSS,
-           age_standard_lower_5year = (`lower year 5`) * ICSS,
-           age_standard_upper_5year = (`upper year 5`) * ICSS,
-           
-           age_standard_10year = `surv year 10` * ICSS,
-           age_standard_lower_10year = (`lower year 10`) * ICSS,
-           age_standard_upper_10year = (`upper year 10`) * ICSS,
-           
-           age_standard_median = median * ICSS,
-           age_standard_lower_median = (lower_median) * ICSS,
-           age_standard_upper_median = (upper_median) * ICSS,
-           
-           age_standard_rmean = rmean * ICSS,
-           age_standard_se = se * ICSS,
-           
-           age_standard_rmean5year = rmean5yr * ICSS,
-           age_standard_se5year = se5yr * ICSS,
-           
-           age_standard_rmean10year = rmean10yr * ICSS,
-           age_standard_se10year = se10yr * ICSS
-           
-           
-           )  # Calculate age-standardized survival
-  
-  
-  # Summarize to get total age-standardized survival
-  total_age_standard <- data %>%
-    summarise(Age = "Age Standardized", 
-              `1-year Survival (95% CI)` = 
-                paste0(round(sum(age_standard_1year, na.rm = TRUE), 1),
-                " (",
-                round(sum(age_standard_lower_1year, na.rm = TRUE),1),
-                "-",
-                round(sum(age_standard_upper_1year, na.rm = TRUE), 1),
-                ")"),
-              
-              `5-year Survival (95% CI)` = 
-                paste0(round(sum(age_standard_5year, na.rm = TRUE), 1),
-                       " (",
-                       round(sum(age_standard_lower_5year, na.rm = TRUE),1),
-                       "-",
-                       round(sum(age_standard_upper_5year, na.rm = TRUE), 1),
-                       ")"),
-              
-              
-              `10-year Survival (95% CI)` = 
-                paste0(round(sum(age_standard_10year, na.rm = TRUE), 1),
-                       " (",
-                       round(sum(age_standard_lower_10year, na.rm = TRUE),1),
-                       "-",
-                       round(sum(age_standard_upper_10year, na.rm = TRUE), 1),
-                       ")"),
-              
-              `surv year 1` = sum(age_standard_1year, na.rm = TRUE) ,
-              `surv year 5` = sum(age_standard_5year, na.rm = TRUE) ,          
-              `surv year 10` = sum(age_standard_10year, na.rm = TRUE)  ,          
-              `lower year 1` =  sum(age_standard_lower_1year, na.rm = TRUE),    
-              `lower year 5` =  sum(age_standard_lower_5year, na.rm = TRUE),
-              `lower year 10` = sum(age_standard_lower_10year, na.rm = TRUE)      ,     
-              `upper year 1`  = sum(age_standard_upper_1year, na.rm = TRUE),
-              `upper year 5`   = sum(age_standard_upper_5year, na.rm = TRUE), 
-              `upper year 10`= sum(age_standard_upper_10year, na.rm = TRUE) ,
-              
-              
-              `Median Survival (95% CI)` = 
-                paste0(round(sum(age_standard_median, na.rm = TRUE), 1),
-                       " (",
-                       round(sum(age_standard_lower_median, na.rm = TRUE),1),
-                       "-",
-                       round(sum(age_standard_upper_median, na.rm = TRUE), 1),
-                       ")"),
-              
-              
-              `Mean Survival (SE)` = 
-                paste0(round(sum(age_standard_rmean, na.rm = TRUE), 1),
-                       " (",
-                       round(
-                         (sum(age_standard_rmean, na.rm = TRUE)) -
-                           (sum(age_standard_se, na.rm = TRUE)) , 1 ) ,
-
-                       "-",
-                       round(
-                         (sum(age_standard_rmean, na.rm = TRUE)) +
-                           (sum(age_standard_se, na.rm = TRUE)) , 1 ) ,
-                       
-                       
-                       ")"),
-              
-              
-              `Mean Survival 5 years (SE)` = 
-                paste0(round(sum(age_standard_rmean5year, na.rm = TRUE), 1),
-                       " (",
-                       round(
-                         (sum(age_standard_rmean5year, na.rm = TRUE)) -
-                           (sum(age_standard_se5year, na.rm = TRUE)) , 1 ) ,
-                       
-                       "-",
-                       round(
-                         (sum(age_standard_rmean5year, na.rm = TRUE)) +
-                           (sum(age_standard_se5year, na.rm = TRUE)) , 1 ) ,
-                       
-                       
-                       ")"),
-              
-              
-              `Mean Survival 10 years (SE)` = 
-                paste0(round(sum(age_standard_rmean10year, na.rm = TRUE), 1),
-                       " (",
-                       round(
-                         (sum(age_standard_rmean10year, na.rm = TRUE)) -
-                           (sum(age_standard_se10year, na.rm = TRUE)) , 1 ) ,
-                       
-                       "-",
-                       round(
-                         (sum(age_standard_rmean10year, na.rm = TRUE)) +
-                           (sum(age_standard_se10year, na.rm = TRUE)) , 1 ) ,
-                       
-                       
-                       ")"),
-              
-              
-              
-              rmean = sum(age_standard_rmean, na.rm = TRUE),  
-              se     =      sum(age_standard_se, na.rm = TRUE),                
-              median    =  sum(age_standard_median, na.rm = TRUE),              
-              lower_median = sum(age_standard_lower_median, na.rm = TRUE),
-              upper_median = sum(age_standard_upper_median, na.rm = TRUE),
-              rmean5yr      =     sum(age_standard_rmean5year, na.rm = TRUE)   ,     
-              se5yr = sum(age_standard_se5year, na.rm = TRUE) ,
-              rmean10yr = sum(age_standard_rmean10year, na.rm = TRUE),
-              se10yr = sum(age_standard_se10year, na.rm = TRUE)
-              
-              
-              
-              )  # Calculate sum of age_standard
-  
-  # Combine with the original data
-  data <- bind_rows(data, total_age_standard)
-  
-  # Fill down Database and Sex columns
-  data <- data %>%
-    tidyr::fill(Database, Sex, Cancer, Method, study_period) %>% 
-    select(-matches("age_standard_")) %>% 
-    select(-c(ICSS))
-  
-  return(data)
-}
-
-# Example usage:
-# test <- survival_median_table %>%
-#   filter(Sex == "Both" & Cancer == "Breast" & Database == "CPRD GOLD" & Age != "All") %>%
-#   calculate_age_standardized_survival(standard_population = ICSS_1) %>% 
-#   filter(Age == "Age Standardized") 
-
-
-results_database <- list()
-# now for loops
-
-
-
-
-
-
-#create a loop for each cancer phenotype
-agestandardizedinc <- list()
-
-# filter out to only include rates
-surv_std <- med_surv_km_sex_age %>% 
-  filter(denominator_age_group != "18 to 150",
-         denominator_sex == "Both",
-         analysis_interval == "years") %>% 
-  mutate(age_standard = "Crude") %>% 
-  select(c(
-    incidence_start_date,            
-    n_events ,                       
-    person_years,                
-    incidence_100000_pys ,
-    incidence_100000_pys_95CI_lower,
-    incidence_100000_pys_95CI_upper,
-    outcome_cohort_name    ,            
-    cdm_name  ,                  
-    denominator_sex     ,                   
-    denominator_age_group ,
-    age_standard ))
-
-
-# overall population
-for(i in 1:length(table(inc_std$outcome_cohort_name))){
-  
-  incidence_estimates_i <- inc_std %>%
-    filter(outcome_cohort_name == names(table(inc_std$outcome_cohort_name)[i]))
-  
-  agestandardizedinc[[i]] <- dsr::dsr(
-    data = incidence_estimates_i,  # specify object containing number of deaths per stratum
-    event = n_events,       # column containing number of deaths per stratum 
-    fu = person_years , # column containing number of population per stratum person years
-    subgroup = incidence_start_date,   
-    refdata = ESP13_updated, # reference population data frame, with column called pop
-    method = "gamma",      # method to calculate 95% CI
-    sig = 0.95,            # significance level
-    mp = 100000,           # we want rates per 100.000 population
-    decimals = 2) 
-  
-  agestandardizedinc[[i]] <- agestandardizedinc[[i]] %>% 
-    mutate(outcome_cohort_name = names(table(inc_std$outcome_cohort_name)[i])) 
-  
-  cli::cli_alert_info(paste0("- european age standardization for ", names(table(inc_std$outcome_cohort_name)[i]), " complete"))
-  
-}
-
-
-agestandardizedinc_final_icss <- bind_rows(agestandardizedsur) %>% 
-  mutate(cdm_name = db_name) %>% 
-  rename(incidence_100000_pys = `Std Rate (per 1e+05)`,
-         incidence_100000_pys_95CI_lower = `95% LCL (Std)`,
-         incidence_100000_pys_95CI_upper = `95% UCL (Std)`,
-         incidence_start_date = Subgroup,
-         person_years = Denominator ,
-         n_events = Numerator ) %>% 
-  mutate(denominator_sex = "Both",
-         denominator_age_group = "18 to 150",
-         cdm_name = db_name ) %>% 
-  as_tibble() %>% 
-  select(!c(
-    `Crude Rate (per 1e+05)`,
-    `95% LCL (Crude)`,
-    `95% UCL (Crude)`)) %>% 
-  mutate(age_standard = "European Standard Population")
-
-
-agestandardizedinc_final_espf <- bind_rows(agestandardizedincf) %>% 
-  mutate(cdm_name = db_name) %>% 
-  rename(incidence_100000_pys = `Std Rate (per 1e+05)`,
-         incidence_100000_pys_95CI_lower = `95% LCL (Std)`,
-         incidence_100000_pys_95CI_upper = `95% UCL (Std)`,
-         incidence_start_date = Subgroup,
-         person_years = Denominator ,
-         n_events = Numerator ) %>% 
-  mutate(denominator_sex = "Female",
-         denominator_age_group = "18 to 150",
-         cdm_name = db_name ) %>% 
-  as_tibble() %>% 
-  select(!c(
-    `Crude Rate (per 1e+05)`,
-    `95% LCL (Crude)`,
-    `95% UCL (Crude)`)) %>% 
-  mutate(age_standard = "European Standard Population")
-
-agestandardizedinc_final_espm <- bind_rows(agestandardizedincm) %>% 
-  mutate(cdm_name = db_name) %>% 
-  rename(incidence_100000_pys = `Std Rate (per 1e+05)`,
-         incidence_100000_pys_95CI_lower = `95% LCL (Std)`,
-         incidence_100000_pys_95CI_upper = `95% UCL (Std)`,
-         incidence_start_date = Subgroup,
-         person_years = Denominator ,
-         n_events = Numerator ) %>% 
-  mutate(denominator_sex = "Male",
-         denominator_age_group = "18 to 150",
-         cdm_name = db_name ) %>% 
-  as_tibble() %>% 
-  select(!c(
-    `Crude Rate (per 1e+05)`,
-    `95% LCL (Crude)`,
-    `95% UCL (Crude)`)) %>% 
-  mutate(age_standard = "European Standard Population")
-
-agestandardizedinc_final_esp <- bind_rows(agestandardizedinc_final_esp,
-                                          agestandardizedinc_final_espf,
-                                          agestandardizedinc_final_espm)
-
-cli::cli_alert_info("- Age standardization for incidence using european standard population completed")
 
