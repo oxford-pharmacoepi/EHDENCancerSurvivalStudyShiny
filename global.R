@@ -493,9 +493,13 @@ calculate_age_standardized_survival <- function(data, standard_population) {
            age_standard_lower_10year = (`lower year 10`) * ICSS,
            age_standard_upper_10year = (`upper year 10`) * ICSS,
            
-           age_standard_median = median * ICSS,
-           age_standard_lower_median = lower_median * ICSS,
-           age_standard_upper_median = upper_median * ICSS,
+           age_standard_median = ifelse(!is.na(median) & !is.na(lower_median) & !is.na(upper_median), median * ICSS, NA),
+           age_standard_lower_median = ifelse(!is.na(median) & !is.na(lower_median) & !is.na(upper_median), lower_median * ICSS, NA),
+           age_standard_upper_median = ifelse(!is.na(median) & !is.na(lower_median) & !is.na(upper_median), upper_median * ICSS, NA),
+           
+           # age_standard_median = median * ICSS,
+           # age_standard_lower_median = lower_median * ICSS,
+           # age_standard_upper_median = upper_median * ICSS,
            
            age_standard_rmean = rmean * ICSS,
            age_standard_se = se * ICSS,
@@ -626,9 +630,10 @@ calculate_age_standardized_survival <- function(data, standard_population) {
   
   # Fill down Database and Sex columns
   data <- data %>%
-    tidyr::fill(Database, Sex, Cancer, Method, study_period) %>% 
-    select(-matches("age_standard_")) %>% 
-    select(-c(ICSS))
+    tidyr::fill(Database, Sex, Cancer, Method, study_period) 
+  #%>% 
+   # select(-matches("age_standard_")) %>% 
+    #select(-c(ICSS))
   
   return(data)
 }
@@ -649,7 +654,7 @@ for(db in 1:length(table(survival_median_table$Database ))){
     
     
     survival_median_table_temp_temp <- survival_median_table_temp %>%
-      filter(Cancer == names(table(survival_median_table_temp$Cancer ))[cancer] )
+      filter(Cancer == names(table(survival_median_table_temp$Cancer))[cancer])
     
     results_cancer[[cancer]] <- survival_median_table_temp_temp %>%
       filter(Sex == "Both" & Age != "All") %>%
