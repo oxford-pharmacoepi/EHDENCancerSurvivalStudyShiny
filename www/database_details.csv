@@ -6,11 +6,11 @@ CRN,Cancer Registry of Norway,Norway,Registry,From national and population regis
 NCR,Netherlands Cancer Registry,Netherlands,Registry,From national death registry
 ECI,South East Scotland Cancer Database,Scotland,Registry,From national death registry
 GCR,Geneva Cancer Registry Data-Base,Switzerland,Registry,From national and population registry
-HUS Finland,Hospital District of Helsinki and Uusimaa,Finland,Hospital,From national death registry
+HUS,Hospital District of Helsinki and Uusimaa,Finland,Hospital,From national death registry
 ULSM,Egas Moniz Health Alliance/Unidade Local de Saúde de Matosinhos,Portugal,Hospital,Hospital only deaths
 ULSEDV,,Portugal,Hospital,Hospital only deaths
 ULSGE,,Portugal,Hospital,Hospital only deaths
-ULSM,,Portugal,Hospital,Hospital only deaths
+ULSRA,,Portugal,Hospital,Hospital only deaths
 SIDIAP,The Information System for Research on Primary Care,Spain,Hospital,national death registry
 HUVM,Hospital Universitario Virgen Macarena,Spain,Hospital,Deaths from cancer registry
 UTARTU,,Estonia,Registry,Deaths from cancer registry
