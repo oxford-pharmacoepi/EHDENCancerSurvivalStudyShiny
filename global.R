@@ -183,11 +183,12 @@ for(i in seq_along(survival_estimates_files)){
                                            show_col_types = FALSE)
 }
 survival_estimates <- dplyr::bind_rows(survival_estimates) %>% 
-  left_join(select(database_details, Database, database_type), by = Database)
-  
-  
+
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Pancreatic", "Pancreas")) %>%
+  dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "HUS2000wtrunc", "HUS")) %>% 
+  left_join(database_details %>% select(Database, database_type), by = "Database") %>% 
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD (UK)")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "CRN", "CRN (Norway)")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "ECI", "ECI (Scotland)")) %>% 
@@ -202,7 +203,7 @@ survival_estimates <- dplyr::bind_rows(survival_estimates) %>%
   dplyr::mutate(Database = replace(Database, Database == "ULSEDV", "ULSEDV (Portugal)")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "ULSRA", "ULSRA (Portugal)")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "UTARTU", "UTARTU (Estonia)")) %>% 
-  dplyr::mutate(Database = replace(Database, Database == "HUS2000wtrunc", "HUS (Finland)")) 
+  dplyr::mutate(Database = replace(Database, Database == "HUS", "HUS (Finland)")) 
 
 survival_estimates_prostate <- survival_estimates %>% 
   filter(Cancer == "Prostate") %>% 
