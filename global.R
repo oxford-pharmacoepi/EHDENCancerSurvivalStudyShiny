@@ -183,6 +183,9 @@ for(i in seq_along(survival_estimates_files)){
                                            show_col_types = FALSE)
 }
 survival_estimates <- dplyr::bind_rows(survival_estimates) %>% 
+  left_join(select(database_details, Database, database_type), by = Database)
+  
+  
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Pancreatic", "Pancreas")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD (UK)")) %>% 
@@ -211,9 +214,15 @@ survival_estimates_ECI <- survival_estimates %>%
 
 survival_estimates <- bind_rows(survival_estimates,
                                 survival_estimates_ECI,
-                                survival_estimates_prostate)
+                                survival_estimates_prostate) 
+                
+                
 rm(survival_estimates_prostate,
    survival_estimates_ECI)
+
+# add database type
+
+
 
 # risk tables ----------
 survival_risk_table_files <- results[stringr::str_detect(results, ".csv")]

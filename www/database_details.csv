@@ -1,4 +1,4 @@
-Database name,Full name,Country,database_type,How is death captured
+Database,Full name,Country,database_type,How is death captured
 CPRD GOLD,Clinical Practice Research Datalink,United Kingdom,Primary,Not linked but 98% accurate compared with national death registry
 IPCI,Integrated Primary Care Information,Netherlands,Primary,From primary care records
 IMASIS,Institut Municipal Assistència Sanitària Information System,Spain,Hospital,Deaths from cancer registry
