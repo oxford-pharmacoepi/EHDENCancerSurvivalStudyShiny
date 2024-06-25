@@ -1,12 +1,16 @@
-Database name,Full name,Country,Database type,Cancer Diagnoses,How is death captured
-CPRD GOLD,Clinical Practice Research Datalink,United Kingdom,Primary Care,Validated,Not linked but 98% accurate compared with national death registry
-IPCI,Integrated Primary Care Information,Netherlands,Primary Care,,From primary care records
-IMASIS,Institut Municipal Assistència Sanitària Information System,Spain,Hospital,,Deaths from cancer registry
-CRN,Cancer Registry of Norway,Norway,Cancer Registry,,From national and population registry
-NCR,Netherlands Cancer Registry,Netherlands,Cancer Registry,,From national death registry
-ECI,South East Scotland Cancer Database,Scotland,Cancer Registry,,From national death registry
-GCR,Geneva Cancer Registry Data-Base,Switzerland,Cancer Registry,,From national and population registry
-HUS Finland,Hospital District of Helsinki and Uusimaa,Finland,Hospital,,From national death registry
-ULSM,Egas Moniz Health Alliance/Unidade Local de Saúde de Matosinhos,Portugal,,,From national and population registry
-SIDIAP,The Information System for Research on Primary Care,Spain,Primary Care and hospital,,
-HUVM,Hospital Universitario Virgen Macarena,Spain,Hospital,Medical diagnosis,Deaths from cancer registry
+Database name,Full name,Country,database_type,How is death captured
+CPRD GOLD,Clinical Practice Research Datalink,United Kingdom,Primary,Not linked but 98% accurate compared with national death registry
+IPCI,Integrated Primary Care Information,Netherlands,Primary,From primary care records
+IMASIS,Institut Municipal Assistència Sanitària Information System,Spain,Hospital,Deaths from cancer registry
+CRN,Cancer Registry of Norway,Norway,Registry,From national and population registry
+NCR,Netherlands Cancer Registry,Netherlands,Registry,From national death registry
+ECI,South East Scotland Cancer Database,Scotland,Registry,From national death registry
+GCR,Geneva Cancer Registry Data-Base,Switzerland,Registry,From national and population registry
+HUS Finland,Hospital District of Helsinki and Uusimaa,Finland,Hospital,From national death registry
+ULSM,Egas Moniz Health Alliance/Unidade Local de Saúde de Matosinhos,Portugal,Hospital,Hospital only deaths
+ULSEDV,,Portugal,Hospital,Hospital only deaths
+ULSGE,,Portugal,Hospital,Hospital only deaths
+ULSM,,Portugal,Hospital,Hospital only deaths
+SIDIAP,The Information System for Research on Primary Care,Spain,Hospital,national death registry
+HUVM,Hospital Universitario Virgen Macarena,Spain,Hospital,Deaths from cancer registry
+UTARTU,,Estonia,Registry,Deaths from cancer registry
