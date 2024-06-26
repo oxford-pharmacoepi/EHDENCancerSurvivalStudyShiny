@@ -221,9 +221,6 @@ survival_estimates <- bind_rows(survival_estimates,
 rm(survival_estimates_prostate,
    survival_estimates_ECI)
 
-# add database type
-
-
 
 # risk tables ----------
 survival_risk_table_files <- results[stringr::str_detect(results, ".csv")]
