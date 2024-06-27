@@ -411,7 +411,7 @@ snapshotcdm <- bind_rows(snapshotcdm) %>%
          observation_period_count = nice.num.count(observation_period_count)) %>% 
   dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "CPRD_GOLD", "CPRD GOLD")) %>%
   dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "HUS2000", "HUS")) %>% 
-  rename("Database name" = "cdm_name",
+  rename("Database" = "cdm_name",
          "Persons in the cancer cohorts" = "person_count",
          "Number of observation periods" = "observation_period_count",
          "OMOP CDM vocabulary version" = "vocabulary_version",
@@ -420,12 +420,12 @@ snapshotcdm <- bind_rows(snapshotcdm) %>%
          "Study Start Date" = "StudyPeriodStartDate",
          "Database Start Date" = "earliest_observation_period_start_date" ) 
 
-snapshotcdm <- full_join(snapshotcdm, database_details, by = "Database name" ) %>% 
+snapshotcdm <- full_join(snapshotcdm, database_details, by = "Database" ) %>% 
   relocate("Database Description", .after = last_col()) %>% 
-  relocate("Full name", .after = `Database name`)
+  relocate("Full name", .after = `Database`)
 
 snapshotcdm <- snapshotcdm %>%
-  mutate(`Database Description` = ifelse(`Database name` == "HUVM", 
+  mutate(`Database Description` = ifelse(`Database` == "HUVM", 
                                          "Virgen Macarena University Hospital provides hospital and community care services to 480,000 people. The hospital belongs to the Andalusian Public Health System as 3erd level hospital in Seville and Huelva areas (Spain). The hospital includes 37 medical specialties provided with state of the art technology for complex and advanced healthcare treatments. Its infrastructure includes 800 beds, 25 surgical theather distributed in 7 buildings. The hospital has 6000 professionals and its budget is more than €398 Million.  The hospital currently participates in more than 435 in phase I, II and III clinical trials and produced scientific publications with 1187 impact factor points during last year. Our EHR system has been in use for more than a decade and it contains more than 10 million episodes and 1 million discharge summaries.", 
                                          `Database Description`))
 
