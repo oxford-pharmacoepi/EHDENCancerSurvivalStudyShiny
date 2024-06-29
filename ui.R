@@ -158,7 +158,7 @@ ui <- dashboardPage(
         ),
         tags$h5(
           tags$span("Funding:" , style = "font-weight: bold;"),
-          "This research was funded by the European Health Data and Evidence Network (EHDEN) (grant number 806968), the Optimal treatment for patients with solid tumours in Europe through Artificial Intelligence (OPTIMA) initiative (grant number 101034347), and the Oxford NIHR Biomedical Research Centre."
+          "This research was funded by the European Health Data and Evidence Network (EHDEN) (grant number 806968), and the Oxford NIHR Biomedical Research Centre."
         ),
         
         tags$h5("The results of this study are published in the following journal:"
@@ -168,13 +168,14 @@ ui <- dashboardPage(
         
         tags$h5("The analysis code used to generate these results can be found",
                 tags$a(href="https://github.com/oxford-pharmacoepi/CancerSurvivalWp2Analysis", "here"),
-                ".The cohort diagnostics including the clinical codelists for each of the 8 cancers can be found",
+                ".The cohort diagnostics including the clinical codelists for each of the eight cancers can be found",
                 tags$a(href="https://dpa-pde-oxford.shinyapps.io/CancerExtrapolationDiagnostics/", "here")
                 
         ),
         
         tags$h5("Any questions regarding this shiny app or the study please contact",
-                tags$a(href="mailto:danielle.newby@ndorms.ox.ac.uk", "Danielle Newby")
+                tags$a(href="mailto:danielle.newby@ndorms.ox.ac.uk", "Danielle Newby"), "or the corresponding author",
+                tags$a(href="mailto:tduarte@idiapjgol.org", "Talita Duarte Salles")
                 
         ),
         
@@ -197,6 +198,46 @@ ui <- dashboardPage(
           style = "display:inline-block; float:right"
         )
       ) ,
+      
+      
+      tabItem(
+        tabName = "test",
+        h3("Thanks go to all the Data Partners and collaborators in this study"),
+        fluidRow(
+          column(width = 3, div(class = "logo-container", img(src = "CPRD.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "idiap.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "sidiap.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "nice.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "iknl.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "crnorway.svg", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "hus.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "huvm.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "gcr.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "eci.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "uoe.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "imasis.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "ulsm.jpeg", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "ulsra.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "ulsedv.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "ulsge.jpeg", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "ipci.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "erasmus.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "utartu.png", height = "100px")))
+        ),
+        tags$style(HTML("
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 120px; /* Adjusted height to include margin space */
+      margin: 10px 0; /* Adds space above and below each logo */
+    }
+    .logo-container img {
+      max-height: 100px;
+      max-width: 90%;
+    }
+  "))
+      ),
 
       tabItem(
         tabName = "demographics",

@@ -49,9 +49,11 @@ mytheme <- create_theme(
     active_link_hover_border_color = "#112446",
     link_hover_border_color = "#112446",
     table_border_color = "black"
-    
+
   )
 )
+
+
 
 # format markdown
 formatMarkdown <- function(x) {
