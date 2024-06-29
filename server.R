@@ -404,6 +404,11 @@ server <-	function(input, output, session) {
         filter(Cancer %in% input$survival_cohort_name_selector) %>%
         filter(Age %in% input$survival_age_selector) %>%
         filter(Sex %in% input$survival_sex_selector)
+      
+      plot_data <- plot_data %>%
+        mutate(database_type = as.factor(database_type)) %>%
+        mutate(Database = as.factor(Database)) 
+      
     
     if (input$show_ci) {
       
@@ -411,6 +416,7 @@ server <-	function(input, output, session) {
         plot <- plot_data %>%
           unite("Group", c(all_of(input$surv_plot_group)), remove = FALSE, sep = "; ") %>%
           unite("facet_var", c(all_of(input$surv_plot_facet)), remove = FALSE, sep = "; ") %>%
+          mutate(Group = fct_reorder(Group, as.integer(database_type))) %>%
           ggplot(aes(x = time, y = est, ymin = lcl, ymax = ucl, group = Group, colour = Group, fill = Group)) +
           geom_line(size = 1) + 
           geom_ribbon(aes(ymin = lcl, ymax = ucl, fill = Group), alpha = 0.2, colour = NA) +
@@ -422,6 +428,7 @@ server <-	function(input, output, session) {
       } else if (!is.null(input$surv_plot_group) && is.null(input$surv_plot_facet)) {
         plot <- plot_data %>%
           unite("Group", c(all_of(input$surv_plot_group)), remove = FALSE, sep = "; ") %>%
+          mutate(Group = fct_reorder(Group, as.integer(database_type))) %>%
           ggplot(aes(x = time, y = est, ymin = lcl, ymax = ucl, group = Group, colour = Group, fill = Group)) +
           geom_line(size = 1) + 
           geom_ribbon(aes(ymin = lcl, ymax = ucl, fill = Group), alpha = 0.2, colour = NA) +
@@ -432,6 +439,7 @@ server <-	function(input, output, session) {
       } else if (is.null(input$surv_plot_group) && !is.null(input$surv_plot_facet)) {
         plot <- plot_data %>%
           unite("facet_var", c(all_of(input$surv_plot_facet)), remove = FALSE, sep = "; ") %>%
+          mutate(Group = fct_reorder(Group, as.integer(database_type))) %>%
           ggplot(aes(x = time, y = est, ymin = lcl, ymax = ucl, group = Group, colour = Group, fill = Group)) +
           geom_line(size = 1) + 
           geom_ribbon(aes(ymin = lcl, ymax = ucl, fill = Group), alpha = 0.2, colour = NA) +
@@ -442,6 +450,7 @@ server <-	function(input, output, session) {
         
       } else {
         plot <- plot_data %>%
+          mutate(Group = fct_reorder(Group, as.integer(database_type))) %>%
           ggplot(aes(x = time, y = est, ymin = lcl, ymax = ucl, group = Group, colour = Group, fill = Group)) +
           geom_line(size = 1) + 
           geom_ribbon(aes(ymin = lcl, ymax = ucl, fill = Group), alpha = 0.2, colour = NA) +
@@ -467,20 +476,27 @@ server <-	function(input, output, session) {
     } else {
       
       if (!is.null(input$surv_plot_group) && !is.null(input$surv_plot_facet)) {
+        
         plot <- plot_data %>%
           unite("Group", c(all_of(input$surv_plot_group)), remove = FALSE, sep = "; ") %>%
           unite("facet_var", c(all_of(input$surv_plot_facet)), remove = FALSE, sep = "; ") %>%
+          mutate(Group = fct_reorder(Group, as.integer(database_type))) %>%
           ggplot(aes(x = time, y = est, ymin = lcl, ymax = ucl, group = Group, colour = Group, fill = Group)) +
           geom_line(size = 1) + 
           xlab("Time (Years)") +
           ylab("Survival Function") +
           facet_wrap(vars(facet_var), ncol = 2) +
-          theme_bw(base_size = 20) 
-
+          theme_bw(base_size = 20) +
+          guides(
+            colour = guide_legend(
+              #override.aes = list(label = gsub(";", " ", levels(Group))), 
+              override.aes = list(fill = NA),  # Remove fill from color legend
+              title = "Database" ) )
         
       } else if (!is.null(input$surv_plot_group) && is.null(input$surv_plot_facet)) {
         plot <- plot_data %>%
           unite("Group", c(all_of(input$surv_plot_group)), remove = FALSE, sep = "; ") %>%
+          mutate(Group = fct_reorder(Group, as.integer(database_type))) %>%
           ggplot(aes(x = time, y = est, ymin = lcl, ymax = ucl, group = Group, colour = Group, fill = Group)) +
           geom_line(size = 1) + 
           xlab("Time (Years)") +
@@ -490,6 +506,7 @@ server <-	function(input, output, session) {
       } else if (is.null(input$surv_plot_group) && !is.null(input$surv_plot_facet)) {
         plot <- plot_data %>%
           unite("facet_var", c(all_of(input$surv_plot_facet)), remove = FALSE, sep = "; ") %>%
+          mutate(Group = fct_reorder(Group, as.integer(database_type))) %>%
           ggplot(aes(x = time, y = est, ymin = lcl, ymax = ucl, group = Group, colour = Group, fill = Group)) +
           geom_line(size = 1) + 
           xlab("Time (Years)") +
@@ -500,6 +517,7 @@ server <-	function(input, output, session) {
       } else {
         plot <- plot_data %>%
           ggplot(aes(x = time, y = est, ymin = lcl, ymax = ucl, group = Group, colour = Group, fill = Group)) +
+          mutate(Group = fct_reorder(Group, as.integer(database_type))) %>%
           geom_line(size = 1.5) + 
           xlab("Time (Years)") +
           ylab("Survival Function (%)") +
@@ -570,6 +588,7 @@ server <-	function(input, output, session) {
       need(input$survivalsum_variable_selector != "", "Please select a summary variable")
     )
 
+    shape_mapping <- c("Hospital" = 21, "Registry" = 22, "Primary" = 24)
 
     plot_data <- med_surv_km_sex_age %>%
       filter(Database %in% input$survivalsum_database_selector) %>%
@@ -580,9 +599,14 @@ server <-	function(input, output, session) {
 
     if (!is.null(input$survsum_plot_group) && !is.null(input$survsum_plot_facet)) {
       
+      plot_data <- plot_data %>%
+        mutate(database_type = as.factor(database_type)) %>%
+        mutate(Database = as.factor(Database)) 
+      
       plot <- plot_data %>%
         unite("Group", c(all_of(input$survsum_plot_group)), remove = FALSE, sep = "; ") %>%
         unite("facet_var", c(all_of(input$survsum_plot_facet)), remove = FALSE, sep = "; ") %>%
+        mutate(Database = fct_reorder(Database, as.integer(database_type))) %>%
         ggplot(aes(x = Database, 
                    y = Value,
                    ymin = if (input$survivalsum_variable_selector == "One Year Survival") {
@@ -609,14 +633,14 @@ server <-	function(input, output, session) {
                    },
                    group = Group, 
                    colour = Group,
+                   #shape = database_type,
                    fill = Group)) +
         geom_errorbar(position = position_dodge(width = 0.6), width = 0, aes(color = Group), size = 1) +
         geom_point(position = position_dodge(width = 0.6), size = 3, shape = 21, stroke = 0.75, color = "black") +
+        #geom_point(position = position_dodge(width = 0.6), size = 3, stroke = 0.75, color = "black") +
         xlab("Database") +
         ylab(input$survivalsum_variable_selector) +
-        # facet_wrap(vars(facet_var), ncol = 2, scales = "free_x") +
-        # theme_bw(base_size = 20) +
-        # coord_flip()
+        #scale_shape_manual(values = shape_mapping) +
       facet_wrap(vars(facet_var), ncol = 2, scales = "free_y") +
         theme_bw(base_size = 20) 
       
@@ -732,7 +756,7 @@ server <-	function(input, output, session) {
     # Move scale_y_continuous outside of ggplot
     plot <- plot +
       theme(strip.text = element_text(size = 20, face = "bold"),
-            axis.text.x = element_text(angle = 45, hjust = 1))
+            axis.text.x = element_text(angle = 45, hjust = 1)) 
 
     plot
   })

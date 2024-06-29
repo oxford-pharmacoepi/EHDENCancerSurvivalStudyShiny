@@ -16,7 +16,7 @@ ui <- dashboardPage(
       ),
       
       menuItem(
-        text = "Databases",
+        text = "Database Snapshot",
         tabName = "dbs",
         icon = shiny::icon("database"),
         menuSubItem(
@@ -76,12 +76,35 @@ ui <- dashboardPage(
         ) 
       ),
       
-      # Logo 
+      menuItem(
+        text = "Data Partners",
+        tabName = "dp",
+        icon = shiny::icon("users-viewfinder"),
+        menuSubItem(
+          text = "Data Partners",
+          tabName = "test"
+        )
+      ),
+      
+      # Logo HDS
+      tags$div(
+        style = "position: relative; margin-top: 20px; text-align: center; margin-bottom: 0;",
+        a(img(
+          src = "EHDEN_Logo_JPG.jpg",  # Replace with the correct file name and extension
+          height = "60px",  # Adjust the height as needed
+          width = "auto"     # Let the width adjust proportionally
+        ),
+        href = "https://www.ehden.eu/",
+        target = "_blank"
+        )
+      ) ,
+      
+      # Logo HDS
       tags$div(
         style = "position: relative; margin-top: 20px; text-align: center; margin-bottom: 0;",
         a(img(
           src = "Logo_HDS.png",  # Replace with the correct file name and extension
-          height = "150px",  # Adjust the height as needed
+          height = "80px",  # Adjust the height as needed
           width = "auto"     # Let the width adjust proportionally
         ),
         href = "https://www.ndorms.ox.ac.uk/research/research-groups/Musculoskeletal-Pharmacoepidemiology",
@@ -89,12 +112,12 @@ ui <- dashboardPage(
         )
       ) ,
       
-      # Logo 
+      # Logo UOXD
       tags$div(
         style = "position: relative; margin-top: -20px; text-align: center; margin-bottom: 0;",
         a(img(
           src = "logoOxford.png",  # Replace with the correct file name and extension
-          height = "150px",  # Adjust the height as needed
+          height = "100px",  # Adjust the height as needed
           width = "auto"     # Let the width adjust proportionally
         ),
         href = "https://www.ndorms.ox.ac.uk/research/research-groups/Musculoskeletal-Pharmacoepidemiology",

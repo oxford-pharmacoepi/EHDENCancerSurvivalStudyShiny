@@ -27,6 +27,7 @@ library(CDMConnector)
 library(CirceR)
 library(rjson)
 library(rclipboard)
+library(forcats)
 
 mytheme <- create_theme(
   adminlte_color(
@@ -189,7 +190,7 @@ survival_estimates <- dplyr::bind_rows(survival_estimates) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "HUS2000wtrunc", "HUS")) %>% 
   left_join(database_details %>% select(Database, database_type), by = "Database") %>% 
-  dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD (UK)")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "CPRD GOLD", "CPRD GOLD (UK)")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "CRN", "CRN (Norway)")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "ECI", "ECI (Scotland)")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "GCR", "GCR (Switzerland)")) %>% 
@@ -280,6 +281,7 @@ survival_median_table <- dplyr::bind_rows(survival_median_table) %>%
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Pancreatic", "Pancreas")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>%
   dplyr::mutate(Database = replace(Database, Database == "HUS2000wtrunc", "HUS")) %>% 
+  left_join(database_details %>% select(Database, database_type), by = "Database") %>% 
   filter(Truncated != "Yes", Method == "Kaplan-Meier") %>% 
   relocate(Database, .before = 1) %>% 
   mutate(
