@@ -202,12 +202,13 @@ ui <- dashboardPage(
       
       tabItem(
         tabName = "test",
-        h3("Thanks go to all the Data Partners and collaborators in this study"),
+        h4("Thanks go to all the Data Partners and collaborators who participated in this study"),
         fluidRow(
-          column(width = 3, div(class = "logo-container", img(src = "CPRD.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "logoOxford.png", height = "100px"))),
           column(width = 3, div(class = "logo-container", img(src = "idiap.png", height = "100px"))),
-          column(width = 3, div(class = "logo-container", img(src = "sidiap.png", height = "100px"))),
           column(width = 3, div(class = "logo-container", img(src = "nice.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "CPRD.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "sidiap.png", height = "100px"))),
           column(width = 3, div(class = "logo-container", img(src = "iknl.png", height = "100px"))),
           column(width = 3, div(class = "logo-container", img(src = "crnorway.svg", height = "100px"))),
           column(width = 3, div(class = "logo-container", img(src = "hus.png", height = "100px"))),
@@ -222,6 +223,9 @@ ui <- dashboardPage(
           column(width = 3, div(class = "logo-container", img(src = "ulsge.jpeg", height = "100px"))),
           column(width = 3, div(class = "logo-container", img(src = "ipci.png", height = "100px"))),
           column(width = 3, div(class = "logo-container", img(src = "erasmus.png", height = "100px"))),
+          
+          column(width = 3, div(class = "logo-container", img(src = "odysseus.png", height = "100px"))),
+          
           column(width = 3, div(class = "logo-container", img(src = "utartu.png", height = "100px")))
         ),
         tags$style(HTML("
