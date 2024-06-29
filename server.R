@@ -423,7 +423,14 @@ server <-	function(input, output, session) {
           xlab("Time (Years)") +
           ylab("Survival Function") +
           facet_wrap(vars(facet_var), ncol = 2) +
-          theme_bw(base_size = 20) 
+          theme_bw(base_size = 20) +
+          guides(
+            colour = guide_legend(
+              title = "Database" ),
+            fill = guide_legend(
+              title = "Database" )
+            
+          )
         
       } else if (!is.null(input$surv_plot_group) && is.null(input$surv_plot_facet)) {
         plot <- plot_data %>%
@@ -434,7 +441,14 @@ server <-	function(input, output, session) {
           geom_ribbon(aes(ymin = lcl, ymax = ucl, fill = Group), alpha = 0.2, colour = NA) +
           xlab("Time (Years)") +
           ylab("Survival Function") +
-          theme_bw(base_size = 20) 
+          theme_bw(base_size = 20) +
+          guides(
+            colour = guide_legend(
+              title = "Database" ),
+            fill = guide_legend(
+              title = "Database" )
+            
+          )
         
       } else if (is.null(input$surv_plot_group) && !is.null(input$surv_plot_facet)) {
         plot <- plot_data %>%
@@ -446,7 +460,14 @@ server <-	function(input, output, session) {
           xlab("Time (Years)") +
           ylab("Survival Function") +
           facet_wrap(vars(facet_var), ncol = 2) +
-          theme_bw(base_size = 20) 
+          theme_bw(base_size = 20) +
+          guides(
+            colour = guide_legend(
+              title = "Database" ),
+            fill = guide_legend(
+              title = "Database" )
+            
+          )
         
       } else {
         plot <- plot_data %>%
@@ -456,7 +477,14 @@ server <-	function(input, output, session) {
           geom_ribbon(aes(ymin = lcl, ymax = ucl, fill = Group), alpha = 0.2, colour = NA) +
           xlab("Time (Years)") +
           ylab("Survival Function") +
-          theme_bw(base_size = 20) 
+          theme_bw(base_size = 20) +
+          guides(
+            colour = guide_legend(
+              title = "Database" ),
+            fill = guide_legend(
+              title = "Database" )
+            
+          )
         
       }
       
@@ -501,7 +529,12 @@ server <-	function(input, output, session) {
           geom_line(size = 1) + 
           xlab("Time (Years)") +
           ylab("Survival Function") +
-          theme_bw(base_size = 20) 
+          theme_bw(base_size = 20) +
+          guides(
+            colour = guide_legend(
+              #override.aes = list(label = gsub(";", " ", levels(Group))), 
+              override.aes = list(fill = NA),  # Remove fill from color legend
+              title = "Database" ) )
         
       } else if (is.null(input$surv_plot_group) && !is.null(input$surv_plot_facet)) {
         plot <- plot_data %>%
@@ -512,7 +545,12 @@ server <-	function(input, output, session) {
           xlab("Time (Years)") +
           ylab("Survival Function") +
           facet_wrap(vars(facet_var), ncol = 2) +
-          theme_bw(base_size = 20) 
+          theme_bw(base_size = 20) +
+          guides(
+            colour = guide_legend(
+              #override.aes = list(label = gsub(";", " ", levels(Group))), 
+              override.aes = list(fill = NA),  # Remove fill from color legend
+              title = "Database" ) )
         
       } else {
         plot <- plot_data %>%
@@ -521,7 +559,12 @@ server <-	function(input, output, session) {
           geom_line(size = 1.5) + 
           xlab("Time (Years)") +
           ylab("Survival Function (%)") +
-          theme_bw(base_size = 20) 
+          theme_bw(base_size = 20) +
+          guides(
+            colour = guide_legend(
+              #override.aes = list(label = gsub(";", " ", levels(Group))), 
+              override.aes = list(fill = NA),  # Remove fill from color legend
+              title = "Database" ) )
         
       }
       
