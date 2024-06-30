@@ -54,7 +54,6 @@ mytheme <- create_theme(
 )
 
 
-
 # format markdown
 formatMarkdown <- function(x) {
   lines <- strsplit(x, "\r\n\r\n") |> unlist()
