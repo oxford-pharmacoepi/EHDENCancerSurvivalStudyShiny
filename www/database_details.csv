@@ -7,10 +7,10 @@ NCR,Netherlands Cancer Registry,Netherlands,Registry,From national death registr
 ECI,South East Scotland Cancer Database,Scotland,Registry,From national death registry
 GCR,Geneva Cancer Registry Data-Base,Switzerland,Registry,From national and population registry
 HUS,Hospital District of Helsinki and Uusimaa,Finland,Hospital,From national death registry
-ULSM,Egas Moniz Health Alliance/Unidade Local de Saúde de Matosinhos,Portugal,Hospital,Hospital only deaths
-ULSEDV,,Portugal,Hospital,Hospital only deaths
-ULSGE,,Portugal,Hospital,Hospital only deaths
-ULSRA,,Portugal,Hospital,Hospital only deaths
+ULSM,Unidade Local de Saúde de Matosinhos,Portugal,Hospital,Hospital only deaths
+ULSEDV,Unidade Local de Saúde de Entre Douro e Vouga,Portugal,Hospital,Hospital only deaths
+ULSGE,Unidade Local de Saúde de Gaia/Espinho,Portugal,Hospital,Hospital only deaths
+ULSRA,Unidade Local de Saúde da Região de Aveiro,Portugal,Hospital,Hospital only deaths
 SIDIAP,The Information System for Research on Primary Care,Spain,Primary,national death registry
 HUVM,Hospital Universitario Virgen Macarena,Spain,Hospital,Deaths from cancer registry
-UTARTU,,Estonia,Registry,Deaths from cancer registry
+UTARTU,University of Tartu,Estonia,Primary/Hospital,Deaths from cancer registry

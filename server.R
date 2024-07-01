@@ -145,40 +145,40 @@ server <-	function(input, output, session) {
   )
   
   
-  # clinical codelists ----------------
-  get_codelists <- reactive({
-    
-    validate(
-      need(input$codelist_cohort_selector != "", "Please select a cohort")
-    )
-    
-    validate(
-      need(input$codelist_vocab_selector != "", "Please select a vocab")
-    )
-    
-    table <- concepts_lists %>%
-      filter(Vocabulary %in% input$codelist_vocab_selector) %>%
-      filter(Cancer %in% input$codelist_cohort_selector)
-    
-    table
-    
-  })
-  
-
-  output$tbl_codelists <- renderText(kable(get_codelists()) %>%
-                                       kable_styling("striped", full_width = F) )
-
-
-  output$gt_codelists_word <- downloadHandler(
-    filename = function() {
-      "concept_lists.docx"
-    },
-    content = function(file) {
-      x <- gt(get_codelists())
-      gtsave(x, file)
-    }
-  )
-  
+  # # clinical codelists ----------------
+  # get_codelists <- reactive({
+  #   
+  #   validate(
+  #     need(input$codelist_cohort_selector != "", "Please select a cohort")
+  #   )
+  #   
+  #   validate(
+  #     need(input$codelist_vocab_selector != "", "Please select a vocab")
+  #   )
+  #   
+  #   table <- concepts_lists %>%
+  #     filter(Vocabulary %in% input$codelist_vocab_selector) %>%
+  #     filter(Cancer %in% input$codelist_cohort_selector)
+  #   
+  #   table
+  #   
+  # })
+  # 
+  # 
+  # output$tbl_codelists <- renderText(kable(get_codelists()) %>%
+  #                                      kable_styling("striped", full_width = F) )
+  # 
+  # 
+  # output$gt_codelists_word <- downloadHandler(
+  #   filename = function() {
+  #     "concept_lists.docx"
+  #   },
+  #   content = function(file) {
+  #     x <- gt(get_codelists())
+  #     gtsave(x, file)
+  #   }
+  # )
+  # 
 
   # attrition --------
   get_attrition <- reactive({
