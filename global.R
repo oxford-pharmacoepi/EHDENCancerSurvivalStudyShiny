@@ -395,7 +395,9 @@ dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "HUS2000", "HUS")) %>%
   dplyr::mutate(group_name = if_else(group_name == "cohort_name",
                                       "Overall", group_name)) %>%
   filter(!(variable == "Sex" & variable_level == "None")) %>% 
-  mutate_all(~ str_replace_all(., "Head_and_neck", "Head and neck")) 
+  mutate_all(~ str_replace_all(., "Head_and_neck", "Head and neck")) %>% 
+  filter(variable != "Cohort end date" ) %>% 
+  filter(variable != "Cohort start date" ) 
   
 # cdm snapshot ------
 snapshot_files <- results[stringr::str_detect(results, ".csv")]

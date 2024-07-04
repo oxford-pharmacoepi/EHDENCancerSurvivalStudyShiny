@@ -144,41 +144,6 @@ server <-	function(input, output, session) {
     }
   )
   
-  
-  # # clinical codelists ----------------
-  # get_codelists <- reactive({
-  #   
-  #   validate(
-  #     need(input$codelist_cohort_selector != "", "Please select a cohort")
-  #   )
-  #   
-  #   validate(
-  #     need(input$codelist_vocab_selector != "", "Please select a vocab")
-  #   )
-  #   
-  #   table <- concepts_lists %>%
-  #     filter(Vocabulary %in% input$codelist_vocab_selector) %>%
-  #     filter(Cancer %in% input$codelist_cohort_selector)
-  #   
-  #   table
-  #   
-  # })
-  # 
-  # 
-  # output$tbl_codelists <- renderText(kable(get_codelists()) %>%
-  #                                      kable_styling("striped", full_width = F) )
-  # 
-  # 
-  # output$gt_codelists_word <- downloadHandler(
-  #   filename = function() {
-  #     "concept_lists.docx"
-  #   },
-  #   content = function(file) {
-  #     x <- gt(get_codelists())
-  #     gtsave(x, file)
-  #   }
-  # )
-  # 
 
   # attrition --------
   get_attrition <- reactive({
@@ -280,7 +245,7 @@ server <-	function(input, output, session) {
       filter(Cancer %in% input$surv_est_cohort_name_selector) %>%
       filter(Database %in% input$surv_est_database_name_selector) %>% 
       filter(Age %in% input$surv_est_age_selector) %>% 
-    filter(Sex %in% input$surv_est_sex_selector) %>% 
+      filter(Sex %in% input$surv_est_sex_selector) %>% 
       arrange(Cancer)
      
     
@@ -314,17 +279,19 @@ server <-	function(input, output, session) {
         arrange(Cancer) %>% 
         mutate(across(everything(), ~ gsub("([0-9])\\.([0-9])", "\\1·\\2", .)))
       
-      
+
       # Conditionally remove the 'Sex' column if 'Both' is selected
-      if (input$survival_sex_selector == "Both") {
+      if (length(table(data$Sex)) == 1) {
         data <- data %>% select(-Sex)
       }
       
-      # Conditionally remove the 'Age' column if 'All' is selected
-      if (input$survival_age_selector == "All" |
-          input$survival_age_selector == "Age Standardized" ) {
+      
+      # 
+      # # Conditionally remove the 'Age' column if 'All' is selected
+      if (length(table(data$Age)) == 1) {
         data <- data %>% select(-Age)
       }
+      
 
       # Create the gt table and save to Word
       x <- gt(data)
