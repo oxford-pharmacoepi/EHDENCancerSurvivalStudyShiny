@@ -300,9 +300,20 @@ ui <- dashboardPage(
               outputId = "gt_patient_characteristics_word",
               label = "Download table as word"
             ),
-            style="display:inline-block; float:right")
+            style="display:inline-block; float:right") ,
         
-      ) ,
+     # ) ,
+      
+      div(style="display:inline-block",
+          downloadButton(
+            outputId = "gt_patient_characteristics_csv",
+            label = "Download table as csv"
+          ),
+          style="display:inline-block; float:right")
+
+    ) ,
+      
+      
       
       tabItem(
         tabName = "stats_results",

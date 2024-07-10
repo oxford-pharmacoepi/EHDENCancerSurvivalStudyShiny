@@ -28,6 +28,8 @@ library(CirceR)
 library(rjson)
 library(rclipboard)
 library(forcats)
+library(gtsummary)
+library(tidyverse)
 
 mytheme <- create_theme(
   adminlte_color(
@@ -358,8 +360,7 @@ dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "HUS2000", "HUS")) %>%
   filter(estimate_type != "q05",
          estimate_type != "q95",
          estimate_type != "mean",
-         estimate_type != "sd"
-         ) %>% 
+         estimate_type != "sd") %>% 
   dplyr::mutate(variable_level = if_else(variable_level == "Obesitycharybdis",
                                          "Obesity", variable_level)) %>% 
   dplyr::mutate(variable = if_else(variable == "age",
@@ -397,7 +398,9 @@ dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "HUS2000", "HUS")) %>%
   filter(!(variable == "Sex" & variable_level == "None")) %>% 
   mutate_all(~ str_replace_all(., "Head_and_neck", "Head and neck")) %>% 
   filter(variable != "Cohort end date" ) %>% 
-  filter(variable != "Cohort start date" ) 
+  filter(variable != "Cohort start date" ) %>% 
+  filter(variable != "Number records" )
+
   
 # cdm snapshot ------
 snapshot_files <- results[stringr::str_detect(results, ".csv")]

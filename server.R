@@ -130,7 +130,9 @@ server <-	function(input, output, session) {
     
   
   output$gt_patient_characteristics  <- render_gt({
+    
     PatientProfiles::gtCharacteristics(get_patient_characteristics())
+    
   })  
   
   
@@ -139,10 +141,29 @@ server <-	function(input, output, session) {
       "patient_characteristics.docx"
     },
     content = function(file) {
-      
+
       gtsave(PatientProfiles::gtCharacteristics(get_patient_characteristics()), file)
+
     }
   )
+  
+  
+  output$gt_patient_characteristics_csv <- downloadHandler(
+    filename = function() {
+      "patient_characteristics.csv"
+    },
+    content = function(file) {
+      
+      tibble_data <- PatientProfiles::gtCharacteristics(get_patient_characteristics())
+      
+      tibble_data <-  as_tibble(tibble_data[["_data"]])
+      
+      #tibble_data[["_spanners"]]$spanner_label
+                                         
+      write.csv(tibble_data, file, row.names = FALSE)  # Save as CSV
+    }
+  )
+  
   
 
   # attrition --------
