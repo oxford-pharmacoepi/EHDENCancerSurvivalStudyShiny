@@ -656,7 +656,6 @@ calculate_age_standardized_survival <- function(data, standard_population) {
 
 results_database <- list()
 results_cancer <- list()
-# now for loops
 
 for(db in 1:length(table(survival_median_table$Database ))){
   

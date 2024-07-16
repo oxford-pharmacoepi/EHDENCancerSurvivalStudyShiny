@@ -157,6 +157,15 @@ server <-	function(input, output, session) {
       tibble_data <- PatientProfiles::gtCharacteristics(get_patient_characteristics())
       
       tibble_data <-  as_tibble(tibble_data[["_data"]])
+      # 
+      # tibble_data[["_spanners"]] |> 
+      #   mutate(span = unlist(spanner_label)) |> 
+      #   split(f=as.factor(tibble_data[["_spanners"]]$spanner_id)) |>
+      #   lapply(function(xx) {
+      #     lab <- xx$span
+      #     variables <- xx$vars |> unlist()
+      #     dplyr::tibble(cohorts=variables, span=lab)
+      #   })
       
       #tibble_data[["_spanners"]]$spanner_label
                                          
