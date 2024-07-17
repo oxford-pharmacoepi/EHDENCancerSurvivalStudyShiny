@@ -217,6 +217,7 @@ ui <- dashboardPage(
           column(width = 3, div(class = "logo-container", img(src = "eci.png", height = "100px"))),
           column(width = 3, div(class = "logo-container", img(src = "uoe.png", height = "100px"))),
           column(width = 3, div(class = "logo-container", img(src = "imasis.png", height = "100px"))),
+          column(width = 3, div(class = "logo-container", img(src = "imasis1.png", height = "100px"))),
           column(width = 3, div(class = "logo-container", img(src = "ulsm.jpeg", height = "100px"))),
           column(width = 3, div(class = "logo-container", img(src = "ulsra.png", height = "100px"))),
           column(width = 3, div(class = "logo-container", img(src = "ulsedv.png", height = "100px"))),
