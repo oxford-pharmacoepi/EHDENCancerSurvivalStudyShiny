@@ -455,8 +455,19 @@ attritioncdm <- bind_rows(attritioncdm) %>%
   dplyr::mutate(Database = replace(Database, Database == "HUS2000", "HUS")) %>% 
   select(!c(cohort_definition_id))
 
-# only keep results for ECI breast
-attritioncdm <- attritioncdm %>% 
+attrition_summary <- attritioncdm %>%
+  group_by(Database, reason, reason_id) %>%
+  summarize(excluded_records = sum(excluded_records, na.rm = TRUE),
+            excluded_subjects = sum(excluded_subjects, na.rm = TRUE),
+            number_records = sum(number_records, na.rm = TRUE),
+            number_subjects = sum(number_subjects, na.rm = TRUE)) %>% 
+  arrange(reason_id) %>% 
+  mutate(Cancer = "Overall")
+
+attritioncdm <- bind_rows(attritioncdm, attrition_summary)
+
+# # only keep results for ECI breast
+attritioncdm <- attritioncdm %>%
   dplyr::filter(!(Database == "ECI" & Cancer != "Breast"))
        
 # filter results for just km results
