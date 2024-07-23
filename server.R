@@ -388,6 +388,13 @@ server <-	function(input, output, session) {
     validate(
       need(input$survival_sex_selector != "", "Please select a sex")
     )
+    
+    validate(
+      need(input$survival_type_selector != "", "Please select a database type")
+    )
+    
+    
+    
     validate(
       need(input$surv_plot_group != "", "Please select a group to colour by")
     )
@@ -396,11 +403,14 @@ server <-	function(input, output, session) {
       need(input$surv_plot_facet != "", "Please select a group to facet by")
     )
     
+    
+    
       plot_data <- survival_km %>%
         filter(Database %in% input$survival_database_selector) %>%
         filter(Cancer %in% input$survival_cohort_name_selector) %>%
         filter(Age %in% input$survival_age_selector) %>%
-        filter(Sex %in% input$survival_sex_selector)
+        filter(Sex %in% input$survival_sex_selector) %>% 
+        filter(database_type %in% input$survival_type_selector )
       
       plot_data <- plot_data %>%
         mutate(database_type = as.factor(database_type)) %>%

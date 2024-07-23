@@ -732,6 +732,18 @@ ui <- dashboardPage(
           )
         ),
         
+        div(
+          style = "display: inline-block;vertical-align:top; width: 150px;",
+          pickerInput(
+            inputId = "survival_type_selector",
+            label = "Database Type",
+            choices = unique(survival_km$database_type),
+            selected = unique(survival_km$database_type),
+            options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = "count > 3"),
+            multiple = TRUE
+          )
+        ),
+        
         
         div(style="display: inline-block;vertical-align:top; width: 150px;",
             pickerInput(inputId = "surv_plot_facet",
@@ -739,7 +751,8 @@ ui <- dashboardPage(
                         choices = c("Cancer",
                                     "Database",
                                     "Sex",
-                                    "Age"
+                                    "Age",
+                                    "database_type"
                         ),
                         selected = c("Cancer" ),
                         options = list(
