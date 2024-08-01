@@ -30,6 +30,7 @@ library(rclipboard)
 library(forcats)
 library(gtsummary)
 library(tidyverse)
+library(zoo)
 
 mytheme <- create_theme(
   adminlte_color(
@@ -225,6 +226,36 @@ survival_estimates <- bind_rows(survival_estimates,
 rm(survival_estimates_prostate,
    survival_estimates_ECI)
 
+
+# age standardized survival curves
+# for overall only
+
+survival_estimates_test <- survival_estimates %>% 
+  filter(Database == "CPRD GOLD (UK)") %>% 
+  filter(Age != "All") %>% 
+  filter(Sex == "Both") %>% 
+  filter(Method == "Kaplan-Meier") %>% 
+  filter(Cancer == "Breast")
+
+
+# make it into wide format
+wide_df <- survival_estimates_test %>%
+  select(time, Age, est, Cancer) %>%  # Ignore extra_column
+  pivot_wider(names_from = Age, values_from = est) %>% 
+  arrange(time)
+
+
+# filling the gaps
+df <- wide_df %>%
+  mutate(across(-time, ~ na.locf(.x, na.rm = FALSE)))
+
+# interpolated_df <- interpolated_df %>%
+#   mutate(across(everything(), ~na.locf(.x, na.rm = FALSE)))
+# 
+# interpolated_df <- Reduce(function(x, y) {
+#   merge(x, y, by = "time", all = TRUE)
+# }, wide_df )
+  
 
 # risk tables ----------
 survival_risk_table_files <- results[stringr::str_detect(results, ".csv")]
@@ -504,13 +535,13 @@ calculate_age_standardized_survival <- function(data, standard_population) {
     filter(Age != "0 to 19") %>%
     summarise(ICSS = sum(ICSS)/100000)
   
-  data <- survival_median_table %>%
-    filter(Database == names(table(survival_median_table$Database ))[db] ) %>% 
-    left_join(age_stds, by = c("Age")) %>% 
-    filter(Age != "All", 
-           Sex == "Female")
-           #, 
-           #Cancer == "Breast")
+  # data <- survival_median_table %>%
+  #   filter(Database == names(table(survival_median_table$Database ))[db] ) %>% 
+  #   left_join(age_stds, by = c("Age")) %>% 
+  #   filter(Age != "All", 
+  #          Sex == "Female")
+  #          #, 
+  #          #Cancer == "Breast")
 
   # Merge age-standardized survival to the original data
   data <- data %>%
