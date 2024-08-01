@@ -506,9 +506,11 @@ calculate_age_standardized_survival <- function(data, standard_population) {
   
   data <- survival_median_table %>%
     filter(Database == names(table(survival_median_table$Database ))[db] ) %>% 
-    left_join(age_stds, by = c("Age")) %>% filter(Age != "All", 
-                                                  Sex == "Female", 
-                                                  Cancer == "Breast")
+    left_join(age_stds, by = c("Age")) %>% 
+    filter(Age != "All", 
+           Sex == "Female")
+           #, 
+           #Cancer == "Breast")
 
   # Merge age-standardized survival to the original data
   data <- data %>%
