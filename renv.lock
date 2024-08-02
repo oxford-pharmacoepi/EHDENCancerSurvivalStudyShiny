@@ -140,20 +140,6 @@
       ],
       "Hash": "2fecebc3047322fa5930f74fae5de70f"
     },
-     "dsr": {
-      "Package": "dsr",
-      "Version": "0.2.2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "dplyr",
-        "frailtypack",
-        "rlang",
-        "stats",
-        "utils"
-      ],
-      "Hash": "cb311d7e25ae845c23dd41e9d13cbead"
-    },
     "MASS": {
       "Package": "MASS",
       "Version": "7.3-60",
@@ -2494,6 +2480,21 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "0d0056cc5383fbc240ccd0cb584bf436"
+    },
+    "zoo": {
+      "Package": "zoo",
+      "Version": "1.8-12",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "grDevices",
+        "graphics",
+        "lattice",
+        "stats",
+        "utils"
+      ],
+      "Hash": "5c715954112b45499fb1dadc6ee6ee3e"
     }
   }
 }
