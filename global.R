@@ -109,6 +109,33 @@ results <- list.files(
   include.dirs = TRUE
 )
 
+
+# age standization for survival
+
+# read in ICCS_1 values (for all cancers in this study apart from prostate)
+ICSS_1 <- readr::read_csv(here("www", "ICSS_1.csv"), 
+                          show_col_types = FALSE) 
+
+# # read in ICCS values (for prostate)
+# ICSS_prostate <- readr::read_csv(here("www", "ICSS_prostate.csv"), 
+#                                  show_col_types = FALSE) 
+
+age_stds <- ICSS_1 %>%
+  mutate(Age = case_when(
+    Age %in% c("0-14", "15-19") ~ "0 to 19",
+    Age %in% c("20-24", "25-29", "30-34", "35-39") ~ "18 to 39",
+    Age %in% c("40-44", "45-49") ~ "40 to 49",
+    Age %in% c("50-54", "55-59") ~ "50 to 59",
+    Age %in% c("60-64", "65-69") ~ "60 to 69",
+    Age %in% c("70-74", "75-79") ~ "70 to 79",
+    Age %in% c("80-84", "85+") ~ "80 +"
+  )) %>%
+  group_by(Age) %>%
+  filter(Age != "0 to 19") %>%
+  summarise(ICSS = sum(ICSS)/100000)
+
+
+
 # database details
 database_details <- read_csv(here::here("www", "database_details.csv"), show_col_types = FALSE)
 
@@ -228,34 +255,133 @@ rm(survival_estimates_prostate,
 
 
 # age standardized survival curves
-# for overall only
+
+# # make it into wide format
+# wide_df <- survival_estimates_test %>%
+#   select(time, Age, est, Cancer) %>%  # Ignore extra_column
+#   pivot_wider(names_from = Age, values_from = est) %>% 
+#   arrange(time)
+# 
+# 
+# # # filling the gaps
+# df <- wide_df %>%
+#   mutate(across(-c(time, Cancer), ~ na.locf(.x, na.rm = FALSE))) %>%
+#   distinct(across(-c(time, Cancer)), .keep_all = TRUE)
+# 
+# 
+# # put back into long format
+# df_long <- df %>% 
+# pivot_longer(cols = -c(time, Cancer), names_to = "Age", values_to = "est")
+# 
+# 
+# # put population weights in 
+# df_long <- df_long %>%
+#   left_join(age_stds, by = "Age")
+# 
+# 
+# weighted_survival_estimates <- df_long %>%
+#   group_by(time, Cancer) %>%  # Group by Cancer as well
+#   summarize(weighted_est = sum(est * ICSS, na.rm = TRUE) / sum(ICSS, na.rm = TRUE))
+
 
 survival_estimates_test <- survival_estimates %>% 
-  filter(Database == "CPRD GOLD (UK)") %>% 
   filter(Age != "All") %>% 
   filter(Sex == "Both") %>% 
-  filter(Method == "Kaplan-Meier") %>% 
-  filter(Cancer == "Breast")
+  filter(Method == "Kaplan-Meier") 
+
+# Define the function to process each cancer type
+# standardize_survival <- function(data_partner, cancer_type, data, weights) {
+#   data %>%
+#     filter(Database == data_partner, Cancer == cancer_type) %>%
+#     select(time, Age, est, Cancer, Database) %>%
+#     pivot_wider(names_from = Age, values_from = est) %>%
+#     arrange(time) %>%
+#     mutate(across(-c(time, Cancer, Database), ~ na.locf(.x, na.rm = FALSE))) %>%
+#     distinct(across(-c(time, Cancer, Database)), .keep_all = TRUE) %>%
+#     pivot_longer(cols = -c(time, Cancer, Database), names_to = "Age", values_to = "est") %>%
+#     left_join(weights, by = "Age") %>%
+#     group_by(time, Cancer, Database) %>%
+#     summarize(weighted_est = sum(est * ICSS, na.rm = TRUE) / sum(ICSS, na.rm = TRUE)) %>%
+#     ungroup()
+# }
+
+# standardize_survival <- function(data_partner, cancer_type, data, weights) {
+#   data %>%
+#     filter(Database == data_partner, Cancer == cancer_type) %>%
+#     { if (nrow(.) == 0) return(tibble(time = numeric(0), Cancer = character(0), Database = character(0), weighted_est = numeric(0))) else . } %>%
+#     select(time, Age, est, Cancer, Database) %>%
+#     pivot_wider(names_from = Age, values_from = est) %>%
+#     arrange(time) %>%
+#     mutate(across(-c(time, Cancer, Database), ~ na.locf(.x, na.rm = FALSE))) %>%
+#     distinct(across(-c(time, Cancer, Database)), .keep_all = TRUE) %>%
+#     pivot_longer(cols = -c(time, Cancer, Database), names_to = "Age", values_to = "est") %>%
+#     left_join(weights, by = "Age") %>%
+#     group_by(time, Cancer, Database) %>%
+#     summarize(weighted_est = sum(est * ICSS, na.rm = TRUE) / sum(ICSS, na.rm = TRUE), .groups = 'drop')
+# }
 
 
-# make it into wide format
-wide_df <- survival_estimates_test %>%
-  select(time, Age, est, Cancer) %>%  # Ignore extra_column
-  pivot_wider(names_from = Age, values_from = est) %>% 
-  arrange(time)
-
-
-# filling the gaps
-df <- wide_df %>%
-  mutate(across(-time, ~ na.locf(.x, na.rm = FALSE)))
-
-# interpolated_df <- interpolated_df %>%
-#   mutate(across(everything(), ~na.locf(.x, na.rm = FALSE)))
-# 
-# interpolated_df <- Reduce(function(x, y) {
-#   merge(x, y, by = "time", all = TRUE)
-# }, wide_df )
+standardize_survival <- function(data_partner, cancer_type, data, weights) {
+  # Filter the data
+  data <- data %>%
+    filter(Database == data_partner, Cancer == cancer_type) %>% 
   
+  { if (nrow(.) == 0) return(tibble(time = numeric(0), Cancer = character(0), Database = character(0), weighted_est = numeric(0))) else . } %>%
+
+    select(time, Age, est, lcl, ucl, Cancer, Database, database_type) %>%
+    pivot_wider(names_from = Age, values_from = c(est, lcl, ucl)) %>%
+    arrange(time) %>%
+    mutate(across(starts_with("est_"), ~ na.locf(.x, na.rm = FALSE))) %>%
+    mutate(across(starts_with("lcl_"), ~ na.locf(.x, na.rm = FALSE))) %>%
+    mutate(across(starts_with("ucl_"), ~ na.locf(.x, na.rm = FALSE))) %>%
+    distinct(across(-c(time, Cancer, Database, database_type)), .keep_all = TRUE) %>%
+    pivot_longer(cols = -c(time, Cancer, Database, database_type), names_to = c(".value", "Age"), names_sep = "_") %>%
+    left_join(weights, by = "Age") %>%
+    group_by(time, Cancer, Database, database_type) %>%
+    summarize(
+      weighted_est = sum(est * ICSS, na.rm = TRUE) / sum(ICSS, na.rm = TRUE),
+      weighted_lcl = sum(lcl * ICSS, na.rm = TRUE) / sum(ICSS, na.rm = TRUE),
+      weighted_ucl = sum(ucl * ICSS, na.rm = TRUE) / sum(ICSS, na.rm = TRUE),
+      .groups = 'drop'
+    )
+  
+  return(data)
+}
+
+
+data_partners <- unique(survival_estimates$Database)
+cancer_types <- unique(survival_estimates$Cancer)
+
+# Create all combinations of data partners and cancer types
+available_combinations <- survival_estimates %>%
+  select(Database, Cancer) %>%
+  distinct()
+
+#combinations <- tidyr::crossing(Database = data_partners, Cancer = cancer_types)
+
+# Apply the function to each combination and combine results
+#standardized_results <- map_df(combinations, ~ standardize_survival(.x$Database, .x$Cancer, survival_estimates_test, age_stds))
+
+standardized_results <- available_combinations %>%
+  pmap_df(~ standardize_survival(.x, .y, survival_estimates_test, age_stds)) %>% 
+  rename(est = weighted_est,
+         lcl = weighted_lcl ,
+          ucl = weighted_ucl ) %>% 
+  mutate(Method = "Kaplan-Meier",
+         Age = "Age Standardized",
+         Sex = "Both",
+         Stratification = "None" ,
+         Adjustment = "None" ,
+         Truncated = "No"
+         ) 
+
+
+survival_estimates <- bind_rows(
+  survival_estimates,
+  standardized_results
+  
+)
+
 
 # risk tables ----------
 survival_risk_table_files <- results[stringr::str_detect(results, ".csv")]
@@ -504,17 +630,6 @@ attritioncdm <- attritioncdm %>%
 # filter results for just km results
 survival_km <- survival_estimates %>% 
   filter(Method == "Kaplan-Meier")
-
-# age standization for survival
-
-# read in ICCS_1 values (for all cancers in this study apart from prostate)
-ICSS_1 <- readr::read_csv(here("www", "ICSS_1.csv"), 
-                          show_col_types = FALSE) 
-
-# read in ICCS values (for prostate)
-ICSS_prostate <- readr::read_csv(here("www", "ICSS_prostate.csv"), 
-                                 show_col_types = FALSE) 
-
 
 
 # Function to calculate age-standardized survival
