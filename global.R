@@ -253,20 +253,34 @@ survival_estimates <- bind_rows(survival_estimates,
 rm(survival_estimates_prostate,
    survival_estimates_ECI)
 
-
-# age standardized survival curves
-# survival_estimates_test <- survival_estimates %>% 
-#   filter(Age != "All") %>% 
-#   filter(Sex == "Both") %>% 
-#   filter(Method == "Kaplan-Meier") 
-# 
+# # Function to standardize survival estimates
 # standardize_survival <- function(data_partner, cancer_type, data, weights) {
 #   # Filter the data
-#   data <- data %>%
-#     filter(Database == data_partner, Cancer == cancer_type) %>% 
+#   filtered_data <- data %>%
+#     filter(Database == data_partner, Cancer == cancer_type)
 #   
-#   { if (nrow(.) == 0) return(tibble(time = numeric(0), Cancer = character(0), Database = character(0), weighted_est = numeric(0))) else . } %>%
-# 
+#   # Check if there is data to process
+#   if (nrow(filtered_data) == 0) {
+#     return(tibble(
+#       time = numeric(0),
+#       Cancer = character(0),
+#       Database = character(0),
+#       database_type = character(0),
+#       weighted_est = numeric(0),
+#       weighted_lcl = numeric(0),
+#       weighted_ucl = numeric(0)
+#     ))
+#   }
+#   
+#   # Ensure required columns are present
+#   required_cols <- c("time", "Age", "est", "lcl", "ucl", "Cancer", "Database", "database_type")
+#   missing_cols <- setdiff(required_cols, colnames(filtered_data))
+#   if (length(missing_cols) > 0) {
+#     stop(paste("Missing columns in filtered data:", paste(missing_cols, collapse = ", ")))
+#   }
+#   
+#   # Perform the standardization process
+#   result <- filtered_data %>%
 #     select(time, Age, est, lcl, ucl, Cancer, Database, database_type) %>%
 #     pivot_wider(names_from = Age, values_from = c(est, lcl, ucl)) %>%
 #     arrange(time) %>%
@@ -284,31 +298,15 @@ rm(survival_estimates_prostate,
 #       .groups = 'drop'
 #     )
 #   
-#   return(data)
+#   return(result)
 # }
 # 
-# 
-# data_partners <- unique(survival_estimates$Database)
-# cancer_types <- unique(survival_estimates$Cancer)
-# 
-# # Create all combinations of data partners and cancer types
-# available_combinations <- survival_estimates %>%
-#   select(Database, Cancer) %>%
-#   distinct()
-# 
-# 
-# standardized_results <- available_combinations %>%
-#   pmap_df(~ standardize_survival(.x, .y, survival_estimates_test, age_stds)) %>% 
-#   rename(est = weighted_est,
-#          lcl = weighted_lcl ,
-#           ucl = weighted_ucl ) %>% 
-#   mutate(Method = "Kaplan-Meier",
-#          Age = "Age Standardized",
-#          Sex = "Both",
-#          Stratification = "None" ,
-#          Adjustment = "None" ,
-#          Truncated = "No"
-#          ) 
+# # Preprocess the data
+# survival_estimates_test <- survival_estimates %>%
+#   filter(Age != "All") %>%
+#   filter(Sex == "Both") %>%
+#   filter(Method == "Kaplan-Meier")
+
 
 # Function to standardize survival estimates
 standardize_survival <- function(data_partner, cancer_type, data, weights) {
@@ -355,6 +353,24 @@ standardize_survival <- function(data_partner, cancer_type, data, weights) {
       .groups = 'drop'
     )
   
+  # Add a row with time = 0, est = 1, lcl = 1, ucl = 1
+  initial_row <- tibble(
+    time = 0,
+    Cancer = unique(result$Cancer),
+    Database = unique(result$Database),
+    database_type = unique(result$database_type),
+    weighted_est = 1,
+    weighted_lcl = 1,
+    weighted_ucl = 1
+  )
+  
+  # Bind the initial row to the result
+  result <- bind_rows(initial_row, result)
+  
+  # Remove rows with time > 0 but less than 0.5
+  result <- result %>%
+    filter(!(time > 0 & time < 0.5))
+  
   return(result)
 }
 
@@ -363,6 +379,7 @@ survival_estimates_test <- survival_estimates %>%
   filter(Age != "All") %>%
   filter(Sex == "Both") %>%
   filter(Method == "Kaplan-Meier")
+
 
 # Generate combinations of data partners and cancer types actually present in the data
 available_combinations <- survival_estimates_test %>%
