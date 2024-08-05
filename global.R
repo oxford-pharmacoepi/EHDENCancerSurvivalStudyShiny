@@ -327,7 +327,7 @@ standardize_survival <- function(data_partner, cancer_type, data, weights) {
   
   # Remove rows with time > 0 but less than 0.5
   result <- result %>%
-    filter(!(time > 0 & time < 0.25))
+    filter(!(time > 0 & time < 0.5))
   
   return(result)
 }
