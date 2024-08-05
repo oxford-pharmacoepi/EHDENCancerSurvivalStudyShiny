@@ -224,9 +224,7 @@ ui <- dashboardPage(
           column(width = 3, div(class = "logo-container", img(src = "ulsge.jpeg", height = "100px"))),
           column(width = 3, div(class = "logo-container", img(src = "ipci.png", height = "100px"))),
           column(width = 3, div(class = "logo-container", img(src = "erasmus.png", height = "100px"))),
-          
           column(width = 3, div(class = "logo-container", img(src = "odysseus.png", height = "100px"))),
-          
           column(width = 3, div(class = "logo-container", img(src = "utartu.png", height = "100px")))
         ),
         tags$style(HTML("
@@ -685,7 +683,11 @@ ui <- dashboardPage(
       
       tabItem(
         tabName = "survival_results",
-        tags$h5("The Kaplan-Meier survival plots are presented below:"),
+        
+        tags$h5("The Kaplan-Meier survival plots are presented below. We present the crude and age standardized KM curves. We calculated age-standardised survival estimates for all ages combined using the direct method using",
+                tags$a(href = "https://www.sciencedirect.com/science/article/pii/S0959804904005283", "ICSS weightings"),
+                
+                "We were unable to estimate age survival for some countries due to the small number of cases in some age and cancer-specific strata, so they are not presented as results."),
         div(
           style = "display: inline-block;vertical-align:top; width: 150px;",
           pickerInput(

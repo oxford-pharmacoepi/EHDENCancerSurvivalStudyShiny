@@ -450,6 +450,10 @@ standardized_results_m <- available_combinations %>%
          Adjustment = "None",
          Truncated = "No")
 
+# remove males breast cancer due to small numbers
+standardized_results_m <- standardized_results_m %>% 
+  filter(Cancer != "Breast")
+
 
 survival_estimates <- bind_rows(
   survival_estimates,
