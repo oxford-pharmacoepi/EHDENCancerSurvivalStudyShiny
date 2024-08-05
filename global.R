@@ -393,12 +393,76 @@ standardized_results_prostate <- available_combinations_p %>%
          Truncated = "No")
 
 
+# females age stds
+survival_estimates_test <- survival_estimates %>%
+  filter(Age != "All") %>%
+  filter(Sex == "Female") %>%
+  filter(Method == "Kaplan-Meier") %>% 
+  filter(Cancer != "Prostate")
+
+
+# Generate combinations of data partners and cancer types actually present in the data
+available_combinations <- survival_estimates_test %>%
+  select(Database, Cancer) %>%
+  distinct()
+
+# Apply the function to each combination
+standardized_results_f <- available_combinations %>%
+  pmap_df(function(Database, Cancer) {
+    standardize_survival(Database, Cancer, survival_estimates_test, age_stds)
+  }) %>%
+  rename(est = weighted_est,
+         lcl = weighted_lcl,
+         ucl = weighted_ucl) %>%
+  mutate(Method = "Kaplan-Meier",
+         Age = "Age Standardized",
+         Sex = "Female",
+         Stratification = "None",
+         Adjustment = "None",
+         Truncated = "No")
+
+
+# Males age stds
+survival_estimates_test <- survival_estimates %>%
+  filter(Age != "All") %>%
+  filter(Sex == "Male") %>%
+  filter(Method == "Kaplan-Meier") %>% 
+  filter(Cancer != "Prostate")
+
+
+# Generate combinations of data partners and cancer types actually present in the data
+available_combinations <- survival_estimates_test %>%
+  select(Database, Cancer) %>%
+  distinct()
+
+# Apply the function to each combination
+standardized_results_m <- available_combinations %>%
+  pmap_df(function(Database, Cancer) {
+    standardize_survival(Database, Cancer, survival_estimates_test, age_stds)
+  }) %>%
+  rename(est = weighted_est,
+         lcl = weighted_lcl,
+         ucl = weighted_ucl) %>%
+  mutate(Method = "Kaplan-Meier",
+         Age = "Age Standardized",
+         Sex = "Male",
+         Stratification = "None",
+         Adjustment = "None",
+         Truncated = "No")
+
+
 survival_estimates <- bind_rows(
   survival_estimates,
   standardized_results,
+  standardized_results_f,
+  standardized_results_m,
   standardized_results_prostate
   
 )
+
+
+
+
 
 
 # risk tables ----------
