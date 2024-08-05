@@ -253,61 +253,6 @@ survival_estimates <- bind_rows(survival_estimates,
 rm(survival_estimates_prostate,
    survival_estimates_ECI)
 
-# # Function to standardize survival estimates
-# standardize_survival <- function(data_partner, cancer_type, data, weights) {
-#   # Filter the data
-#   filtered_data <- data %>%
-#     filter(Database == data_partner, Cancer == cancer_type)
-#   
-#   # Check if there is data to process
-#   if (nrow(filtered_data) == 0) {
-#     return(tibble(
-#       time = numeric(0),
-#       Cancer = character(0),
-#       Database = character(0),
-#       database_type = character(0),
-#       weighted_est = numeric(0),
-#       weighted_lcl = numeric(0),
-#       weighted_ucl = numeric(0)
-#     ))
-#   }
-#   
-#   # Ensure required columns are present
-#   required_cols <- c("time", "Age", "est", "lcl", "ucl", "Cancer", "Database", "database_type")
-#   missing_cols <- setdiff(required_cols, colnames(filtered_data))
-#   if (length(missing_cols) > 0) {
-#     stop(paste("Missing columns in filtered data:", paste(missing_cols, collapse = ", ")))
-#   }
-#   
-#   # Perform the standardization process
-#   result <- filtered_data %>%
-#     select(time, Age, est, lcl, ucl, Cancer, Database, database_type) %>%
-#     pivot_wider(names_from = Age, values_from = c(est, lcl, ucl)) %>%
-#     arrange(time) %>%
-#     mutate(across(starts_with("est_"), ~ na.locf(.x, na.rm = FALSE))) %>%
-#     mutate(across(starts_with("lcl_"), ~ na.locf(.x, na.rm = FALSE))) %>%
-#     mutate(across(starts_with("ucl_"), ~ na.locf(.x, na.rm = FALSE))) %>%
-#     distinct(across(-c(time, Cancer, Database, database_type)), .keep_all = TRUE) %>%
-#     pivot_longer(cols = -c(time, Cancer, Database, database_type), names_to = c(".value", "Age"), names_sep = "_") %>%
-#     left_join(weights, by = "Age") %>%
-#     group_by(time, Cancer, Database, database_type) %>%
-#     summarize(
-#       weighted_est = sum(est * ICSS, na.rm = TRUE) / sum(ICSS, na.rm = TRUE),
-#       weighted_lcl = sum(lcl * ICSS, na.rm = TRUE) / sum(ICSS, na.rm = TRUE),
-#       weighted_ucl = sum(ucl * ICSS, na.rm = TRUE) / sum(ICSS, na.rm = TRUE),
-#       .groups = 'drop'
-#     )
-#   
-#   return(result)
-# }
-# 
-# # Preprocess the data
-# survival_estimates_test <- survival_estimates %>%
-#   filter(Age != "All") %>%
-#   filter(Sex == "Both") %>%
-#   filter(Method == "Kaplan-Meier")
-
-
 # Function to standardize survival estimates
 standardize_survival <- function(data_partner, cancer_type, data, weights) {
   # Filter the data
