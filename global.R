@@ -117,8 +117,8 @@ ICSS_1 <- readr::read_csv(here("www", "ICSS_1.csv"),
                           show_col_types = FALSE) 
 
 # # read in ICCS values (for prostate)
-# ICSS_prostate <- readr::read_csv(here("www", "ICSS_prostate.csv"), 
-#                                  show_col_types = FALSE) 
+ICSS_prostate <- readr::read_csv(here("www", "ICSS_prostate.csv"),
+                                 show_col_types = FALSE)
 
 age_stds <- ICSS_1 %>%
   mutate(Age = case_when(
@@ -135,6 +135,19 @@ age_stds <- ICSS_1 %>%
   summarise(ICSS = sum(ICSS)/100000)
 
 
+age_stds_prostate <- ICSS_prostate %>%
+  filter(Age != "All") %>% 
+  mutate(Age = case_when(
+    Age %in% c("0-14") ~ "18 to 39",
+    Age %in% c("15-54 years") ~ "40 to 49",
+    Age %in% c("55-64 years") ~ "50 to 59",
+    Age %in% c("65-74 years") ~ "60 to 69",
+    Age %in% c("75-84 years") ~ "70 to 79",
+    Age %in% c("85+ years") ~ "80 +"
+  )) %>%
+  group_by(Age) %>%
+  summarise(ICSS = sum(ICSS)/100000) 
+  
 
 # database details
 database_details <- read_csv(here::here("www", "database_details.csv"), show_col_types = FALSE)
@@ -253,7 +266,7 @@ survival_estimates <- bind_rows(survival_estimates,
 rm(survival_estimates_prostate,
    survival_estimates_ECI)
 
-# Function to standardize survival estimates
+# Function to standardize survival estimates for all cancers apart from prostate
 standardize_survival <- function(data_partner, cancer_type, data, weights) {
   # Filter the data
   filtered_data <- data %>%
@@ -314,7 +327,7 @@ standardize_survival <- function(data_partner, cancer_type, data, weights) {
   
   # Remove rows with time > 0 but less than 0.5
   result <- result %>%
-    filter(!(time > 0 & time < 0.5))
+    filter(!(time > 0 & time < 0.25))
   
   return(result)
 }
@@ -323,7 +336,8 @@ standardize_survival <- function(data_partner, cancer_type, data, weights) {
 survival_estimates_test <- survival_estimates %>%
   filter(Age != "All") %>%
   filter(Sex == "Both") %>%
-  filter(Method == "Kaplan-Meier")
+  filter(Method == "Kaplan-Meier") %>% 
+  filter(Cancer != "Prostate")
 
 
 # Generate combinations of data partners and cancer types actually present in the data
@@ -347,10 +361,42 @@ standardized_results <- available_combinations %>%
          Truncated = "No")
 
 
+# age standardization for prostate
+# Preprocess the data
+survival_estimates_p <- survival_estimates %>%
+  filter(Age != "All") %>%
+  filter(Age != "18 to 39") %>%
+  filter(Age != "40 to 49") %>%
+  filter(Sex == "Both") %>%
+  filter(Method == "Kaplan-Meier") %>% 
+  filter(Cancer == "Prostate")
+
+
+# Generate combinations of data partners and cancer types actually present in the data
+available_combinations_p <- survival_estimates_p %>%
+  select(Database, Cancer) %>%
+  distinct()
+
+# Apply the function to each combination
+standardized_results_prostate <- available_combinations_p %>%
+  pmap_df(function(Database, Cancer) {
+    standardize_survival(Database, Cancer, survival_estimates_p, age_stds_prostate)
+  }) %>%
+  rename(est = weighted_est,
+         lcl = weighted_lcl,
+         ucl = weighted_ucl) %>%
+  mutate(Method = "Kaplan-Meier",
+         Age = "Age Standardized",
+         Sex = "Both",
+         Stratification = "None",
+         Adjustment = "None",
+         Truncated = "No")
+
 
 survival_estimates <- bind_rows(
   survival_estimates,
-  standardized_results
+  standardized_results,
+  standardized_results_prostate
   
 )
 
