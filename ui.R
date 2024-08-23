@@ -136,7 +136,7 @@ ui <- dashboardPage(
       # background  ------
       tabItem(
         tabName = "background",
-        h3("Trends in overall survival of eight cancers in 2000-2019: a cohort study including 1.8 million patients from 14 European databases"),
+        h3("Trends in overall survival of eight cancers in 2000-2019: a cohort study including 1.7 million patients from 11 European databases"),
         tags$h4(tags$strong("Please note, the results presented here should be considered as
                                                 preliminary and subject to change.")),
         
