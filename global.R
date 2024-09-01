@@ -472,6 +472,7 @@ survival_estimates <- bind_rows(
 
 
 
+
 # risk tables ----------
 survival_risk_table_files <- results[stringr::str_detect(results, ".csv")]
 survival_risk_table_files <- results[stringr::str_detect(results, "risk_table")]
@@ -958,6 +959,18 @@ final_results_age_std <- bind_rows(results_database,
 survival_median_table <- bind_rows(survival_median_table,
                                    final_results_age_std)
 
+
+# survival_median_table <- survival_median_table %>%
+#   # Create a temporary dataframe for lookups
+#   group_by(Sex) %>%
+#   mutate(median_survival_all = ifelse(Age == "all", median, NA)) %>%
+#   # Spread to get median_survival values from 'age == all' into a separate column
+#   fill(median_survival_all, .direction = "down") %>%
+#   # Update median_survival where age == 'age standardized'
+#   mutate(age_standard_median = ifelse(Age == "Age Standardized" & is.na(median), median_survival_all, age_standard_median)) %>%
+#   # Clean up temporary columns
+#   select(-median_survival_all) %>%
+#   ungroup()
 
 
 
