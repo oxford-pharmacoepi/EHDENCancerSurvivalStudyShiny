@@ -157,17 +157,6 @@ server <-	function(input, output, session) {
       tibble_data <- PatientProfiles::gtCharacteristics(get_patient_characteristics())
       
       tibble_data <-  as_tibble(tibble_data[["_data"]])
-      # 
-      # tibble_data[["_spanners"]] |> 
-      #   mutate(span = unlist(spanner_label)) |> 
-      #   split(f=as.factor(tibble_data[["_spanners"]]$spanner_id)) |>
-      #   lapply(function(xx) {
-      #     lab <- xx$span
-      #     variables <- xx$vars |> unlist()
-      #     dplyr::tibble(cohorts=variables, span=lab)
-      #   })
-      
-      #tibble_data[["_spanners"]]$spanner_label
                                          
       write.csv(tibble_data, file, row.names = FALSE)  # Save as CSV
     }
@@ -429,7 +418,8 @@ server <-	function(input, output, session) {
           geom_ribbon(aes(ymin = lcl, ymax = ucl, fill = Group), alpha = 0.2, colour = NA) +
           xlab("Time (Years)") +
           ylab("Survival Function") +
-          facet_wrap(vars(facet_var), ncol = 2) +
+          facet_wrap(vars(facet_var), ncol = 3) +
+         # facet_wrap(vars(facet_var), ncol = 2) +
           theme_bw(base_size = 20) +
           guides(
             colour = guide_legend(
@@ -466,7 +456,8 @@ server <-	function(input, output, session) {
           geom_ribbon(aes(ymin = lcl, ymax = ucl, fill = Group), alpha = 0.2, colour = NA) +
           xlab("Time (Years)") +
           ylab("Survival Function") +
-          facet_wrap(vars(facet_var), ncol = 2) +
+          #facet_wrap(vars(facet_var), ncol = 2) +
+          facet_wrap(vars(facet_var), ncol = 3) +
           theme_bw(base_size = 20) +
           guides(
             colour = guide_legend(
@@ -520,7 +511,8 @@ server <-	function(input, output, session) {
           geom_line(size = 1) + 
           xlab("Time (Years)") +
           ylab("Survival Function") +
-          facet_wrap(vars(facet_var), ncol = 2) +
+          facet_wrap(vars(facet_var), ncol = 3) +
+          #facet_wrap(vars(facet_var), ncol = 2) +
           theme_bw(base_size = 20) +
           guides(
             colour = guide_legend(
@@ -551,7 +543,8 @@ server <-	function(input, output, session) {
           geom_line(size = 1) + 
           xlab("Time (Years)") +
           ylab("Survival Function") +
-          facet_wrap(vars(facet_var), ncol = 2) +
+          facet_wrap(vars(facet_var), ncol = 3) +
+         # facet_wrap(vars(facet_var), ncol = 2) +
           theme_bw(base_size = 20) +
           guides(
             colour = guide_legend(
