@@ -296,14 +296,41 @@ standardize_survival <- function(data_partner, cancer_type, data, weights) {
     stop(paste("Missing columns in filtered data:", paste(missing_cols, collapse = ", ")))
   }
   
+  
+  fill_na_locf_mean <- function(x) {
+    # Carry forward the last observation
+    forward_fill <- na.locf(x, na.rm = FALSE)
+    # Carry backward the next observation
+    backward_fill <- na.locf(x, fromLast = TRUE, na.rm = FALSE)
+    # Calculate the mean of forward and backward fills
+    filled_mean <- rowMeans(cbind(forward_fill, backward_fill), na.rm = TRUE)
+    
+    return(filled_mean)
+  }
+  
+  
+  
   # Perform the standardization process
   result <- filtered_data %>%
     select(time, Age, est, lcl, ucl, Cancer, Database, database_type) %>%
     pivot_wider(names_from = Age, values_from = c(est, lcl, ucl)) %>%
     arrange(time) %>%
-    mutate(across(starts_with("est_"), ~ na.locf(.x, na.rm = FALSE))) %>%
-    mutate(across(starts_with("lcl_"), ~ na.locf(.x, na.rm = FALSE))) %>%
-    mutate(across(starts_with("ucl_"), ~ na.locf(.x, na.rm = FALSE))) %>%
+    
+    # calculates the mean between two points (recommended)
+    mutate(across(starts_with("est_"), ~ fill_na_locf_mean(.x))) %>%
+    mutate(across(starts_with("lcl_"), ~ fill_na_locf_mean(.x))) %>%
+    mutate(across(starts_with("ucl_"), ~ fill_na_locf_mean(.x))) %>%
+    
+    # # calculates a value based on the linear relationship between two data points
+    # mutate(across(starts_with("est_"), ~ na.approx(.x, na.rm = FALSE))) %>%
+    # mutate(across(starts_with("lcl_"), ~ na.approx(.x, na.rm = FALSE))) %>%
+    # mutate(across(starts_with("ucl_"), ~ na.approx(.x, na.rm = FALSE))) %>%
+    
+    # original bringing last value carried forward
+    # mutate(across(starts_with("est_"), ~ na.locf(.x, na.rm = FALSE))) %>%
+    # mutate(across(starts_with("lcl_"), ~ na.locf(.x, na.rm = FALSE))) %>%
+    # mutate(across(starts_with("ucl_"), ~ na.locf(.x, na.rm = FALSE))) %>%
+    
     distinct(across(-c(time, Cancer, Database, database_type)), .keep_all = TRUE) %>%
     pivot_longer(cols = -c(time, Cancer, Database, database_type), names_to = c(".value", "Age"), names_sep = "_") %>%
     left_join(weights, by = "Age") %>%

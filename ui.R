@@ -782,15 +782,6 @@ ui <- dashboardPage(
           checkboxInput("show_ci", "Show Confidence Intervals", value = FALSE)
         ),
         
-
-        # column(
-        #   width = 4,  # Adjust width as needed
-        #   div(
-        #     style = "width: 100%;",  # Use percentage to make it responsive within the column
-        #     numericInput("facet_ncol", "Number of Facets Columns:", value = 2, min = 1, max = 10, step = 1)
-        #   )
-        # ),
-        
         
           div(
             style = "width: 100%;",  # Use percentage to make it responsive within the column
