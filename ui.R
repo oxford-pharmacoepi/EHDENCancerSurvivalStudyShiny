@@ -136,35 +136,53 @@ ui <- dashboardPage(
       # background  ------
       tabItem(
         tabName = "background",
-        h3("Trends in overall survival of eight cancers in 2000-2019: a cohort study including 1.7 million patients from 11 European databases"),
+        h3("Trends in comorbidities, concomitant treatments, and overall survival for eight cancers (2000-2019): A cohort study of 1.7 million patients across 11 European health records and cancer registries"),
         tags$h4(tags$strong("Please note, the results presented here should be considered as
                                                 preliminary and subject to change.")),
         
         tags$h5(
-          "This app is a companion to the study focussing on the overall survival for eight different cancers
-        (Breast, Colorectal, Lung, Liver, Stomach, Head & Neck, Prostate, and Pancreas) for a variety of different electronic health records and cancer registries across Europe (Spain, Netherlands, Norway, Finland, Portugal, Estonia, Switzerland, and the United Kingdom)."
+          "This app is a companion to the study focussing trends in comorbidities, concomitant treatments, and overall survival for eight cancers (Breast, Colorectal, Lung, Liver, Stomach, Head & Neck, Prostate, and Pancreas) for a variety of different electronic health records and cancer registries across Europe (Spain, Netherlands, Norway, Finland, Portugal, Estonia, Switzerland, and the United Kingdom)."
         ),
         
         
         tags$h5(
           tags$span("Background:", style = "font-weight: bold;"),
-          "TBC"
+          "Real-world evidence offers timely insights into cancer burden, addressing differences between countries in cancer care. This study aims to describe the patient characteristics and estimate overall survival of patients diagnosed with either breast, pancreatic, prostate, colorectal, lung, stomach, liver, or head and neck cancer from 11 electronic health records and cancer registry databases from Estonia, Finland, The Netherlands, Norway, Portugal, Spain, Switzerland, and the United Kingdom."
         ),
         
         tags$h5(
           tags$span("Methods:", style = "font-weight: bold;"),
-          "TBC"
+          "Patients aged 18 years and older and with a primary cancer diagnosis were included in this study. The study period was from the 1st of January 2000 until the 31st of December 2019. Patients were followed up from cancer diagnosis until either death, database exit or end of the study period. Mortality data for each database originated either from National Death Registries, or death records registered within the databases. Patient characteristics at cancer diagnosis, such as sex, age, comorbidities and medication usage, were summarized. Median survival and survival rates at one-, five- and ten-year after diagnosis were calculated using the Kaplan Meier method and age standardized. All results were stratified by cancer type and sex."
           
         ),
+        
+        tags$h5(
+          tags$span("Findings:", style = "font-weight: bold;"),
+          "There were 1,796,278 eligible patients included in the study. Baseline patient characteristics showed consistent patterns in age, sex, comorbidities and medication usage across databases with breast, prostate, colorectal, and lung cancer the most prevalent cancers across databases. Patients aged 60-79 years accounted for the highest number of cancer diagnoses across all databases. Common comorbidities prior to cancer diagnosis were hypertension, type 2 diabetes, osteoarthritis, anemia and hyperlipidemia and common medications were those used for acid related disorders, systemic antibacterials and anti-inflammatory/antirheumatic medications. Breast and prostate cancer had the highest one-year, five-year, and ten-year overall survival with pancreatic cancer showing the lowest survival rates."
+          
+        ),
+        
+        
+        tags$h5(
+          tags$span("Interpretation:", style = "font-weight: bold;"),
+          "Our study found similar characteristics and survival patterns across different electronic health records databases and cancer registries for a variety of different cancers highlighting the potential benefit of utilizing real world data to enhance our understanding of cancer survival."
+          
+        ),
+
+        
         tags$h5(
           tags$span("Funding:" , style = "font-weight: bold;"),
           "This research was funded by the European Health Data and Evidence Network (EHDEN) (grant number 806968), and the Oxford NIHR Biomedical Research Centre."
         ),
         
-        tags$h5("The results of this study are published in the following journal:"
+        tags$h5("The results of this study are published in the following preprint and journal:"
         ),
         tags$ol(
-          tags$li(strong("TBC"),"(",tags$a(href="https://www.ndorms.ox.ac.uk/research/research-groups/Musculoskeletal-Pharmacoepidemiology","Paper Link"),")" )),
+          tags$li(strong("Preprint"),"(",tags$a(href="https://www.ndorms.ox.ac.uk/research/research-groups/Musculoskeletal-Pharmacoepidemiology","Paper Link"),")" )),
+        
+        tags$ol(
+          tags$li(strong("Journal Article"),"(",tags$a(href="https://www.ndorms.ox.ac.uk/research/research-groups/Musculoskeletal-Pharmacoepidemiology","Paper Link"),")" )),
+        
         
         tags$h5("The analysis code used to generate these results can be found",
                 tags$a(href="https://github.com/oxford-pharmacoepi/CancerSurvivalWp2Analysis", "here"),

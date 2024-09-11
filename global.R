@@ -260,11 +260,12 @@ survival_estimates_ECI <- survival_estimates %>%
 
 survival_estimates <- bind_rows(survival_estimates,
                                 survival_estimates_ECI,
-                                survival_estimates_prostate) 
+                                survival_estimates_prostate) %>% 
+  filter(Database != "ULSM (Portugal)")
 
 # for ULSM for breast cancer 
-survival_estimates <- survival_estimates %>%
-  filter(!(Database == "ULSM" & Cancer == "Breast" & Sex == "Female" & Method == "Kaplan-Meier") & time <= 17)
+# survival_estimates <- survival_estimates %>%
+#   filter(!(Database == "ULSM" & Cancer == "Breast" & Sex == "Female" & Method == "Kaplan-Meier") & time <= 17)
   
                 
 rm(survival_estimates_prostate,
@@ -425,22 +426,23 @@ standardized_results_prostate <- available_combinations_p %>%
 
 
 # females age stds
-survival_estimates_test <- survival_estimates %>%
+survival_estimates_f <- survival_estimates %>%
   filter(Age != "All") %>%
   filter(Sex == "Female") %>%
+  filter(Age != "18 to 39") %>%
   filter(Method == "Kaplan-Meier") %>% 
-  filter(Cancer != "Prostate")
+  filter(Cancer != "Breast") 
 
 
 # Generate combinations of data partners and cancer types actually present in the data
-available_combinations <- survival_estimates_test %>%
+available_combinations <- survival_estimates_f %>%
   select(Database, Cancer) %>%
   distinct()
 
 # Apply the function to each combination
 standardized_results_f <- available_combinations %>%
   pmap_df(function(Database, Cancer) {
-    standardize_survival(Database, Cancer, survival_estimates_test, age_stds)
+    standardize_survival(Database, Cancer, survival_estimates_f, age_stds)
   }) %>%
   rename(est = weighted_est,
          lcl = weighted_lcl,
@@ -452,28 +454,27 @@ standardized_results_f <- available_combinations %>%
          Adjustment = "None",
          Truncated = "No")
 
-# # remove males breast cancer due to small numbers
-standardized_results_f <- standardized_results_f %>%
-  filter(!(Cancer == "Head and Neck" & Database %in% c("ULSM (Portugal)", "HUVM (Spain)"))) %>%
-  filter(!(Cancer == "Lung" & Database == "ULSM (Portugal)"))
+
 
 # Males age stds
-survival_estimates_test <- survival_estimates %>%
+survival_estimates_m <- survival_estimates %>%
   filter(Age != "All") %>%
   filter(Sex == "Male") %>%
+  filter(Age != "18 to 39") %>%
   filter(Method == "Kaplan-Meier") %>% 
-  filter(Cancer != "Prostate")
+  filter(Cancer != "Prostate") %>% 
+  filter(Cancer != "Breast") 
 
 
 # Generate combinations of data partners and cancer types actually present in the data
-available_combinations <- survival_estimates_test %>%
+available_combinations <- survival_estimates_m %>%
   select(Database, Cancer) %>%
   distinct()
 
 # Apply the function to each combination
 standardized_results_m <- available_combinations %>%
   pmap_df(function(Database, Cancer) {
-    standardize_survival(Database, Cancer, survival_estimates_test, age_stds)
+    standardize_survival(Database, Cancer, survival_estimates_m, age_stds)
   }) %>%
   rename(est = weighted_est,
          lcl = weighted_lcl,
@@ -490,17 +491,85 @@ standardized_results_m <- standardized_results_m %>%
   filter(!(Cancer == "Breast" & !(Database %in% c("SIDIAP (Spain)"))))
 
 
+
+# females age stds breast
+survival_estimates_f_breast <- survival_estimates %>%
+  filter(Age != "All") %>%
+  filter(Sex == "Female") %>%
+  filter(Age != "18 to 39") %>%
+  filter(Age != "40 to 49") %>%
+  filter(Method == "Kaplan-Meier") %>% 
+  filter(Cancer == "Breast") 
+
+
+# Generate combinations of data partners and cancer types actually present in the data
+available_combinations <- survival_estimates_f_breast %>%
+  select(Database, Cancer) %>%
+  distinct()
+
+# Apply the function to each combination
+standardized_results_f_breast <- available_combinations %>%
+  pmap_df(function(Database, Cancer) {
+    standardize_survival(Database, Cancer, survival_estimates_f_breast, age_stds)
+  }) %>%
+  rename(est = weighted_est,
+         lcl = weighted_lcl,
+         ucl = weighted_ucl) %>%
+  mutate(Method = "Kaplan-Meier",
+         Age = "Age Standardized",
+         Sex = "Female",
+         Stratification = "None",
+         Adjustment = "None",
+         Truncated = "No")
+
+
+
+
+# Males age stds breast
+survival_estimates_m_breast <- survival_estimates %>%
+  filter(Age != "All") %>%
+  filter(Sex == "Male") %>%
+  filter(Age != "18 to 39") %>%
+  filter(Age != "40 to 49") %>%
+  filter(Method == "Kaplan-Meier") %>% 
+  filter(Cancer == "Breast") 
+
+
+# Generate combinations of data partners and cancer types actually present in the data
+available_combinations <- survival_estimates_m_breast %>%
+  select(Database, Cancer) %>%
+  distinct()
+
+# Apply the function to each combination
+standardized_results_m_breast <- available_combinations %>%
+  pmap_df(function(Database, Cancer) {
+    standardize_survival(Database, Cancer, survival_estimates_m_breast, age_stds)
+  }) %>%
+  rename(est = weighted_est,
+         lcl = weighted_lcl,
+         ucl = weighted_ucl) %>%
+  mutate(Method = "Kaplan-Meier",
+         Age = "Age Standardized",
+         Sex = "Male",
+         Stratification = "None",
+         Adjustment = "None",
+         Truncated = "No")
+
+
+# males and females only ages 40+ and for prostrate and breast from 50+
 survival_estimates <- bind_rows(
   survival_estimates,
   standardized_results,
   standardized_results_f,
+  standardized_results_f_breast,
+  standardized_results_m_breast,
   standardized_results_m,
   standardized_results_prostate) 
 
 
-# extract out ECI for females
+# extract out ECI for females for just 50 to 59 (Both sex contains all age groups)
 survival_estimates_ECI <- 
-  survival_estimates %>% 
+  standardized_results_f_breast %>% 
   filter(Database == "ECI (Scotland)") %>% 
   mutate(Sex = "Female")
 
@@ -543,7 +612,8 @@ survival_risk_table_prostate <- survival_risk_table %>%
 survival_risk_table <- bind_rows(survival_risk_table,
                                  survival_risk_table_ECI,
                                 survival_risk_table_prostate) %>% 
-  mutate_all(~ ifelse(is.na(.), "-", .)) 
+  mutate_all(~ ifelse(is.na(.), "-", .)) %>% 
+  filter(Database != "ULSM")
 
 rm(survival_risk_table_prostate,
    survival_risk_table_ECI
@@ -630,7 +700,8 @@ survival_median_table_ECI <- survival_median_table %>%
 
 survival_median_table <- bind_rows(survival_median_table,
                                    survival_median_table_ECI,
-                                   survival_median_table_prostate) 
+                                   survival_median_table_prostate) %>% 
+  filter(Database != "ULSM")
 
 rm(survival_median_table_prostate)
 
@@ -962,17 +1033,39 @@ for(db in 1:length(table(survival_median_table$Database ))){
       calculate_age_standardized_survival(standard_population = ICSS_1) %>%
       filter(Age == "Age Standardized")
 
-
-    results_cancer_f[[cancer]] <- survival_median_table_temp_temp %>%
-      filter(Sex == "Female" & Age != "All") %>%
-      calculate_age_standardized_survival(standard_population = ICSS_1) %>%
-      filter(Age == "Age Standardized")
-
-
-    results_cancer_m[[cancer]] <- survival_median_table_temp_temp %>%
-      filter(Sex == "Male" & Age != "All") %>%
-      calculate_age_standardized_survival(standard_population = ICSS_1) %>%
-      filter(Age == "Age Standardized")
+    if(names(table(survival_median_table_temp$Cancer))[cancer] == "Breast" | names(table(survival_median_table_temp$Cancer))[cancer] == "Prostate"){
+      
+      results_cancer_f[[cancer]] <- survival_median_table_temp_temp %>%
+        filter(Sex == "Female" & Age != "All") %>%
+        filter(Age != "18 to 39") %>% 
+        filter(Age != "40 to 49") %>% 
+        calculate_age_standardized_survival(standard_population = ICSS_1) %>%
+        filter(Age == "Age Standardized")
+      
+      
+      results_cancer_m[[cancer]] <- survival_median_table_temp_temp %>%
+        filter(Sex == "Male" & Age != "All") %>%
+        filter(Age != "18 to 39") %>% 
+        filter(Age != "40 to 49") %>% 
+        calculate_age_standardized_survival(standard_population = ICSS_1) %>%
+        filter(Age == "Age Standardized")
+    
+    } else {
+      
+      results_cancer_f[[cancer]] <- survival_median_table_temp_temp %>%
+        filter(Sex == "Female" & Age != "All") %>%
+        filter(Age != "18 to 39") %>% 
+        calculate_age_standardized_survival(standard_population = ICSS_1) %>%
+        filter(Age == "Age Standardized")
+      
+      
+      results_cancer_m[[cancer]] <- survival_median_table_temp_temp %>%
+        filter(Sex == "Male" & Age != "All") %>%
+        filter(Age != "18 to 39") %>% 
+        calculate_age_standardized_survival(standard_population = ICSS_1) %>%
+        filter(Age == "Age Standardized")
+      
+    }
 
   }
 
@@ -988,33 +1081,26 @@ for(db in 1:length(table(survival_median_table$Database ))){
 
 }
 
+
+
+
 final_results_age_std <- bind_rows(results_database,
                                    results_database_f,
                                    results_database_m
                                    ) %>%
   filter(!is.na(Database)) %>%
-  filter(!(Cancer == "Breast" & Sex == "Male" & !(Database %in% c("SIDIAP")))) %>%
-  filter(!(Cancer == "Head_and_neck" & Sex == "Female" & (Database %in% c("ULSM", "HUVM")))) %>%
-  filter(!(Cancer == "Lung" & Sex == "Female" & (Database %in% c("ULSM"))))  %>%
-  filter(!(Cancer == "Breast" & Sex == "Female" & (Database %in% c("ULSM", "HUVM", "IMASIS", "GCR"))))
+  filter(!(Cancer == "Head_and_neck" & Sex == "Female" & (Database %in% c("HUVM")))) %>%
+  filter(!(Cancer == "Liver" & Sex == "Female" & (Database %in% c("HUVM")))) %>%
+  filter(!(Cancer == "Pancreas" & Sex == "Female" & (Database %in% c("HUVM", "IMASIS")))) %>% 
+  filter(!(Cancer == "Breast" & Sex == "Female" & (Database %in% c("HUVM", "IMASIS", "GCR")))) %>%
+  filter(!(Cancer == "Breast" & Sex == "Male" & (Database %in% c("HUVM", "IMASIS", "GCR"))))
   
 
 survival_median_table <- bind_rows(survival_median_table,
-                                   final_results_age_std)
-
-
-# survival_median_table <- survival_median_table %>%
-#   # Create a temporary dataframe for lookups
-#   group_by(Sex) %>%
-#   mutate(median_survival_all = ifelse(Age == "all", median, NA)) %>%
-#   # Spread to get median_survival values from 'age == all' into a separate column
-#   fill(median_survival_all, .direction = "down") %>%
-#   # Update median_survival where age == 'age standardized'
-#   mutate(age_standard_median = ifelse(Age == "Age Standardized" & is.na(median), median_survival_all, age_standard_median)) %>%
-#   # Clean up temporary columns
-#   select(-median_survival_all) %>%
-#   ungroup()
-
+                                   final_results_age_std) %>% 
+  mutate(
+    `Median Survival (95% CI)` = ifelse(Cancer == "Breast" & Age == "Age Standardized", NA, `Median Survival (95% CI)`)
+  )
 
 
 rm(final_results_age_std,
