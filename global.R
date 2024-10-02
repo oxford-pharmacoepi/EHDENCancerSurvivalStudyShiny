@@ -258,9 +258,13 @@ survival_estimates_ECI <- survival_estimates %>%
   filter(Database == "ECI (Scotland)") %>% 
   dplyr::mutate(Sex = replace(Sex, Sex == "Both", "Female"))
 
+# survival_estimates <- bind_rows(survival_estimates,
+#                                 survival_estimates_ECI,
+#                                 survival_estimates_prostate)
+
 survival_estimates <- bind_rows(survival_estimates,
                                 survival_estimates_ECI,
-                                survival_estimates_prostate) %>% 
+                                survival_estimates_prostate) %>%
   filter(Database != "ULSM (Portugal)")
 
 # for ULSM for breast cancer 
@@ -424,6 +428,8 @@ standardized_results_prostate <- available_combinations_p %>%
          Adjustment = "None",
          Truncated = "No")
 
+standardized_results_prostate_m <- standardized_results_prostate %>% 
+  mutate(Sex = "Male")
 
 # females age stds
 survival_estimates_f <- survival_estimates %>%
@@ -489,7 +495,6 @@ standardized_results_m <- available_combinations %>%
 # remove males breast cancer due to small numbers
 standardized_results_m <- standardized_results_m %>%
   filter(!(Cancer == "Breast" & !(Database %in% c("SIDIAP (Spain)"))))
-
 
 
 # females age stds breast
@@ -564,6 +569,7 @@ survival_estimates <- bind_rows(
   standardized_results_f_breast,
   standardized_results_m_breast,
   standardized_results_m,
+  standardized_results_prostate_m,
   standardized_results_prostate) 
 
 
@@ -700,8 +706,13 @@ survival_median_table_ECI <- survival_median_table %>%
 
 survival_median_table <- bind_rows(survival_median_table,
                                    survival_median_table_ECI,
-                                   survival_median_table_prostate) %>% 
+                                   survival_median_table_prostate) %>%
   filter(Database != "ULSM")
+
+# survival_median_table <- bind_rows(survival_median_table,
+#                                    survival_median_table_ECI,
+#                                    survival_median_table_prostate) 
+
 
 rm(survival_median_table_prostate)
 
@@ -1280,3 +1291,260 @@ attritionChart <- function(x) {
 }
 
 
+
+#heat map for comorbidities
+
+# table_comorb <- tableone_whole %>% 
+#   filter(!(cdm_name %in% c("CRN", "ECI", "GCR", "NCR"))) %>% 
+#   filter(strata_name == "Overall") %>% 
+#   filter(grepl("Conditions", variable)) %>% 
+#   filter(Cancer == "cohort_name") %>% 
+#   filter(estimate_type == "percentage") %>% 
+#   mutate(estimate = as.numeric(as.character(estimate))) %>% 
+#   mutate(estimate = ifelse(is.na(estimate), 0, estimate))
+# 
+# table_comorb <- table_comorb %>% 
+# group_by(cdm_name) %>%  # Group by database
+#   mutate(rank = rank(-estimate, ties.method = "first")) %>%  # Rank within each group
+#   ungroup()
+# 
+# # # Example data with percentages
+# # comorbidity_data <- data.frame(
+# #   comorbidity = c("Hypertension", "Diabetes", "COPD", "Heart Disease", "Stroke"),
+# #   partner_1 = c(30.5, 15.2, 10.1, 20.3, 8.0),
+# #   partner_2 = c(32.2, 14.0, 11.5, 22.0, 7.5),
+# #   partner_3 = c(29.0, 13.0, 12.0, 21.0, 9.0),
+# #   partner_4 = c(31.0, 16.0, 13.0, 19.0, 8.5),
+# #   partner_5 = c(29.5, 13.5, 11.5, 20.5, 9.5),
+# #   partner_6 = c(30.5, 14.5, 12.5, 21.5, 7.0)
+# # )
+# # 
+# # # Reshape the data for heatmap
+# # library(reshape2)
+# # comorbidity_melted <- melt(comorbidity_data, id.vars = "comorbidity")
+# # 
+# # library(ggplot2)
+# # 
+# 
+# 
+# # by rank dark colour 
+# ggplot(table_comorb, aes(x = cdm_name, y = variable_level, fill = rank)) +
+#   geom_tile(color = "white") +
+#   scale_fill_gradient(low = "#444BFD", high = "#FF9028", name = "Rank") +
+#   labs(title = "Rank of Comorbidities for all Cancers") +
+#   theme_minimal(base_size = 15) +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1) ,
+#         axis.title.x = element_blank(),  # Remove x-axis title
+#         axis.title.y = element_blank()
+#         )  # Rotate x-axis labels
+# 
+# 
+# 
+# 
+# 
+# table_medications <- tableone_whole %>% 
+#   filter(!(cdm_name %in% c("CRN", "ECI", "GCR", "NCR"))) %>% 
+#   filter(strata_name == "Overall") %>% 
+#   filter(grepl("Medications", variable)) %>% 
+#   filter(Cancer == "cohort_name") %>% 
+#   filter(estimate_type == "percentage") %>% 
+#   mutate(estimate = as.numeric(as.character(estimate))) %>% 
+#   mutate(estimate = ifelse(is.na(estimate), 0, estimate))
+# 
+# table_medications <- table_medications %>% 
+#   group_by(cdm_name) %>%  # Group by database
+#   mutate(rank = rank(-estimate, ties.method = "first")) %>%  # Rank within each group
+#   ungroup()
+# 
+# # # Example data with percentages
+# # comorbidity_data <- data.frame(
+# #   comorbidity = c("Hypertension", "Diabetes", "COPD", "Heart Disease", "Stroke"),
+# #   partner_1 = c(30.5, 15.2, 10.1, 20.3, 8.0),
+# #   partner_2 = c(32.2, 14.0, 11.5, 22.0, 7.5),
+# #   partner_3 = c(29.0, 13.0, 12.0, 21.0, 9.0),
+# #   partner_4 = c(31.0, 16.0, 13.0, 19.0, 8.5),
+# #   partner_5 = c(29.5, 13.5, 11.5, 20.5, 9.5),
+# #   partner_6 = c(30.5, 14.5, 12.5, 21.5, 7.0)
+# # )
+# # 
+# # # Reshape the data for heatmap
+# # library(reshape2)
+# # comorbidity_melted <- melt(comorbidity_data, id.vars = "comorbidity")
+# # 
+# # library(ggplot2)
+# # 
+# 
+# # by percentage
+# # ggplot(table_medications, aes(x = cdm_name, y = variable_level, fill = estimate)) +
+# #   geom_tile(color = "white") +
+# #   scale_fill_gradient(low = "white", high = "blue", name = "Percentage") +
+# #   labs(title = "Percentage of Medications Across Databases",
+# #        x = "Data Partner",
+# #        y = "Comorbidity") +
+# #   theme_minimal(base_size = 15)
+# 
+# 
+# # by rank dark colour 
+# 
+# ggplot(table_medications, aes(x = cdm_name, y = variable_level, fill = rank)) +
+#   geom_tile(color = "white") +
+#   scale_fill_gradient(low = "#444BFD", high = "#FF9028", name = "Rank") +
+#   labs(title = "Rank of Prior Medications for all Cancers") +
+#   theme_minimal(base_size = 15) +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1) ,
+#         axis.title.x = element_blank(),  # Remove x-axis title
+#         axis.title.y = element_blank()
+#   )  # Rotate x-axis labels
+# 
+# 
+# # ggplot(table_medications, aes(x = cdm_name, y = variable_level, fill = rank)) +
+# #   geom_tile(color = "white") +
+# #   scale_fill_gradient(low = "purple", high = "light blue", name = "Rank") +
+# #   labs(title = "Rank of Medications Across Databases",
+# #        x = "Data Partner",
+# #        y = "Comorbidity") +
+# #   theme_minimal(base_size = 15) +
+# #   theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels
+# 
+# 
+# pathResults <- "C:/Users/dnewby/OneDrive - Nexus365/Desktop/"
+# 
+# # per cancer (create a loop)
+# for( i in 1: (length(table(tableone_whole$Cancer)))) {
+# 
+# table_comorb_1 <- tableone_whole %>% 
+#   filter(!(cdm_name %in% c("CRN", "ECI", "GCR", "NCR"))) %>% 
+#   filter(strata_name == "Overall") %>% 
+#   filter(grepl("Conditions", variable)) %>% 
+#   filter(Cancer == names(table(tableone_whole$Cancer))[i]
+#          ) %>%
+#   filter(estimate_type == "percentage") %>% 
+#   mutate(estimate = as.numeric(as.character(estimate))) %>% 
+#   mutate(estimate = ifelse(is.na(estimate), 0, estimate))
+# 
+# table_comorb_1 <- table_comorb_1 %>% 
+#   group_by(cdm_name) %>%  # Group by database
+#   mutate(rank = rank(-estimate, ties.method = "first")) %>%  # Rank within each group
+#   ungroup()
+# 
+# plot1 <- ggplot(table_comorb_1, aes(x = cdm_name, y = variable_level, fill = rank)) +
+#   geom_tile(color = "white") +
+#   scale_fill_gradient(low = "#444BFD", high = "#FF9028", name = "Rank") +
+#   labs(title = paste0("Rank of Comorbidities for ",names(table(tableone_whole$Cancer))[i], " Cancer") ) +
+#   theme_minimal(base_size = 15) +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1) ,
+#         axis.title.x = element_blank(),  # Remove x-axis title
+#         axis.title.y = element_blank()
+#   )  # Rotate x-axis labels
+# 
+# 
+# plotname <- paste0("Comorbidities_", names(table(tableone_whole$Cancer))[i],".png")
+# 
+# png(paste0(pathResults ,"/plots_cancer/", plotname),
+#     width = 10, height = 8, units = "in", res = 600)
+# print(plot1, newpage = FALSE)
+# dev.off()
+# 
+# 
+# 
+# 
+# table_medications_1 <- tableone_whole %>% 
+#   filter(!(cdm_name %in% c("CRN", "ECI", "GCR", "NCR"))) %>% 
+#   filter(strata_name == "Overall") %>% 
+#   filter(grepl("Medications", variable)) %>% 
+#   filter(Cancer == names(table(tableone_whole$Cancer))[i]
+#   ) %>% 
+#   filter(estimate_type == "percentage") %>% 
+#   mutate(estimate = as.numeric(as.character(estimate))) %>% 
+#   mutate(estimate = ifelse(is.na(estimate), 0, estimate))
+# 
+# table_medications_1 <- table_medications_1 %>% 
+#   group_by(cdm_name) %>%  # Group by database
+#   mutate(rank = rank(-estimate, ties.method = "first")) %>%  # Rank within each group
+#   ungroup()
+# 
+# 
+# plot1 <- ggplot(table_medications_1, aes(x = cdm_name, y = variable_level, fill = rank)) +
+#   geom_tile(color = "white") +
+#   scale_fill_gradient(low = "#444BFD", high = "#FF9028", name = "Rank") +
+#   labs(title = paste0("Rank of Prior Medications for ",names(table(tableone_whole$Cancer))[i], " Cancer") ) +
+#   theme_minimal(base_size = 15) +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1) ,
+#         axis.title.x = element_blank(),  # Remove x-axis title
+#         axis.title.y = element_blank()
+#   )  # Rotate x-axis labels
+# 
+# 
+# plotname1 <- paste0("medications_", names(table(tableone_whole$Cancer))[i],".png")
+# 
+# png(paste0(pathResults ,"/plots_cancer/", plotname1),
+#     width = 10, height = 6, units = "in", res = 600)
+# print(plot1, newpage = FALSE)
+# dev.off()
+# 
+# print(paste0("Done for ", names(table(tableone_whole$Cancer))[i]))
+# 
+# 
+# }
+# 
+# 
+# 
+# # age distributions per cancer
+# 
+# age_distribution <- tableone_whole %>% 
+#   #filter(!(cdm_name %in% c("CRN", "ECI", "GCR", "NCR"))) %>% 
+#   filter(strata_name == "Overall") %>% 
+#   filter(grepl("Age group", variable)) %>% 
+#   filter(Cancer == "cohort_name" |
+#            Cancer == "Overall" ) %>%
+#   filter(estimate_type == "percentage") %>% 
+#   mutate(estimate = as.numeric(as.character(estimate)))
+# 
+# ggplot(age_distribution, aes(x = factor(variable_level), y = estimate, fill = variable_level)) +
+#   geom_bar(stat = "identity", position = "dodge") +  # Create bar plot with grouped bars
+#   facet_wrap(~ cdm_name, scales = "free_y") +  # Facet by data partner
+#   labs(x = "Age Group", y = "Percentage (%)") +
+#   #theme_minimal() +
+#   theme(legend.position = "none",
+#         axis.text.x = element_text(angle = 45, hjust = 1)
+#         ) 
+# 
+# outcome_distribution <- tableone_whole %>% 
+#   filter(strata_name == "Overall") %>% 
+#   filter(grepl("outcome", variable)) %>% 
+#   filter(Cancer == "cohort_name" |
+#            Cancer == "Overall" ) %>%
+#   filter(estimate_type == "percentage") %>% 
+#   mutate(estimate = as.numeric(as.character(estimate)))
+# 
+# ggplot(outcome_distribution, aes(x = factor(variable_level), y = estimate, fill = variable_level)) +
+#   geom_bar(stat = "identity", position = "dodge") +  # Create bar plot with grouped bars
+#   facet_wrap(~ cdm_name, scales = "free_y") +  # Facet by data partner
+#   labs(x = "Cancer", y = "Percentage (%)") +
+#   #theme_minimal() +
+#   theme(legend.position = "none",
+#         axis.text.x = element_text(angle = 45, hjust = 1)
+#   ) 
+# 
+# #sex
+# 
+# 
+# sex_distribution <- tableone_whole %>% 
+#   filter(strata_name == "Overall") %>% 
+#   filter(variable == "Sex") %>% 
+#   filter(!(Cancer == "cohort_name" |
+#            Cancer == "Overall" )) %>%
+#   filter(estimate_type == "percentage") %>% 
+#   mutate(estimate = as.numeric(as.character(estimate)))
+# 
+# sex_distribution_complete <- sex_distribution %>%
+#   complete(Cancer, variable_level, cdm_name, fill = list(estimate = 0)) 
+# 
+# ggplot(sex_distribution_complete, aes(x = Cancer, y = estimate, fill = variable_level)) + 
+#   #geom_bar(stat = "identity", position = "dodge") +  # Bar plot with grouped bars
+#   geom_bar(stat = "identity", position = position_dodge(width = 0.9), width = 0.8) +  # Ensure consistent bar width
+#   facet_wrap(~ cdm_name, scales = "free_y") +  # Facet by data partner
+#   labs(x = "Cancer Type", y = "Percentage (%)", fill = "Sex") +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+# 
+# 
