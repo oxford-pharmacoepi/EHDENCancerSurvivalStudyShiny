@@ -136,7 +136,7 @@ ui <- dashboardPage(
       # background  ------
       tabItem(
         tabName = "background",
-        h3("Trends in comorbidities, concomitant treatments, and overall survival for eight cancers (2000-2019): A cohort study of 1.7 million patients across 11 European health records and cancer registries"),
+        h3("Characterising Comorbidities, Medication Use, and Survival in Eight Incident Cancers Across Europe: A Multinational Network Cohort Study of 1.7 Million Patients"),
         tags$h4(tags$strong("Please note, the results presented here should be considered as
                                                 preliminary and subject to change.")),
         
@@ -147,25 +147,25 @@ ui <- dashboardPage(
         
         tags$h5(
           tags$span("Background:", style = "font-weight: bold;"),
-          "Real-world evidence offers timely insights into cancer burden, addressing differences between countries in cancer care. This study aims to describe the patient characteristics and estimate overall survival of patients diagnosed with either breast, pancreatic, prostate, colorectal, lung, stomach, liver, or head and neck cancer from 11 electronic health records and cancer registry databases from Estonia, Finland, The Netherlands, Norway, Portugal, Spain, Switzerland, and the United Kingdom."
+          "Real-world evidence provides valuable insights into cancer burden, presentation, and variations in care. This study examines patient characteristics and overall survival for breast, pancreatic, prostate, colorectal, lung, stomach, liver, and head and neck cancers using data from 11 electronic health records and cancer registries from eight European countries, mapped to the Observational Medical Outcomes Partnership Common Data Model (OMOP-CDM)."
         ),
         
         tags$h5(
           tags$span("Methods:", style = "font-weight: bold;"),
-          "Patients aged 18 years and older and with a primary cancer diagnosis were included in this study. The study period was from the 1st of January 2000 until the 31st of December 2019. Patients were followed up from cancer diagnosis until either death, database exit or end of the study period. Mortality data for each database originated either from National Death Registries, or death records registered within the databases. Patient characteristics at cancer diagnosis, such as sex, age, comorbidities and medication usage, were summarized. Median survival and survival rates at one-, five- and ten-year after diagnosis were calculated using the Kaplan Meier method and age standardized. All results were stratified by cancer type and sex."
+          "Patients aged 18 years or older with a primary cancer diagnosis between January 1st, 2000, and December 31st, 2019, were included. Patients were followed from cancer diagnosis until death, database exit, or study end. Mortality data was sourced from linked national death registries for most databases. Patient characteristics, including sex, age, comorbidities, and medication use, were summarised. Age-standardised overall survival at one, five, and ten years were calculated using the Kaplan-Meier method and stratified by cancer type, age group and sex."
           
         ),
         
         tags$h5(
           tags$span("Findings:", style = "font-weight: bold;"),
-          "There were 1,796,278 eligible patients included in the study. Baseline patient characteristics showed consistent patterns in age, sex, comorbidities and medication usage across databases with breast, prostate, colorectal, and lung cancer the most prevalent cancers across databases. Patients aged 60-79 years accounted for the highest number of cancer diagnoses across all databases. Common comorbidities prior to cancer diagnosis were hypertension, type 2 diabetes, osteoarthritis, anemia and hyperlipidemia and common medications were those used for acid related disorders, systemic antibacterials and anti-inflammatory/antirheumatic medications. Breast and prostate cancer had the highest one-year, five-year, and ten-year overall survival with pancreatic cancer showing the lowest survival rates."
+          "There were 1,796,278 eligible cancer patients included with most diagnoses in individuals aged 60-79 years. Top comorbidities and medications were relatively consistent across databases, with certain variations observed by cancer type, possibly indicative of early cancer signs. For instance, anaemia was frequent in colorectal (9%-23%) and stomach cancers (10%-34%), while chronic obstructive pulmonary disease (18%-34%) and pneumonia (15%-33%) were common in lung cancer patients. Breast and prostate cancers had the highest one, five and ten-year overall survival, and pancreatic cancer showed the lowest survival in all databases. Slight variations in cancer survival estimates were observed across data sources and countries."
           
         ),
         
         
         tags$h5(
           tags$span("Interpretation:", style = "font-weight: bold;"),
-          "Our study found similar characteristics and survival patterns across different electronic health records databases and cancer registries for a variety of different cancers highlighting the potential benefit of utilizing real world data to enhance our understanding of cancer survival."
+          "Integrating varied real-world data sources, utilizing the standardized OMOP-CDM structure, facilitates federated analyses and may offer promising avenues to enhance our understanding of cancer outcomes, including prodromes, which are often recorded in routinely collected healthcare data before cancer onset."
           
         ),
 
@@ -186,7 +186,7 @@ ui <- dashboardPage(
         
         tags$h5("The analysis code used to generate these results can be found",
                 tags$a(href="https://github.com/oxford-pharmacoepi/CancerSurvivalWp2Analysis", "here"),
-                ".The cohort diagnostics including the clinical codelists for each of the eight cancers can be found",
+                ".The cohort diagnostics including the clinical codelists for each cancer can be found",
                 tags$a(href="https://dpa-pde-oxford.shinyapps.io/CancerExtrapolationDiagnostics/", "here")
                 
         ),
@@ -702,7 +702,7 @@ ui <- dashboardPage(
       tabItem(
         tabName = "survival_results",
         
-        tags$h5("The Kaplan-Meier survival plots are presented below. We present the crude and age standardized KM curves. We calculated age-standardised survival estimates for all ages combined using the direct method using",
+        tags$h5("The Kaplan-Meier survival plots are presented below. We present the crude and age standardized KM curves. We calculated age-standardised survival estimates for all ages combined for both sexes and for  using the direct method using",
                 tags$a(href = "https://www.sciencedirect.com/science/article/pii/S0959804904005283", "ICSS weightings"),
                 
                 "We were unable to estimate age survival for some countries due to the small number of cases in some age and cancer-specific strata, so they are not presented as results."),

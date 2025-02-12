@@ -1,12 +1,12 @@
 Database,Full name,Country,database_type,How is death captured
 CPRD GOLD,Clinical Practice Research Datalink,United Kingdom,Primary,Not linked but 98% accurate compared with national death registry
-IMASIS,Institut Municipal Assistència Sanitària Information System,Spain,Secondary/Other,Deaths from cancer registry
+IMASIS,Institut Municipal Assistència Sanitària Information System,Spain,Secondary,Deaths from cancer registry
 CRN,Cancer Registry of Norway,Norway,Registry,From national and population registry
 NCR,Netherlands Cancer Registry,Netherlands,Registry,From national death registry
-ECI,South East Scotland Cancer Database,Scotland,Registry,From national death registry
+ECi,South East Scotland Cancer Database,Scotland,Cancer Specific,From national death registry
 GCR,Geneva Cancer Registry Data-Base,Switzerland,Registry,From national and population registry
-HUS,Hospital District of Helsinki and Uusimaa,Finland,Secondary/Other,From national death registry
-ULSM,Unidade Local de Saúde de Matosinhos,Portugal,Secondary/Other,Hospital only deaths
+HUS,Hospital District of Helsinki and Uusimaa,Finland,Secondary,From national death registry
+ULSM,Unidade Local de Saúde de Matosinhos,Portugal,Secondary,Hospital only deaths
 SIDIAP,The Information System for Research on Primary Care,Spain,Primary,national death registry
-HUVM,Hospital Universitario Virgen Macarena,Spain,Secondary/Other,Deaths from cancer registry
-UTARTU,University of Tartu,Estonia,Secondary/Other,Deaths from cancer registry
+HUVM,Hospital Universitario Virgen Macarena,Spain,Secondary,Deaths from cancer registry
+UTARTU,University of Tartu,Estonia,Cancer Specific,Deaths from cancer registry

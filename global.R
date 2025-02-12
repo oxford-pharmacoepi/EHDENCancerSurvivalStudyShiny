@@ -233,10 +233,11 @@ survival_estimates <- dplyr::bind_rows(survival_estimates) %>%
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Pancreatic", "Pancreas")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "HUS2000wtrunc", "HUS")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "ECI", "ECi")) %>% 
   left_join(database_details %>% select(Database, database_type), by = "Database") %>% 
   dplyr::mutate(Database = replace(Database, Database == "CPRD GOLD", "CPRD GOLD (UK)")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "CRN", "CRN (Norway)")) %>% 
-  dplyr::mutate(Database = replace(Database, Database == "ECI", "ECI (Scotland)")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "ECi", "ECi (Scotland)")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "GCR", "GCR (Switzerland)")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "HUVM", "HUVM (Spain)")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "IMASIS", "IMASIS (Spain)")) %>% 
@@ -255,7 +256,7 @@ survival_estimates_prostate <- survival_estimates %>%
   mutate(Sex = "Both")
 
 survival_estimates_ECI <- survival_estimates %>% 
-  filter(Database == "ECI (Scotland)") %>% 
+  filter(Database == "ECi (Scotland)") %>% 
   dplyr::mutate(Sex = replace(Sex, Sex == "Both", "Female"))
 
 # survival_estimates <- bind_rows(survival_estimates,
@@ -576,7 +577,7 @@ survival_estimates <- bind_rows(
 # extract out ECI for females for just 50 to 59 (Both sex contains all age groups)
 survival_estimates_ECI <- 
   standardized_results_f_breast %>% 
-  filter(Database == "ECI (Scotland)") %>% 
+  filter(Database == "ECi (Scotland)") %>% 
   mutate(Sex = "Female")
 
 
@@ -602,13 +603,14 @@ survival_risk_table <- dplyr::bind_rows(survival_risk_table) %>%
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Pancreatic", "Pancreas")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "ECI", "ECi")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "HUS2000wtrunc", "HUS")) %>% 
   select(-c("Method", "Stratification", "Adjustment" )) %>% 
   relocate(Database, .before = 1) %>% 
   filter(details != "n.censor")
 
 survival_risk_table_ECI <- survival_risk_table %>% 
-  filter(Database == "ECI") %>% 
+  filter(Database == "ECi") %>% 
   dplyr::mutate(Sex = replace(Sex, Sex == "Both", "Female"))
 
 survival_risk_table_prostate <- survival_risk_table %>% 
@@ -644,6 +646,7 @@ for(i in seq_along(survival_median_files)){
 survival_median_table <- dplyr::bind_rows(survival_median_table) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Pancreatic", "Pancreas")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>%
+  dplyr::mutate(Database = replace(Database, Database == "ECI", "ECi")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "HUS2000wtrunc", "HUS")) %>% 
   left_join(database_details %>% select(Database, database_type), by = "Database") %>% 
   filter(Truncated != "Yes", Method == "Kaplan-Meier") %>% 
@@ -701,7 +704,7 @@ survival_median_table_prostate <- survival_median_table %>%
   mutate(Sex = "Both")
 
 survival_median_table_ECI <- survival_median_table %>% 
-  filter(Database == "ECI") %>% 
+  filter(Database == "ECi") %>% 
   dplyr::mutate(Sex = replace(Sex, Sex == "Both", "Female"))
 
 survival_median_table <- bind_rows(survival_median_table,
@@ -727,6 +730,7 @@ for(i in seq_along(tableone_whole_files)){
 }
 tableone_whole <- bind_rows(tableone_whole) %>% 
 dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "HUS2000", "HUS")) %>% 
+  dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "ECI", "ECi")) %>% 
   dplyr::mutate(Cancer = replace(group_level, group_level == "Pancreatic", "Pancreas")) %>%
   dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "CPRD_GOLD", "CPRD GOLD")) %>% 
   filter(estimate_type != "q05",
@@ -771,7 +775,10 @@ dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "HUS2000", "HUS")) %>%
   mutate_all(~ str_replace_all(., "Head_and_neck", "Head and neck")) %>% 
   filter(variable != "Cohort end date" ) %>% 
   filter(variable != "Cohort start date" ) %>% 
-  filter(variable != "Number records" )
+  filter(variable != "Number records" ) %>% 
+filter(!(cdm_name == "HUVM" & variable == "Medications flag from -365 to 0")) %>% 
+  filter(!(cdm_name == "NCR" & variable == "Medications flag from -365 to 0")) %>% 
+filter(!(cdm_name == "NCR" & variable == "Conditions flag from any time prior to 0"))
 
   
 # cdm snapshot ------
@@ -790,6 +797,7 @@ snapshotcdm <- bind_rows(snapshotcdm) %>%
   mutate(person_count = nice.num.count(person_count), 
          observation_period_count = nice.num.count(observation_period_count)) %>% 
   dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "CPRD_GOLD", "CPRD GOLD")) %>%
+  dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "ECI", "ECi")) %>% 
   dplyr::mutate(cdm_name = replace(cdm_name, cdm_name == "HUS2000", "HUS")) %>% 
   rename("Database" = "cdm_name",
          "Persons in the cancer cohorts" = "person_count",
@@ -824,6 +832,7 @@ attritioncdm <- bind_rows(attritioncdm) %>%
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Pancreatic", "Pancreas")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
+  dplyr::mutate(Database = replace(Database, Database == "ECI", "ECi")) %>% 
   dplyr::mutate(Database = replace(Database, Database == "HUS2000", "HUS")) %>% 
   select(!c(cohort_definition_id))
 
@@ -840,7 +849,7 @@ attritioncdm <- bind_rows(attritioncdm, attrition_summary)
 
 # # only keep results for ECI breast
 attritioncdm <- attritioncdm %>%
-  dplyr::filter(!(Database == "ECI" & Cancer != "Breast"))
+  dplyr::filter(!(Database == "ECi" & Cancer != "Breast"))
        
 # filter results for just km results
 survival_km <- survival_estimates %>% 
@@ -1111,7 +1120,10 @@ survival_median_table <- bind_rows(survival_median_table,
                                    final_results_age_std) %>% 
   mutate(
     `Median Survival (95% CI)` = ifelse(Cancer == "Breast" & Age == "Age Standardized", NA, `Median Survival (95% CI)`)
-  )
+  ) %>% 
+  mutate(
+    `Median Survival (95% CI)` = ifelse(Age == "Age Standardized", NA, `Median Survival (95% CI)`)
+  ) 
 
 
 rm(final_results_age_std,
@@ -1136,6 +1148,7 @@ med_surv_km <- survival_median_table %>%
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Pancreatic", "Pancreas")) %>%
   dplyr::mutate(Database = replace(Database, Database == "HUS2000", "HUS")) %>%
+  dplyr::mutate(Database = replace(Database, Database == "ECI", "ECi")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>%
   mutate(across(everything(), ~replace(., . == "0 (0-0)", NA)))
 
@@ -1164,6 +1177,7 @@ med_surv_km_sex_age <- survival_median_table %>%
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Head_and_neck", "Head and Neck")) %>%
   dplyr::mutate(Database = replace(Database, Database == "HUS2000", "HUS")) %>% 
   dplyr::mutate(Cancer = replace(Cancer, Cancer == "Pancreatic", "Pancreas")) %>%
+  dplyr::mutate(Database = replace(Database, Database == "ECI", "ECi")) %>%
   dplyr::mutate(Database = replace(Database, Database == "CPRD_GOLD", "CPRD GOLD")) %>% 
   pivot_longer(
     cols = c(rmean, median, `surv year 1`, `surv year 5`,`surv year 10` ),
